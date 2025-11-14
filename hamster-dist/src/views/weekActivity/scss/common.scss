@@ -1,0 +1,162 @@
+@mixin bgImage($name) {
+    background-image: url('@/assets/img/weekActivity/' + $name + '.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+@mixin btnBox($width, $height, $name) {
+    width: $width;
+    height: $height;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    box-sizing: border-box;
+    @include bgImage($name);
+    margin: 0 auto;
+
+    span {
+        font-family: MyriadArabic, MyriadArabic;
+        font-weight: 400;
+        font-size: 18px;
+        color: #383115;
+        line-height: 18px;
+
+        // @include borderText(#390000, 2px) {
+        //     @include fontGradient(#ffffff, #ffffff, 180deg, 100%, 15px);
+        // }
+    }
+}
+
+@mixin giftBox($width, $height, $name, $imgW, $imgH) {
+    width: $width;
+    height: $height;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    @include bgImage($name);
+
+    img {
+        max-width: $imgW;
+        max-height: $imgH;
+    }
+
+    p {
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-weight: 500;
+        font-size: 13px;
+        color: #fffb83;
+        position: absolute;
+        bottom: 8px;
+    }
+}
+
+
+img {
+    display: block;
+}
+
+.ara {
+    .banner {
+        @include bgImage('banner-ar');
+
+    }
+
+    .countdown {
+        // flex-direction: row-reverse
+    }
+
+    .countdown {
+        .time {
+            text-indent: -12px !important;
+        }
+    }
+}
+
+.pop-title {
+    text-align: center;
+    font-family: Arial, Arial;
+    font-weight: 900;
+    font-size: 17px;
+    color: #ffffff;
+    line-height: 17px;
+    height: 37px;
+    padding: 125px 111px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // @include fontGradient(#d64d00, #4e1d00, 180deg, 100%, 19px);
+}
+
+.title {
+    font-family: PingFang-SC, PingFang-SC;
+    font-weight: 800;
+    font-size: 15px;
+    line-height: 1;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 30px 110px 0;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+// 一键置灰
+.filter {
+    filter: grayscale(40%);
+    -webkit-filter: grayscale(100%);
+}
+
+// 关闭按钮
+.off {
+    position: absolute;
+    top: 135px;
+    right: 31px;
+    width: 38px;
+    height: 38px;
+    z-index: 1;
+}
+
+// 用户名滚动样式
+.user-name {
+    width: 70px;
+    padding: 0;
+    position: absolute;
+    bottom: 10px;
+    height: 20px;
+    font-weight: 600;
+    font-size: 13px;
+    color: #3a0000;
+    line-height: 18px;
+    background: none;
+
+    :deep(.van-notice-bar__wrap) {
+        display: flex;
+        justify-content: center;
+    }
+}
+
+.popBtn {
+    width: 133px;
+    height: 50px;
+    margin: 0 auto;
+    // @include bgImage('btn5');
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 5px;
+    box-sizing: border-box;
+
+    span {
+        font-family: Arial, Arial;
+        font-weight: 900;
+        font-size: 19px;
+        color: #ffffff;
+    }
+}

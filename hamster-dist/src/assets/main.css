@@ -1,0 +1,94 @@
+@import './base.css';
+
+.clamp-1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.clamp-2 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.clamp-3 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-wrap {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.al-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.al-hor-center {
+    display: flex;
+    justify-content: center;
+}
+
+.al-ver-center {
+    display: flex;
+    align-items: center;
+}
+
+.clearfix:after {
+    content: ".";
+    clear: both;
+    height: 0;
+    visibility: hidden;
+    display: block;
+}
+
+.clearfix {
+    zoom: 1;
+}
+
+.fl {
+    float: left;
+}
+
+.fr {
+    float: right;
+}
+
+.btn-bg {
+    background: linear-gradient(270deg, #88EBCA 0%, #8ABBFF 48%, #D6B3FF 100%) !important;
+}
+
+.be_gray {
+    -webkit-filter: grayscale(1);
+    /* Webkit */
+    filter: gray;
+    /* IE6-9 */
+    filter: grayscale(1);
+    /* W3C */
+}
+
+.inline_block {
+    display: inline-block;
+}
+
+.btn_active:active {
+    transform: scale(0.9);
+}

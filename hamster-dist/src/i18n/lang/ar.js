@@ -1,0 +1,445 @@
+// عربي
+const AR = {
+  // CP
+  cp: {
+    ranking: {
+      tabList: [
+        {
+          label: "أفضل CP",
+          value: 0,
+        },
+        {
+          label: "التقييم الأسبوعي",
+          value: 1,
+        },
+        {
+          label: "المكافآت",
+          value: 2,
+        },
+      ],
+      weekList: [
+        {
+          label: "الأسبوع الماضي",
+          value: 1,
+        },
+        {
+          label: "الأسبوع الحالي",
+          value: 2,
+        },
+      ],
+      tips: {
+        tab1: "الأزواج الثلاثة من الـ CP الحاصلين على أعلى تصنيف CP",
+        tab2: "القائمة مرتبة حسب قيمة هدايا Cp المقدمة لبعضكم البعض",
+        explain:
+          "تحتفظ شركة Hamster Live بحق التفسير النهائي لهذا البرنامج",
+      },
+    },
+  },
+
+  // Charge
+  charge: {
+    index: {
+      honorOfCertircate: "شهادة الشرف",
+      tabList: [
+        {
+          label: "المهام",
+          value: 0,
+        },
+        {
+          label: "الترتيب",
+          value: 1,
+        },
+        // {
+        //   label: "معبد المجد",
+        //   value: 2,
+        // },
+      ],
+      dayList: [
+        {
+          label: "اليوم",
+          value: 2,
+        },
+        {
+          label: "أمس",
+          value: 1,
+        },
+      ],
+      rankings: {
+        daily: "الترتيب اليومي",
+        monthly: "الترتيب الشهري",
+      },
+      tips: {
+        daily: "يتم تحديث الترتيب اليومي في الساعة 0:00 (UTC +3)",
+        upto: {
+          20000: {
+            title: "شحن تصل إلى 20000 دولار",
+            text: "هذا الشهر شحن تصل إلى 20000 دولار للمستخدمين",
+          },
+          10000: {
+            title: "شحن تصل إلى 10000 دولار",
+            text: "هذا الشهر شحن تصل إلى 10000 دولار للمستخدمين",
+          },
+          5000: {
+            title: "شحن تصل إلى 5000 دولار",
+            text: "هذا الشهر شحن تصل إلى 5000 دولار للمستخدمين",
+          },
+        },
+        reward: "سيتم منح هذه الميدالية إلى TOP 1 بعد الحدث وستكون صالحة لمدة 30 يومًا!",
+        upgrade: "لتحسين تصنيفك، تحتاج أيضًا إلى: $",
+      },
+      lv: "المستوى ",
+      giftPack: " حزم الهدايا",
+      reached: "إعادة الشحن إلى: ",
+      day: "يومًا",
+      levelingUp: "يتطلب رفع المستوى أيضًا: ",
+      rechargedThisMonth: "إعادة الشحن هذا الشهر: ",
+      coins:'كنز'
+    },
+    certificate: {
+      tips: {
+        winners: "قائمة الفائزين شهادة فخرية",
+      },
+    },
+  },
+
+  // Recharge
+  recharge: {
+    index: {
+      tabList: [
+        {
+          label: "مهمة",
+          value: 0,
+        },
+        {
+          label: "قائمة",
+          value: 1,
+        },
+      ],
+      langList: [
+        {
+          text: "بالعربية",
+          value: 0,
+        },
+        {
+          text: "إنجليزي",
+          value: 1,
+        },
+      ],
+      confirm: "أكّد",
+      cancel: "ألغى",
+      idPlaceholder: "أدخل معرف الهامستر",
+      tips: {
+        checkInfo: "يرجى التحقق من معلومات الحساب الخاص بك",
+      },
+      topup: "شغل",
+    },
+  },
+
+  // Guild
+  guild: {
+    title: "وكالة",
+    applyJoin: "طلب الانضمام",
+    applying: "تطبيق",
+    agencyInfo: "المعلومات المؤسسية",
+    agencyStar: "مؤسسة ستار",
+    founder: {
+      nick: "مؤسس نيك",
+      uid: "معرف المؤسس",
+    },
+    btn: {
+      create: "إنشاء",
+      search: "بحث .",
+      createAgency: "إنشاء وكيل",
+      reject: "رفض",
+      consent: "رسالة موافقة",
+      cancel: "ألغى",
+      confirm: "أكّد",
+      remove: "حذف .",
+    },
+    monthlyData: "البيانات الشهرية",
+    myCard: "بلدي بطاقة الوكيل",
+    topRoom: "أعلى 10 غرف",
+    tips: {
+      nodata: "لا توجد بيانات",
+      enterName: "من فضلك أدخل اسم الوكيل",
+      enterId: "الرجاء إدخال رقم المستخدم",
+      dissolveAgency: "مرة واحدة في حل و لا يمكن استردادها ، هو حل تأكيد ؟",
+      quitAgency:
+        "الخروج من العصابة قد تؤثر على تسوية الرواتب . وفي الوقت نفسه ، من أجل توحيد قواعد إدارة مرساة ، وتجنب الخروج من النقابة الخبيثة ، خروج النقابة تحتاج إلى دفع رسوم 1000 دولار . هل أنت متأكد أنك تريد ترك النقابة ؟",
+      searchUid: "البحث عن معرف المستخدم",
+    },
+    label: {
+      totalIncome: "إجمالي الإيرادات",
+      totalHours: "مجموع ساعات",
+      totalValidDays: "مجموع أيام فعالة",
+      hours: "ساعة .",
+      validDays: "أيام فعالة",
+      validDay: "تاريخ انتهاء الصلاحية",
+      joinTime: "حان الوقت للانضمام إلى وكيل",
+      lastLoginTime: "آخر وقت تسجيل الدخول",
+      cover: "وكيل التأمين",
+      name: "اسم المنظمة",
+      todayIncome: "دخل اليوم",
+      yesterdayIncome: "دخل الأمس",
+      thisMonthIncome: "الدخل الشهري",
+      thisMonthHours: "عدد ساعات الشهر",
+      thisMonthDays: "أيام الشهر",
+      lastMonthIncome: "دخل الشهر الماضي",
+      lastMonthHours: "عدد الساعات في الشهر الماضي",
+      lastMonthDays: "الأيام الشهرية الأخيرة",
+    },
+    unit: {
+      date: "التاريخ",
+      days: "أيام .",
+      hours: "ساعة .",
+      income: "دخل",
+    },
+    more: {
+      information: "معلومات",
+      invite: "دعوة",
+      order: "طلب",
+      withdraw: "سحب",
+      dissolve: "حل",
+      cancel: "ألغى",
+      quit: "سحب",
+    },
+    message: "اترك رسالة",
+    dissolveAgency: "حل المؤسسة",
+    quitAgency: "خروج وكيل",
+  },
+
+  // Other
+  other: {
+    finishedText: "لا يوجد المزيد من المحتوى المتاح",
+    pullingText: "للتحديث اسحب للأسفل...",
+    loosingText: "إطلاق للتحديث...",
+    loadingText: "تحميل...",
+  },
+  Reseller: {
+    // 页面标题
+    Agent: 'الوكيل',
+    OrderProcessing: 'معالجة الطلبات',
+
+    // 用户信息
+    Username: 'اسم المستخدم',
+    UserId: 'معرف المستخدم',
+
+    // 操作按钮
+    TransferCoin: 'تحويل العملات',
+    TransferToReseller: 'تحويل إلى تاجر العملة',
+
+    // 转账统计
+    TransferToday: 'التحويل اليوم',
+    TransferThisWeek: 'التحويل هذا الأسبوع',
+    TransferThisMonth: 'التحويل هذا الشهر',
+    TransferLastMonth: 'التحويل الشهر الماضي',
+
+    // 转账记录
+    Record: 'السجل',
+    NoMoreRecords: 'لا توجد سجلات أخرى',
+    TransferCoins: 'تحويل العملات',
+
+    // 转账相关
+    TransferSuccessful: 'تم التحويل بنجاح',
+    TransferFailed: 'فشل التحويل',
+    NotResellerUser: 'هذا المستخدم ليس تاجر عملة',
+
+    // 退出登录确认
+    LogoutTitle: 'تأكيد تسجيل الخروج',
+    ConfirmLogout: 'هل تريد تسجيل الخروج؟',
+
+    // 订单页面
+    OrderProcessingTitle: 'معالجة الطلبات',
+
+    // 筛选选项
+    Pending: 'قيد الانتظار',
+    InProgress: 'قيد المعالجة',
+    Completed: 'مكتمل',
+    Declined: 'مرفوض',
+    Unknown: 'غير معروف',
+
+    // 订单字段
+    WithdrawalMethod: 'طريقة السحب',
+    WithdrawalAmount: 'مبلغ السحب',
+    AnticipatedIncome: 'الدخل المتوقع',
+    OrderTime: 'وقت الطلب',
+    ViewInWithdrawCenter: 'عرض في مركز السحب',
+
+    // 弹窗
+    SelectMonth: 'اختر الشهر',
+    Cancel: 'إلغاء',
+    Confirm: 'تأكيد',
+
+    // 状态文本
+    LoadFailed: 'فشل التحميل، انقر لإعادة المحاولة',
+    Loading: 'جاري التحميل...',
+    NoMoreData: 'لا توجد بيانات أخرى',
+    NoOrderData: 'لا توجد بيانات طلب',
+    NotAvailable: 'غير متوفر',
+
+    // 通用
+    USD: 'دولار أمريكي',
+    Diamond: 'الماس',
+    Gold: 'الذهب',
+
+    // 图片alt属性
+    Back: 'رجوع',
+    Selected: 'محدد',
+    NotSelected: 'غير محدد',
+    ChannelIcon: 'أيقونة القناة',
+    Arrow: 'سهم',
+    NoData: 'لا توجد بيانات',
+  },
+  Agency: {
+    // 提现相关
+    Withdraw: 'سحب',
+    WithdrawMethods: 'طرق السحب',
+    WithdrawalMethod: 'طريقة السحب',
+    SelectWithdrawalMethod: 'اختر طريقة السحب',
+    Agent: 'الوكيل',
+    SelectAgent: 'اختر الوكيل',
+    Amount: 'المبلغ',
+    Balance: 'الرصيد',
+    EnterAmount: 'أدخل المبلغ',
+    WithdrawAll: 'سحب الكل',
+    Processing: 'جاري المعالجة',
+    Saving: 'جاري الحفظ...',
+    Confirm: 'تأكيد',
+    Cancel: 'إلغاء',
+
+    // 表单字段
+    AccountID: 'معرف الحساب',
+    EnterAccountID: 'أدخل معرف الحساب',
+    RecipientName: 'اسم المستلم',
+    EnterRecipientName: 'أدخل اسم المستلم',
+    WhatsAppNumber: 'رقم الواتساب',
+    EnterWhatsAppNumber: 'أدخل رقم الواتساب',
+    UserId: 'معرف المستخدم',
+
+    // 错误提示
+    PleaseSelectWithdrawMethod: 'يرجى اختيار طريقة السحب',
+    PleaseEnterAccountID: 'يرجى إدخال معرف الحساب',
+    PleaseEnterRecipientName: 'يرجى إدخال اسم المستلم',
+    PleaseEnterWhatsAppNumber: 'يرجى إدخال رقم الواتساب',
+    PleaseSelectAgent: 'يرجى اختيار وكيل',
+    PleaseSelectValidAgent: 'يرجى اختيار وكيل صالح',
+    AgentInfoIncomplete: 'معلومات الوكيل غير مكتملة',
+    PleaseEnterValidAmount: 'يرجى إدخال مبلغ صالح',
+    AmountCannotExceed: 'لا يمكن أن يتجاوز المبلغ {max}',
+    AmountCannotExceedBalance: 'لا يمكن أن يتجاوز المبلغ رصيدك',
+
+    // 确认对话框
+    ConfirmWithdraw: 'تأكيد السحب',
+    ConfirmWithdrawMessage: 'تأكيد سحب {amount} ماسة ({usdAmount} دولار أمريكي) إلى الوكيل {agentName} عبر {method}؟',
+    WithdrawRequestSubmitted: 'تم إرسال طلب السحب بنجاح',
+
+    // 订单相关
+    OrderDetail: 'تفاصيل الطلب',
+    Pending: 'قيد الانتظار',
+    InProgress: 'قيد التنفيذ',
+    Declined: 'مرفوض',
+    Completed: 'مكتمل',
+    LoadingOrders: 'جاري التحميل...',
+    NoMoreOrders: 'لا توجد طلبات أخرى',
+    WithdrawalMethod: 'طريقة السحب',
+    OrderID: 'رقم الطلب',
+    OrderTime: 'وقت الطلب',
+    AccountID: 'رقم الحساب',
+    RecipientName: 'اسم المستلم',
+    WhatsAppNumber: 'رقم واتساب',
+    PaymentReceipt: 'إيصال الدفع',
+    Contact: 'اتصال',
+    PaymentReceived: 'تم استلام الدفع',
+    UploadedOn: 'تم الرفع في',
+    OrderIDCopied: 'تم نسخ رقم الطلب',
+    AccountIDCopied: 'تم نسخ رقم الحساب',
+    WhatsAppNumberCopied: 'تم نسخ رقم واتساب',
+    PaymentConfirmedSuccessfully: 'تم تأكيد الدفع بنجاح',
+    FailedToConfirmPayment: 'فشل في تأكيد الدفع',
+    FailedToLoadOrders: 'فشل في تحميل الطلبات',
+
+    // 其他
+    Unknown: 'غير معروف',
+  },
+  transfer: {
+    title: 'تحويل العملات',
+    checkUserId: 'يرجى التحقق من معرف المستخدم الذي تقوم بالتحويل إليه',
+    search: 'بحث',
+    unknownUser: 'مستخدم غير معروف',
+    userIdPrefix: 'الرقم:',
+    enterAmount: 'يرجى إدخال المبلغ الذي تريد تحويله',
+    balance: 'الرصيد:',
+    max: 'الحد الأقصى',
+    min: 'الحد الأدنى',
+    attention:
+      'سيتم تحويل العملات إلى حساب herovoice، لا يمكنك إلغاءه بعد إتمام المعاملة، يرجى التأكد من التحويل إلى الحساب الصحيح.',
+    transferring: 'جاري التحويل...',
+    transfer: 'تحويل',
+    searchUserIdPlaceholder: 'بحث عن معرف المستخدم',
+    maxAmountPlaceholder: 'الحد الأقصى {max} لمرة واحدة',
+    minAmountPlaceholder: 'الحد الأدنى {min} عملة مطلوب',
+    minimumTransferError: 'الحد الأدنى لمبلغ التحويل هو {min} عملة',
+  },
+
+  // 斋月
+  ramadan: {
+    The: "الشهر الميمون \nشهر رمضان المبارك",
+    Act: "هدية النشاط",
+    Wis: "متمنياً لكم جميعاً رمضاناً مباركاً، أرسلوا هدية أدناه للاحتفال برمضان تقديم هدية سيكسبك نقاطاً تعادل قيمة الهدية!",
+    Cha: "التحديات",
+    Ran: "التصنيفات",
+    Rew: "المكافآت",
+    Cha1: "مهام التحدي",
+    Dai: "تسجيل الدخول اليومي",
+    Roo: "ترتيب الغرف",
+    Gif: "ترتيب الهدايا",
+    Sen: "إرسال الهدية{0}",
+    Go: "انطلق",
+    Cla: "تم جمعها بالفعل",
+    Sending: 'أرسل {0}',
+    Get: 'Get',
+    TOP: 'TOP{0}',
+    flo: 'خلال فترة الحدث، قم بإعادة شحن 10 سكاكين أو أكثر كل يوم لمدة 7 أيام متتالية، يمكنك الحصول على حزمة المكافأة في نهاية الحدث - ميدالية مميزة دائمة',
+    Permanent: 'دائم ',
+    room: 'غرفة مؤيد',
+    room1: 'غرفة توب1أفضل 3 داعمين',
+    room2: 'غرفة توب2أفضل 3 داعمين',
+    room3: 'غرفة توب3أفضل 3 داعمين',
+  },
+
+  // roomWeekAct
+  roomWeekAct: {
+    act: "فعل",
+    rule: "قاعدة",
+    Rewards: "مكافآت",
+    room: "مستوى الغرفة",
+    circ: "التدفق الدائري",
+    activ: "قواعد النشاط",
+    my: 'إحصائياتي',
+    NoLevel: 'لا يوجد مستوى',
+    rule1: "1. النشاط صالح لفترة طويلة، كل يوم أحد الساعة 0:00 بتوقيت غرينتش +3 - الأحد القادم الساعة 0:00 بتوقيت غرينتش +3;",
+    rule2: "2. جميع المكافآت تعود إلى صاحب المنزل. سيتم دفع المكافآت بعد التسوية في الساعة 00:00 من يوم الأحد (بتوقيت جرينتش +3). الوقت الفعلي يخضع للعد التنازلي الموجود في أعلى الصفحة؛",
+    rule3: "3. إذا شارك حساب غير طبيعي في الحدث، يحق للمسؤولين إلغاء مشاركة الحساب غير الطبيعي وإلغاء المكافأة؛",
+    rule4: "4. هذا النشاط لا علاقة له بـ Apple lce. لمزيد من تفاصيل الحدث، يرجى الاتصال بمسؤول الغرفة الرسمي معرف الغرفة: 10000 (انقر للانتقال).",
+    rule5: '5. إذا كانت لديك أي أسئلة، يُرجى الاتصال بمعرف غرفة المسؤول الرسمي: 10000 ',
+    no: "لم تقم بإنشاء غرفة بعد للمشاركة في هذا الحدث! انقر على الزر أدناه للذهاب لإنشاء غرفتك.",
+    go: 'اذهب لإنشاء غرفة',
+    award: 'منح الجوائز:'
+  },
+
+  weekActivity: {
+    Wee: "ويكلي ستار",
+    Las: "أفضل 3 في الأسبوع الماضي",
+    Vie: "عرض لوحة الشرف",
+    Las1: "الأسبوع الماضي",
+    Thi: "هذا الأسبوع",
+    Awa: "الجوائز",
+    TOP: "TOP 1",
+    TOP2: "TOP 2",
+    TOP3: "TOP 3",
+    Eve: "قواعد الفعالية",
+    The: "١. الحملة صالحة لفترة طويلة، من الساعة ٠:٠٠ صباحًا يوم الأحد إلى الساعة ٢٤:٠٠ مساءً يوم السبت القادم (بتوقيت غرينتش +٣) لدورة حملة واحدة.", "Rew": "٢. سيتم توزيع المكافآت المكتسبة هذا الأسبوع تلقائيًا على أفضل ٣ مستخدمين في قائمة هذا الأسبوع بعد التسوية كل يوم أحد الساعة ٠:٠٠ صباحًا بتوقيت غرينتش +٣. يُرجى مراجعة العد التنازلي أعلى القائمة لمعرفة وقت التسوية.", "Ifa": "3. في حالة مشاركة أي حساب غير طبيعي في النشاط، يحق للمسؤول إلغاء تأهيل مشاركة الحساب غير الطبيعي وإلغاء إصدار المكافآت;", "Thi4": "4. لا علاقة لهذا النشاط بـ Apple lce;", "Ify": "5. إذا كانت لديك أي أسئلة، يُرجى الاتصال بمعرف غرفة المسؤول الرسمي: 10000."
+  }
+};
+
+export default AR;
