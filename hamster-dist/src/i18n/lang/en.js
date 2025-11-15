@@ -93,7 +93,7 @@ const EN = {
       day: "D",
       levelingUp: "Leveling up also requires: ",
       rechargedThisMonth: "Recharged this month: ",
-      coins:"coins"
+      coins: "coins"
     },
     certificate: {
       tips: {
@@ -441,7 +441,9 @@ const EN = {
     TOP3: "TOP 3",
     Eve: "Event Rules",
     The: "1. The campaign is valid for a long period of time, Sunday's 0:00 - next Saturday's 24:00 (GMT +3) for one campaign cycle;", "Rew": "2. Rewards earned this week will be automatically distributed to the TOP 3 users in this week's list after the settlement on every Sunday at 0:00 GMT +3. Please refer to the countdown at the top of the list for the settlement time;", "Ifa": "3. If any abnormal account participates in the activity, the official has the right to cancel the participation qualification of the abnormal account and cancel the issuance of rewards;", "Thi4": "4. This activity has nothing to do with Apple lce;", "Ify": "5. If you have any questions, please contact the official administrator room ID: 10000."
-  }
+  },
+
+  sysadmin: {}
 };
 
 export default EN;
