@@ -1,34 +1,44 @@
 <template>
     <div class="index">
         <div class="top">
-            <img class="back" src="../../assets/img/sysadmin/icon-back.png" alt="">
+            <img @click="AppClose()" class="back" src="../../assets/img/sysadmin/icon-back.png" alt="">
             <p class="top-title">Admin Center</p>
         </div>
         <div class="user f">
             <div class="left">
-                <img class="user-img" src="@/assets/img/sysadmin/icon-room.png" alt="">
+                <van-image class="user-img" style="border-radius: 50%" :key="picIdx" :src="info?.avatar" />
             </div>
             <div class="right">
-                <p>namename</p>
+                <p>{{ info?.nick }}</p>
                 <div class="box f">
-                    <img src="@/assets/img/sysadmin/icon-room.png" alt="">
-                    <img src="@/assets/img/sysadmin/icon-room.png" alt="">
+                    <van-image v-if="info?.vipLevelIcon" :key="picIdx" :src="info?.vipLevelIcon" />
+                    <van-image v-if="info?.experLevelIcon" :key="picIdx" :src="info?.experLevelIcon" />
+                    <van-image v-if="info?.charmLevelIcon" :key="picIdx" :src="info?.charmLevelIcon" />
+
                 </div>
             </div>
         </div>
 
         <div class="num-box f-c">
             <div class="box f">
-                <div class="li" v-for="(item, index) in 3" :key="index">
-                    <p class="p1">999</p>
+                <div class="li">
+                    <p class="p1">{{ info?.bdCount }}</p>
                     <p class="p2">BD</p>
+                </div>
+                <div class="li">
+                    <p class="p1">{{ info?.agencyCount }}</p>
+                    <p class="p2">Agency</p>
+                </div>
+                <div class="li">
+                    <p class="p1">{{ info?.hostCount }}</p>
+                    <p class="p2">Host</p>
                 </div>
             </div>
         </div>
 
         <p class="lable-title">User Management</p>
         <div class="page-list">
-            <div class="li f-s" @click="$router.push('/sysadmin/userInformation?lang=en')">
+            <div class="li f-s" @click="$router.push(`/sysadmin/userInformation?uid=${props.uid}&lang=en`)">
                 <div class="left f">
                     <img src="@/assets/img/sysadmin/icon-infomation.png" alt="">
                     <span>User Information</span>
@@ -64,14 +74,14 @@
 
         <p class="lable-title">BD Management</p>
         <div class="page-list">
-            <div class="li f-s">
+            <div class="li f-s" @click="showCreateBD = true">
                 <div class="left f">
                     <img src="@/assets/img/sysadmin/icon-createBD.png" alt="">
                     <span>Create BD</span>
                 </div>
                 <img class="go" src="@/assets/img/sysadmin/icon-right.png" alt="">
             </div>
-            <div class="li f-s">
+            <div class="li f-s" @click="$router.push('/sysadmin/dataBD?lang=en')">
                 <div class="left f">
                     <img src="@/assets/img/sysadmin/icon-bdData.png" alt="">
                     <span>BD data</span>
@@ -79,6 +89,11 @@
                 <img class="go" src="@/assets/img/sysadmin/icon-right.png" alt="">
             </div>
         </div>
+
+        <!-- create BD -->
+        <van-popup v-model:show="showCreateBD" position="bottom" round class="showCreateBD">
+            <createBD></createBD>
+        </van-popup>
     </div>
 
 </template>
@@ -86,43 +101,40 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { getLang } from "@/utils";
 import i18n from '@/i18n/index.js';
 // import { OpenUserSpace, OpenRoom, OpengetToke } from "@/utils/client";
 import { showToast } from "vant";
-// import { GET_StarWeek, GET_StarWeek_top, GET_StarWeek_honorHall } from "@/api/weekActivity";
+import { home } from "@/api/sysadmin";
 // import { ramadanUrl, ramadanGiftUrl } from "./js/data"
+import createBD from './createBD.vue'
+import { getLang } from "@/utils";
+import { AppClose } from "@/utils/client";
+
 const { t } = i18n.global;
 // import Common from '@/utils/common';
-const weekActivityUrl = (name) => {
-    return new URL(`../../assets/img/weekActivity/${name}.png`, import.meta.url).href;
-};
-const weekActivityGiftUrl = (name) => {
-    return new URL(`../../assets/img/weekActivity/gifts/${name}.png`, import.meta.url).href;
-};
+
 // 接收参数
 const props = defineProps(["uid", "ticket", "memberUid"]);
-const router = useRouter();
 const lang = getLang();
 
-const popLastDay = ref(false)
+// create BD 
+const showCreateBD = ref(false)
 
 
-// 跳转到房间
-function toRoom(roomId) {
-    OpenRoom(roomId);
+// 首页
+const info = ref()
+function getHome() {
+    home({
+        uid: props.uid,
+    })
+        .then((data) => {
+            info.value = data
+            console.log('data==', info.value);
+        })
+        .catch((err) => {
+            showToast(err.message);
+        });
 }
-
-function toOpengetToke() {
-    OpengetToke();
-}
-
-// 前往用户中心
-function toUser(userId) {
-    OpenUserSpace(userId);
-}
-
-
 
 // 单位换算
 function setKM(num, decimal = 1) {
@@ -155,7 +167,6 @@ function myTimeDay(timestamp) {
 }
 
 onMounted(async () => {
-
-
+    await getHome()
 });
 </script>

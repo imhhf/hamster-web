@@ -74,6 +74,8 @@
         .img {
             width: 50px;
             height: 50px;
+            border-radius: 50%;
+            background: none;
         }
 
         .user-info {
@@ -83,6 +85,32 @@
                 font-size: 16px;
                 margin: 0 0 4px 0;
                 font-weight: 500;
+
+                .name {
+                    position: relative;
+                    width: 82px;
+                    height: 15px;
+                    margin: 10px auto 0;
+                    box-sizing: border-box;
+                    // padding: 0 10px;
+                    z-index: 1;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    .user-name {
+                        font-size: 16px;
+                        text-align: center;
+                        position: relative !important;
+                        bottom: 0 !important;
+                        width: 80px;
+                        justify-content: start !important;
+
+                        :deep(.van-notice-bar__wrap) {
+                            justify-content: center !important;
+                        }
+                    }
+                }
 
                 .ex {
                     width: 14px;

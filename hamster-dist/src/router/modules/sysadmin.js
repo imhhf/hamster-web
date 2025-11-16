@@ -42,5 +42,25 @@ export default {
             props: (route) => route.query,
             component: () => import("@/views/sysadmin/roomInformation.vue"),
         },
+        {
+            path: "createBD",
+            name: "CreateBD",
+            meta: {
+                title_en: "createBD",
+                title_ara: "الوكالة",
+            },
+            props: (route) => route.query,
+            component: () => import("@/views/sysadmin/createBD.vue"),
+        },
+        {
+            path: "dataBD",
+            name: "DataBD",
+            meta: {
+                title_en: "dataBD",
+                title_ara: "الوكالة",
+            },
+            props: (route) => route.query,
+            component: () => import("@/views/sysadmin/dataBD.vue"),
+        },
     ],
 };

@@ -19,10 +19,9 @@
 
     .left {
 
-        &-img {
+        .user-img {
             width: 50px;
             height: 50px;
-            border-radius: 50%;
         }
     }
 
@@ -40,7 +39,7 @@
         .box {
             margin-top: 5px;
 
-            img {
+            .van-image {
                 max-width: 42px;
                 max-height: 18px;
                 margin: 0 2px;
@@ -125,11 +124,12 @@
     border-radius: 6px;
     margin: 0 auto;
 
-    .li:last-child{
-        &::before{
+    .li:last-child {
+        &::before {
             background: none;
         }
     }
+
     .li {
         height: 40px;
         position: relative;
@@ -166,4 +166,10 @@
 
         }
     }
+}
+
+:deep(.showCreateBD) {
+    width: 100%;
+    height: 462px;
+    background-color: #f5f5f5;
 }

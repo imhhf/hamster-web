@@ -13,14 +13,15 @@
         </div>
 
         <div class="user-list-container">
-            <div class="user-item" v-for="(user, index) in userList" :key="user.id"
+            <div class="user-item" v-for="(user, index) in userListData" :key="user.id"
                 :class="{ 'active': selectedUserId === user.id }">
                 <div class="user-info-box f">
-                    <img class="img" src="../../assets/img/sysadmin/icon-back.png" alt="">
+                    <img class="img" :src="user?.avatar" alt="">
 
                     <div class="user-info">
                         <div class="username f">
-                            <div class="name">name</div>
+                            <van-notice-bar class="name" :text="user?.nick" :speed="20" />
+                            <!-- <div class="name">name</div> -->
                             <img class="ex" src="../../assets/img/sysadmin/ixon-ex.png" alt="">
                             <img class="count" src="../../assets/img/sysadmin/icon-back.png" alt="">
                         </div>
@@ -205,196 +206,14 @@
 
 </template>
 <style lang="scss" src="./scss/userInformation.scss" scoped></style>
-
-<!-- <style lang="scss" scoped>
-.information-page {
-    min-width: 100vw;
-    min-height: 100vh;
-    background-color: #f5f5f5;
-}
-
-.top {
-    display: flex;
-    align-items: center;
-    padding: 16px;
-    background-color: white;
-
-    .back {
-        width: 24px;
-        height: 24px;
-        cursor: pointer;
-    }
-
-    .top-title {
-        flex: 1;
-        text-align: center;
-        font-size: 18px;
-        font-weight: bold;
-        margin: 0;
-    }
-}
-
-.search-section {
-    padding: 16px;
-    margin-bottom: 1px;
-    margin-top: -80px;
-
-    .search-container {
-        display: flex;
-        border-radius: 4px;
-        overflow: hidden;
-        padding: 0;
-
-        :deep(.van-search__content) {
-            padding: 0;
-        }
-
-        :deep(.van-cell) {
-            width: 257px;
-            height: 41px;
-            background: #FFFFFF;
-            border-radius: 21px;
-            padding: 0 15px;
-            box-sizing: border-box;
-        }
-
-        .van-search {
-            border: none;
-            padding: 0;
-            font-size: 14px;
-            outline: none;
-
-            &::placeholder {
-                color: #000000;
-            }
-        }
-
-        .search-btn {
-            font-family: PingFangSC, PingFang SC;
-            font-weight: 500;
-            font-size: 14px;
-            color: #000000;
-            line-height: 20px;
-            border: none;
-            background: none;
-            margin: 0 10px;
-            cursor: pointer;
-        }
-    }
-}
-
-.user-list-container {
-    .user-item {
-        width: 355px;
-        height: 82px;
-        background: #FFFFFF;
-        border-radius: 6px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin: 0 auto 10px;
-        box-sizing: border-box;
-        padding: 0 16px;
-        transition: all 0.3s ease;
-
-        &.active {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-            height: auto;
-            min-height: 82px;
-            padding: 16px;
-        }
-
-        .img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-        }
-
-        .user-info {
-            margin: 0 10px;
-            flex: 1;
-
-            .username {
-                font-size: 16px;
-                margin: 0 0 4px 0;
-                font-weight: 500;
-                align-items: center;
-
-                .ex {
-                    width: 14px;
-                    height: 14px;
-                    margin: 0 6px;
-                }
-
-                .count {
-                    width: 21px;
-                    height: 21px;
-                }
-            }
-
-            .user-id {
-                font-size: 14px;
-                color: #666;
-                margin: 0;
-            }
-        }
-
-        .user-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            width: 60px;
-            margin-left: 10px;
-
-            button {
-                font-family: Helvetica, Helvetica;
-                font-weight: bold;
-                font-size: 11px;
-                color: #FFFFFF;
-                border: none;
-                width: 60px;
-                height: 26px;
-                border-radius: 4px;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .edit-btn {
-                background: #4a7cff;
-
-                &:hover {
-                    background: #3a6ce0;
-                }
-            }
-
-            .ban-btn {
-                background: #ff4d4f;
-
-                &:hover {
-                    background: #e04345;
-                }
-
-                &.banned {
-                    background: #52c41a;
-
-                    &:hover {
-                        background: #46a818;
-                    }
-                }
-            }
-        }
-    }
-}
-</style> -->
-
 <script setup>
 import { ref, onMounted, reactive, computed } from "vue";
 import { useRouter } from "vue-router";
 import { showToast } from "vant";
+import { searchUser, getUserList } from "@/api/sysadmin";
 
 const router = useRouter();
+const props = defineProps(["uid", "ticket", "memberUid"]);
 
 // 封禁用户弹窗
 const showBanUser = ref(false)
@@ -404,14 +223,46 @@ const searchId = ref("");
 // 当前选中的用户ID
 const selectedUserId = ref("");
 
+const searchUserData = ref()
+function getSearchUser() {
+    searchUser({
+        uid: props.uid,
+        erbanNo: searchId.value
+    })
+        .then((data) => {
+            info.value = data
+            console.log('data==', info.value);
+        })
+        .catch((err) => {
+            showToast(err.message);
+        });
+}
+
+const userListData = ref()
+function userList() {
+    getUserList({
+        uid: props.uid,
+        // searchKey: searchId.value,
+        pageNum: 1,
+        pageSize: 10
+    })
+        .then((data) => {
+            userListData.value = data
+            console.log('data==', info.value);
+        })
+        .catch((err) => {
+            showToast(err.message);
+        });
+}
+
 // 用户列表数据
-const userList = ref([
-    { id: "12415", username: "Username", isBanned: false },
-    { id: "12416", username: "Username", isBanned: true },
-    { id: "12417", username: "Username", isBanned: false },
-    { id: "12418", username: "Username", isBanned: false },
-    { id: "12419", username: "Username", isBanned: true }
-]);
+// const userList = ref([
+//     { id: "12415", username: "Username", isBanned: false },
+//     { id: "12416", username: "Username", isBanned: true },
+//     { id: "12417", username: "Username", isBanned: false },
+//     { id: "12418", username: "Username", isBanned: false },
+//     { id: "12419", username: "Username", isBanned: true }
+// ]);
 
 // 返回上一页
 const goBack = () => {
@@ -424,18 +275,18 @@ const handleSearch = () => {
         showToast("Please enter user ID");
         return;
     }
-
-    // 模拟搜索逻辑
-    const foundUser = userList.value.find(user => user.id === searchId.value);
-    if (foundUser) {
-        userList.value = [foundUser];
-        selectedUserId.value = foundUser.id;
-        showToast("User found");
-    } else {
-        showToast("User not found");
-        // 重置用户列表
-        resetUserList();
-    }
+    getSearchUser()
+    // // 模拟搜索逻辑
+    // const foundUser = userList.value.find(user => user.id === searchId.value);
+    // if (foundUser) {
+    //     userList.value = [foundUser];
+    //     selectedUserId.value = foundUser.id;
+    //     showToast("User found");
+    // } else {
+    //     showToast("User not found");
+    //     // 重置用户列表
+    //     resetUserList();
+    // }
 };
 
 // 重置用户列表
@@ -582,7 +433,8 @@ defineExpose({
     openPopup
 });
 
-onMounted(() => {
+onMounted(async () => {
     // 初始化代码
+    await userList()
 });
 </script>
