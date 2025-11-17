@@ -45,7 +45,7 @@
                 </div>
                 <img class="go" src="@/assets/img/sysadmin/icon-right.png" alt="">
             </div>
-            <div class="li f-s" @click="$router.push('/sysadmin/banList?lang=en')">
+            <div class="li f-s" @click="$router.push(`/sysadmin/banList?uid=${props.uid}&lang=en`)">
                 <div class="left f">
                     <img src="@/assets/img/sysadmin/icon-banList.png" alt="">
                     <span>User ban list</span>
@@ -63,7 +63,7 @@
 
         <p class="lable-title">Room Management</p>
         <div class="page-list">
-            <div class="li f-s" @click="$router.push('/sysadmin/roomInformation?lang=en')">
+            <div class="li f-s" @click="$router.push(`/sysadmin/roomInformation?uid=${props.uid}&lang=en`)">
                 <div class="left f">
                     <img src="@/assets/img/sysadmin/icon-room.png" alt="">
                     <span>Room information</span>
@@ -81,7 +81,7 @@
                 </div>
                 <img class="go" src="@/assets/img/sysadmin/icon-right.png" alt="">
             </div>
-            <div class="li f-s" @click="$router.push('/sysadmin/dataBD?lang=en')">
+            <div class="li f-s" @click="$router.push(`/sysadmin/dataBD?uid=${props.uid}&lang=en`)">
                 <div class="left f">
                     <img src="@/assets/img/sysadmin/icon-bdData.png" alt="">
                     <span>BD data</span>

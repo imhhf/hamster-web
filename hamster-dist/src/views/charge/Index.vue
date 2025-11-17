@@ -210,26 +210,6 @@ function getMissionConf() {
     });
 }
 
-// // 获取荣耀殿堂
-// function getHonorHall() {
-//   loading.value = true;
-//   HONOR_HALL()
-//     .then((data) => {
-//       loading.value = false;
-//       const { honorHallList, moreThan1wList, moreThan2wList, moreThan5kList } =
-//         data;
-
-//       honor.honorHallList = honorHallList;
-//       honor.moreThan1wList = moreThan1wList;
-//       honor.moreThan2wList = moreThan2wList;
-//       honor.moreThan5kList = moreThan5kList;
-//     })
-//     .catch((err) => {
-//       loading.value = false;
-//       showToast(err.message);
-//     });
-// }
-
 // 获取榜单
 function getChargeRank() {
   loading.value = true;

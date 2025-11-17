@@ -7,35 +7,64 @@
 
         <div class="search-section">
             <div class="search-container">
-                <van-search class="van-search" v-model="searchId" placeholder="Enter the user ID" />
+                <van-search class="van-search" @clear="clearApi" v-model="searchId" placeholder="Enter the user ID" />
                 <button class="search-btn" @click="handleSearch">Search</button>
             </div>
         </div>
-
         <div class="user-list-container">
-            <div class="user-item" v-for="(user, index) in userListData" :key="user.id"
-                :class="{ 'active': selectedUserId === user.id }">
-                <div class="user-info-box f">
-                    <img class="img" :src="user?.avatar" alt="">
-
-                    <div class="user-info">
-                        <div class="username f">
-                            <van-notice-bar class="name" :text="user?.nick" :speed="20" />
-                            <!-- <div class="name">name</div> -->
-                            <img class="ex" src="../../assets/img/sysadmin/ixon-ex.png" alt="">
-                            <img class="count" src="../../assets/img/sysadmin/icon-back.png" alt="">
+            <template v-if="userListData?.length>0 && !isSearch">
+                <div class="user-item" v-for="(user, index) in userListData" :key="user.id"
+                    :class="{ 'active': selectedUserId === user.id }">
+                    <div class="user-info-box f">
+                        <img class="img" :src="user?.avatar" alt="">
+                        <div class="user-info">
+                            <div class="username f">
+                                <van-notice-bar class="name" :text="user?.nick" :speed="20" />
+                                <img class="ex" v-if="user?.gender===1" src="../../assets/img/sysadmin/ixon-ex.png" alt="">
+                                <img class="ex" v-else src="../../assets/img/sysadmin/ixon-ex.png" alt="">
+                                <img class="count" :src="user?.countryNationalFlag" alt="">
+                            </div>
+                            <p class="user-id">ID:{{ user.erbanNo }}</p>
                         </div>
-                        <p class="user-id">ID:{{ user.id }}</p>
+                    </div>
+                    <div class="user-actions f-w">
+                        <button class="edit-btn" @click="handleEdit(index)">Edit</button>
+                        <button class="ban-btn" @click="handleBan(index)" :class="{ 'banned': user.isBanned }">
+                            {{ user.isBanned ? 'Unban' : 'Ban' }}
+                        </button>
                     </div>
                 </div>
+            </template>
 
-                <div class="user-actions f-w">
-                    <button class="edit-btn" @click="handleEdit(user)">Edit</button>
-                    <button class="ban-btn" @click="handleBan(user)" :class="{ 'banned': user.isBanned }">
-                        {{ user.isBanned ? 'Unban' : 'Ban' }}
-                    </button>
+            <template v-else>
+                <div class="user-item" >
+                    <div class="user-info-box f">
+                        <img class="img" :src="searchInfo?.avatar" alt="">
+
+                        <div class="user-info">
+                            <div class="username f">
+                                <van-notice-bar class="name" :text="searchInfo?.nick" :speed="20" />
+                                <img class="ex" v-if="searchInfo?.gender===1" src="../../assets/img/sysadmin/ixon-ex.png" alt="">
+                                <img class="ex" v-else src="../../assets/img/sysadmin/ixon-ex.png" alt="">
+                                <img class="count" :src="searchInfo?.countryNationalFlag" alt="">
+                            </div>
+                            <p class="user-id">ID:{{ searchInfo?.erbanNo }}</p>
+                        </div>
+                    </div>
+
+                    <div class="user-actions f-w">
+                        <button class="edit-btn" @click="handleEdit(index)">Edit</button>
+                        <button class="ban-btn" @click="handleBan(index)">
+                            Ban
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </template>
+        </div>
+        <!-- 没有数据 -->
+        <div class="none-data" v-if="userListData?.length<0 && !isSearch || searchInfo === null && isSearch">
+            <img src="../../assets/img/sysadmin/none.png" alt="">
+            <p>No Data</p>
         </div>
         <!-- 用户信息弹窗 -->
         <van-popup v-model:show="showUserInfoPopup" position="bottom" round class="user-info-popup">
@@ -51,12 +80,12 @@
                     <div class="user-basic-info">
                         <div class="avatar-section">
                             <div class="avatar-container">
-                                <img :src="userInfo.avatar" alt="User Avatar" class="user-avatar">
+                                <img :src="isSearch ? searchInfo.avatar: userListData[changeIndex].avatar" alt="User Avatar" class="user-avatar">
                             </div>
                         </div>
                         <div class="user-details">
-                            <h3 class="username">{{ userInfo.username }}</h3>
-                            <p class="user-id">ID:{{ userInfo.id }}</p>
+                            <h3 class="username">{{ isSearch ? searchInfo.nick:userListData[changeIndex].nick }}</h3>
+                            <p class="user-id">ID:{{ isSearch ? searchInfo.erbanNo:userListData[changeIndex].erbanNo }}</p>
                         </div>
                     </div>
 
@@ -64,23 +93,23 @@
                     <div class="user-detail-info">
                         <div class="info-item">
                             <span class="info-label">Gender</span>
-                            <span class="info-value">{{ userInfo.gender }}</span>
+                            <span class="info-value">{{ isSearch ? searchInfo?.gender : userInfoData?.gender }}</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Country</span>
-                            <span class="info-value">{{ userInfo.country }}</span>
+                            <span class="info-value">{{ isSearch ? searchInfo?.countryName:userInfoData?.countryName }}</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Wealth</span>
-                            <span class="info-value wealth">{{ userInfo.wealth }}</span>
+                            <span class="info-value wealth">{{ isSearch ? searchInfo?.experLevelName:userInfoData?.experLevelName }}</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Charm</span>
-                            <span class="info-value charm">{{ userInfo.charm }}</span>
+                            <span class="info-value charm">{{ isSearch ? searchInfo?.charmLevelName:userInfoData?.charmLevelName }}</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Agency</span>
-                            <span class="info-value">{{ userInfo.agency }}</span>
+                            <span class="info-value">{{isSearch ? searchInfo?.agencyName: userInfoData?.agencyName }}</span>
                         </div>
                     </div>
                 </div>
@@ -88,15 +117,15 @@
 
                 <!-- 操作按钮区域 -->
                 <div class="action-buttons">
-                    <van-button class="action-btn change-avatar-btn f-c" @click="handleChangeAvatar">
+                    <van-button class="action-btn change-avatar-btn f-c" @click="handleChangeUser(1)">
                         <img class="ex" src="../../assets/img/sysadmin/icon1.png" alt="">
                         Change avatar
                     </van-button>
-                    <van-button class="action-btn change-name-btn f-c" @click="handleChangeName">
+                    <van-button class="action-btn change-name-btn f-c" @click="handleChangeUser(2)">
                         <img class="ex" src="../../assets/img/sysadmin/icon2.png" alt="">
                         Change name
                     </van-button>
-                    <van-button class="action-btn change-bio-btn f-c" @click="handleChangeBio">
+                    <van-button class="action-btn change-bio-btn f-c" @click="handleChangeUser(3)">
                         <img class="ex" src="../../assets/img/sysadmin/icon3.png" alt="">
                         Change Bio
                     </van-button>
@@ -106,14 +135,14 @@
 
         <!-- 恢复默认头像弹窗 -->
         <van-popup v-model:show="showChangeAvatar" round class="showChangeAvatar">
-            <p class="pop-tit">Change avatar</p>
-            <p class="tips">Change the user avatar to the default avatar.</p>
+            <p class="pop-tit">{{headChangeIndex===1?'Change avatar':headChangeIndex===2?'Change name':'Change Bio'}}</p>
+            <p class="tips">{{ headChangeIndex===1?'Change the user avatar to the default avatar.':headChangeIndex===2?'Change user name to default name':'Delete personalized signature' }}</p>
             <!-- 操作按钮区域 -->
             <div class="action-buttons f-c">
                 <van-button class="action-btn Cancle f-c" @click="showChangeAvatar = false">
                     Cancle
                 </van-button>
-                <van-button class="action-btn Confirm f-c" @click="handleChangeName">
+                <van-button class="action-btn Confirm f-c" @click="handleChange">
                     Confirm
                 </van-button>
             </div>
@@ -133,12 +162,12 @@
                     <div class="user-basic-info">
                         <div class="avatar-section">
                             <div class="avatar-container">
-                                <img :src="userInfo.avatar" alt="User Avatar" class="user-avatar">
+                                <img :src="isSearch ? searchInfo?.avatar: userListData[changeIndex].avatar" alt="User Avatar" class="user-avatar">
                             </div>
                         </div>
                         <div class="user-details">
-                            <h3 class="username">{{ userInfo.username }}</h3>
-                            <p class="user-id">ID:{{ userInfo.id }}</p>
+                            <h3 class="username">{{ isSearch ? searchInfo?.nick: userListData[changeIndex].nick }}</h3>
+                            <p class="user-id">ID:{{ isSearch ? searchInfo?.erbanNo: userListData[changeIndex].erbanNo }}</p>
                         </div>
                     </div>
 
@@ -180,7 +209,7 @@
 
                 <!-- 操作按钮 -->
                 <div class="action-buttons">
-                    <van-button class="action-btn ban-btn" @click="handleBanUser" :disabled="!banReason.trim()">
+                    <van-button class="action-btn ban-btn" @click="!banReason.trim()?'':showBanUser=true" :disabled="!banReason.trim()">
                         Ban the User
                     </van-button>
                 </div>
@@ -197,7 +226,7 @@
                 <van-button class="action-btn Cancle f-c" @click="showBanUser = false">
                     Cancle
                 </van-button>
-                <van-button class="action-btn Confirm f-c" @click="handleChangeName">
+                <van-button class="action-btn Confirm f-c" @click="handleChangeBanUser">
                     Confirm
                 </van-button>
             </div>
@@ -210,7 +239,7 @@
 import { ref, onMounted, reactive, computed } from "vue";
 import { useRouter } from "vue-router";
 import { showToast } from "vant";
-import { searchUser, getUserList } from "@/api/sysadmin";
+import { searchUser, getUserList, getUserInfo, updateUserInfo, BanUser } from "@/api/sysadmin";
 
 const router = useRouter();
 const props = defineProps(["uid", "ticket", "memberUid"]);
@@ -218,27 +247,8 @@ const props = defineProps(["uid", "ticket", "memberUid"]);
 // 封禁用户弹窗
 const showBanUser = ref(false)
 
-// 搜索的用户ID
-const searchId = ref("");
-// 当前选中的用户ID
-const selectedUserId = ref("");
-
-const searchUserData = ref()
-function getSearchUser() {
-    searchUser({
-        uid: props.uid,
-        erbanNo: searchId.value
-    })
-        .then((data) => {
-            info.value = data
-            console.log('data==', info.value);
-        })
-        .catch((err) => {
-            showToast(err.message);
-        });
-}
-
 const userListData = ref()
+// 用户列表
 function userList() {
     getUserList({
         uid: props.uid,
@@ -248,70 +258,133 @@ function userList() {
     })
         .then((data) => {
             userListData.value = data
-            console.log('data==', info.value);
         })
         .catch((err) => {
             showToast(err.message);
         });
 }
 
-// 用户列表数据
-// const userList = ref([
-//     { id: "12415", username: "Username", isBanned: false },
-//     { id: "12416", username: "Username", isBanned: true },
-//     { id: "12417", username: "Username", isBanned: false },
-//     { id: "12418", username: "Username", isBanned: false },
-//     { id: "12419", username: "Username", isBanned: true }
-// ]);
+// 用户信息
+const userInfoData = ref()
+
+function UserInfo(targetUid) {
+  getUserInfo({
+    uid: props.uid,
+    targetUid:targetUid
+  })
+    .then((data) => {
+      userInfoData.value = data;
+    })
+    .catch((err) => {
+    //   loading.value = false;
+      showToast(err.message);
+    });
+}
+
+// 编辑用户
+const changeIndex = ref(0)
+const handleEdit = (ind) => {
+    changeIndex.value = ind
+    // showToast(`Edit user: ${user.username} (ID: ${user.id})`);
+    // 这里可以打开编辑模态框或跳转到编辑页面
+    showUserInfoPopup.value = true
+    UserInfo(userListData.value[ind].uid)
+};
+
+const updateUserInfoData  = ref()
+function getUpdateUserInfoData() {
+    // 修改用户信息
+    var page1 = {
+        uid: props.uid,
+        targetUid:userListData.value[changeIndex.value].uid,
+        resetAvatar:true
+    }
+    var page2 = {
+        uid: props.uid,
+        targetUid:userListData.value[changeIndex.value].uid,
+        resetNick:true
+    }
+    var page3 = {
+        uid: props.uid,
+        targetUid:userListData.value[changeIndex.value].uid,
+        resetSignture:true
+    }
+    console.log('headChangeIndex.value==', headChangeIndex.value);
+  updateUserInfo(headChangeIndex.value === 1?page1:headChangeIndex.value === 2?page2:page3)
+    .then((data) => {
+      updateUserInfoData.value = data;
+      console.log('updateUserInfoData.value==', updateUserInfoData.value);
+      showUserInfoPopup.value = false;
+      showChangeAvatar.value = false
+      userList()
+    })
+    .catch((err) => {
+    //   loading.value = false;
+    //   showToast(err.message);
+    });
+}
+
+// 点击修改用户信息
+const headChangeIndex = ref(0)
+function handleChangeUser(ind){
+    headChangeIndex.value = ind
+    showChangeAvatar.value = true
+}
+
+const handleChange = ()=>{
+    getUpdateUserInfoData()
+
+}
 
 // 返回上一页
 const goBack = () => {
     router.back();
 };
 
+
+// 搜索的用户ID
+const searchId = ref("");
+// 当前选中的用户ID
+const selectedUserId = ref("");
+
 // 搜索用户
+const searchInfo = ref()
+function getSearchUser() {
+    searchUser({
+        uid: props.uid,
+        erbanNo: searchId.value
+    })
+        .then((data) => {
+            searchInfo.value = data
+            console.log('data==', searchInfo.value);
+        })
+        .catch((err) => {
+            showToast(err.message);
+        });
+}
+
+// 搜索用户
+const isSearch = ref(false)
 const handleSearch = () => {
     if (!searchId.value.trim()) {
         showToast("Please enter user ID");
         return;
     }
+    isSearch.value = true
     getSearchUser()
-    // // 模拟搜索逻辑
-    // const foundUser = userList.value.find(user => user.id === searchId.value);
-    // if (foundUser) {
-    //     userList.value = [foundUser];
-    //     selectedUserId.value = foundUser.id;
-    //     showToast("User found");
-    // } else {
-    //     showToast("User not found");
-    //     // 重置用户列表
-    //     resetUserList();
-    // }
 };
 
-// 重置用户列表
-const resetUserList = () => {
-    userList.value = [
-        { id: "12415", username: "Username", isBanned: false },
-        { id: "12416", username: "Username", isBanned: true },
-        { id: "12417", username: "Username", isBanned: false },
-        { id: "12418", username: "Username", isBanned: false },
-        { id: "12419", username: "Username", isBanned: true }
-    ];
-    selectedUserId.value = "";
-};
+// 清空id
+const clearApi = ()=>{
+    isSearch.value = false
+    userList()
+}
 
-// 编辑用户
-const handleEdit = (user) => {
-    // showToast(`Edit user: ${user.username} (ID: ${user.id})`);
-    // 这里可以打开编辑模态框或跳转到编辑页面
-    showUserInfoPopup.value = true
-};
 
 // 封禁/解封用户
 const handleBan = (user) => {
-    user.isBanned = !user.isBanned;
-    const action = user.isBanned ? "banned" : "unbanned";
+    // user.isBanned = !user.isBanned;
+    // const action = user.isBanned ? "banned" : "unbanned";
     showBanPopup.value = true
     // showToast(`User ${user.username} ${action}`);
     // 这里应该调用API更新用户状态
@@ -332,18 +405,6 @@ const showUserInfoPopup = ref(false);
 const showChangeAvatar = ref(false);
 const showUserInfoBanPopup = ref(true);
 
-// 用户信息数据
-const userInfo = reactive({
-    id: '12415',
-    username: 'Username',
-    avatar: ('../../assets/img/sysadmin/icon-back.png'), // 使用默认头像
-    gender: 'Female',
-    country: 'USA',
-    wealth: 'LV.12',
-    charm: 'LV.12',
-    agency: 'Agency name'
-});
-
 // 打开弹窗的方法（可以从父组件调用）
 const openPopup = () => {
     showUserInfoPopup.value = true;
@@ -359,19 +420,12 @@ const showBanPopup = ref(false);
 // 时间下拉框显示控制
 const showTimeDropdown = ref(false);
 
-// 用户信息数据
-// const userInfo = reactive({
-//     id: '12415',
-//     username: 'Username',
-//     avatar: require('../../assets/img/sysadmin/icon-back.png'), // 使用默认头像
-// });
-
 // 封禁时间选项
 const banTimeOptions = ref([
     { label: '1 day', value: 1 },
     { label: '7 days', value: 7 },
     { label: '30 days', value: 30 },
-    { label: 'Forever', value: -1 }
+    { label: 'Forever', value: 0 }
 ]);
 
 // 选中的封禁时间
@@ -404,26 +458,40 @@ const handleBanUser = () => {
         showToast('Please enter ban reason');
         return;
     }
-
-    const banData = {
-        userId: userInfo.id,
-        username: userInfo.username,
-        banTime: selectedBanTime.value,
-        banReason: banReason.value,
-        banTimeLabel: selectedBanTimeLabel.value
-    };
-
-    // 这里可以调用API执行封禁操作
-    console.log('Ban user data:', banData);
-
-    showToast(`User ${userInfo.username} has been banned for ${banData.banTimeLabel}`);
-
+    showBanUser.value = true
     // 关闭弹窗
     closePopup();
 
     // 触发封禁成功事件，供父组件监听
     emit('banSuccess', banData);
 };
+
+// 封禁用户
+const banUserData = ref()
+function handleChangeBanUser() {
+    // 手动进行URL编码
+    const encodedReason = encodeURIComponent(banReason.value);
+    
+    BanUser({
+        uid: props.uid,
+        targetUid: userListData.value[changeIndex.value].uid,
+        timeType: selectedBanTime.value,
+        desc: encodedReason  // 使用编码后的值
+    })
+    .then((data) => {
+        banUserData.value = data;
+        showToast('The user is banned and cannot be banned repeatedly;');
+        showBanUser.value = false;
+        showBanPopup.value = false;
+        userList();
+    })
+    .catch((err) => {
+        showToast(err.message);
+    });
+}
+
+//确定封禁
+
 
 // 定义事件
 const emit = defineEmits(['banSuccess']);
@@ -435,6 +503,7 @@ defineExpose({
 
 onMounted(async () => {
     // 初始化代码
+    // await UserInfo()
     await userList()
 });
 </script>
