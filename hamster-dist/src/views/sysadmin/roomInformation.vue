@@ -7,34 +7,69 @@
 
         <div class="search-section">
             <div class="search-container">
-                <van-search class="van-search" v-model="searchId" placeholder="Enter the user ID" />
+                <van-search class="van-search" @clear="clearApi" v-model="searchId" placeholder="Enter the user ID" />
                 <button class="search-btn" @click="handleSearch">Search</button>
             </div>
         </div>
 
         <div class="user-list-container">
-            <div class="user-item" v-for="(user, index) in userList" :key="user.id"
-                :class="{ 'active': selectedUserId === user.id }">
-                <div class="user-info-box f">
-                    <img class="img" src="../../assets/img/sysadmin/icon-back.png" alt="">
+            <template v-if="roomList?.length > 0 && !isSearch">
+                <div class="user-item" v-for="(user, index) in roomList" :key="user.id"
+                    :class="{ 'active': selectedUserId === user.id }">
+                    <div class="user-info-box f">
+                        <img class="img" :src="user.avatar" alt="" />
 
-                    <div class="user-info">
-                        <div class="username f">
-                            <div class="name">name</div>
-                            <img class="ex" src="../../assets/img/sysadmin/ixon-ex.png" alt="">
-                            <img class="count" src="../../assets/img/sysadmin/icon-back.png" alt="">
+                        <div class="user-info">
+                            <div class="username f">
+                                <div class="name">{{ user.title }}</div>
+                                <img class="ex" v-if="user?.gender === 1" src="../../assets/img/sysadmin/ixon-ex.png"
+                                    alt="" />
+                                <img class="ex" v-else src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
+                                <img class="count" :src="user?.countryNationalFlag" alt="" />
+                            </div>
+                            <p class="user-id">ID:{{ user.roomNo }}</p>
                         </div>
-                        <p class="user-id">ID:{{ user.id }}</p>
                     </div>
-                </div>
 
-                <div class="user-actions">
-                    <!-- <p class="banned Unblocked">Banned</p> -->
-                    <div class="view f" @click="showBanInformation = true">
-                        View<img class="ex" src="../../assets/img/sysadmin/icon-right.png" alt="">
+                    <div class="user-actions">
+                        <div class="view f" @click="popShowBanInformation(index)">
+                            View<img class="ex" src="../../assets/img/sysadmin/icon-right.png" alt="" />
+                        </div>
                     </div>
                 </div>
-            </div>
+            </template>
+            <template v-else>
+                <div class="user-item">
+                    <div class="user-info-box f">
+                        <img class="img" :src="searchInfo?.avatar" alt="" />
+
+                        <div class="user-info">
+                            <div class="username f">
+                                <div class="name">{{ searchInfo?.nick }}</div>
+                                <img class="ex" v-if="searchInfo?.gender === 1"
+                                    src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
+                                <img class="ex" v-else src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
+                                <img class="count" :src="searchInfo?.countryNationalFlag" alt="" />
+                            </div>
+                            <p class="user-id">ID:{{ searchInfo?.erbanNo }}</p>
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        <div class="view f" @click="popShowBanInformation(index)">
+                            View<img class="ex" src="../../assets/img/sysadmin/icon-right.png" alt="" />
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <!-- 没有数据 -->
+        <div class="none-data" v-if="
+            (userBanList?.length < 0 && !isSearch) ||
+            (searchInfo === null && isSearch)
+        ">
+            <img src="../../assets/img/sysadmin/none.png" alt="" />
+            <p>No Data</p>
         </div>
 
         <!-- 用户信息弹窗 -->
@@ -50,44 +85,44 @@
                     <div class="user-basic-info">
                         <div class="avatar-section">
                             <div class="avatar-container">
-                                <img :src="userInfo.avatar" alt="User Avatar" class="user-avatar">
+                                <img :src="roomInfo?.avatar" alt="User Avatar" class="user-avatar">
                             </div>
                         </div>
                         <div class="user-details">
-                            <h3 class="username">{{ userInfo.username }}</h3>
-                            <p class="user-id">ID:{{ userInfo.id }}</p>
+                            <h3 class="username">{{ roomInfo?.title }}</h3>
+                            <p class="user-id">ID:{{ roomInfo?.roomNo }}</p>
                         </div>
                     </div>
 
                     <div class="cell f-s">
                         <div class="left">Owner</div>
-                        <div class="right">Username</div>
+                        <div class="right">{{ roomInfo?.ownerNick }}</div>
                     </div>
                     <div class="cell f-s">
                         <div class="left">Country</div>
-                        <div class="right">USA</div>
+                        <div class="right">{{ roomInfo?.countryName }}</div>
                     </div>
                     <div class="cell f-s">
                         <div class="left">Agency</div>
-                        <div class="right">Agency name</div>
+                        <div class="right">{{ roomInfo?.agencyName }}</div>
                     </div>
                     <div class="cell f-s">
                         <div class="left">Administrator</div>
-                        <div class="right">155</div>
+                        <div class="right">{{ roomInfo?.adminCount }}</div>
                     </div>
                     <div class="cell f-s">
                         <div class="left">Member</div>
-                        <div class="right">10</div>
+                        <div class="right">{{ roomInfo?.memberCount }}</div>
                     </div>
                 </div>
 
                 <!-- 操作按钮区域 -->
                 <div class="action-buttons">
-                    <van-button class="action-btn change-avatar-btn f-c" @click="handleChangeAvatar">
+                    <van-button class="action-btn change-avatar-btn f-c"  @click="handleChangeUser(1)">
                         <img class="ex" src="../../assets/img/sysadmin/icon1.png" alt="">
                         Change avatar
                     </van-button>
-                    <van-button class="action-btn change-name-btn f-c" @click="handleChangeName">
+                    <van-button class="action-btn change-name-btn f-c"  @click="handleChangeUser(2)">
                         <img class="ex" src="../../assets/img/sysadmin/icon2.png" alt="">
                         Change name
                     </van-button>
@@ -105,7 +140,7 @@
                 <van-button class="action-btn Cancle f-c" @click="showUnBlock = false">
                     Cancle
                 </van-button>
-                <van-button class="action-btn Confirm f-c" @click="handleChangeName">
+                <van-button class="action-btn Confirm f-c" @click="handleChange">
                     Confirm
                 </van-button>
             </div>
@@ -119,82 +154,138 @@
 import { ref, onMounted, reactive, computed } from "vue";
 import { useRouter } from "vue-router";
 import { showToast } from "vant";
+import { GetRoomList, GetRoomInfo, searchUser, UpdateRoomInfo } from "@/api/sysadmin";
 
 const router = useRouter();
+const props = defineProps(["uid", "ticket", "memberUid"]);
 
 // 封禁用户弹窗
 const showBanInformation = ref(false)
 // 解封状态
-const showUnBlock = ref(true)
+const showUnBlock = ref(false)
 
 // 搜索的用户ID
 const searchId = ref("");
 // 当前选中的用户ID
 const selectedUserId = ref("");
+// 搜索用户
+const searchInfo = ref()
+function getSearchUser() {
+    searchUser({
+        uid: props.uid,
+        erbanNo: searchId.value
+    })
+        .then((data) => {
+            searchInfo.value = data
+            console.log('data==', searchInfo.value);
+        })
+        .catch((err) => {
+            showToast(err.message);
+        });
+}
 
-// 用户列表数据
-const userList = ref([
-    { id: "12415", username: "Username", isBanned: false },
-    { id: "12416", username: "Username", isBanned: true },
-    { id: "12417", username: "Username", isBanned: false },
-    { id: "12418", username: "Username", isBanned: false },
-    { id: "12419", username: "Username", isBanned: true }
-]);
+// 搜索用户
+const isSearch = ref(false);
+const handleSearch = () => {
+    if (!searchId.value.trim()) {
+        showToast("Please enter user ID");
+        return;
+    }
+    isSearch.value = true;
+    getSearchUser();
+};
 
 // 返回上一页
 const goBack = () => {
     router.back();
 };
 
-// 搜索用户
-const handleSearch = () => {
-    if (!searchId.value.trim()) {
-        showToast("Please enter user ID");
-        return;
-    }
+const roomList = ref();
+// 房间列表
+function getRoomList(targetUid) {
+    GetRoomList({
+        uid: props.uid,
+        pageNum: 1,
+        pageSize: 50,
+    })
+        .then((data) => {
+            roomList.value = data;
+        })
+        .catch((err) => {
+            showToast(err.message);
+        });
+}
 
-    // 模拟搜索逻辑
-    const foundUser = userList.value.find(user => user.id === searchId.value);
-    if (foundUser) {
-        userList.value = [foundUser];
-        selectedUserId.value = foundUser.id;
-        showToast("User found");
-    } else {
-        showToast("User not found");
-        // 重置用户列表
-        resetUserList();
-    }
+// 房间详情
+const roomInfo = ref();
+function getRoomInfo(targetUid) {
+    GetRoomInfo({
+        uid: props.uid,
+        roomId: isSearch.value ? searchInfo.value.roomId : roomList.value[banIndex.value].roomId,
+    })
+        .then((data) => {
+            roomInfo.value = data;
+        })
+        .catch((err) => {
+            //   loading.value = false;
+            showToast(err.message);
+        });
+}
+
+const banIndex = ref();
+const popShowBanInformation = (ind) => {
+    banIndex.value = ind;
+    showBanInformation.value = true;
+    getRoomInfo();
 };
 
-// 重置用户列表
-const resetUserList = () => {
-    userList.value = [
-        { id: "12415", username: "Username", isBanned: false },
-        { id: "12416", username: "Username", isBanned: true },
-        { id: "12417", username: "Username", isBanned: false },
-        { id: "12418", username: "Username", isBanned: false },
-        { id: "12419", username: "Username", isBanned: true }
-    ];
-    selectedUserId.value = "";
-};
 
-// 用户信息数据
-const userInfo = reactive({
-    id: '12415',
-    username: 'Username',
-    avatar: ('../../assets/img/sysadmin/icon-back.png'), // 使用默认头像
-    gender: 'Female',
-    country: 'USA',
-    wealth: 'LV.12',
-    charm: 'LV.12',
-    agency: 'Agency name'
-});
+// 修改房间信息
+const updateRoomInfoData = ref()
+function getUpdateRoomInfo() {
+    // 修改用户信息
+    var page1 = {
+        uid: props.uid,
+        targetRoomId: roomList.value[changeIndex.value].roomId,
+        resetTitle: true
+    }
+    var page2 = {
+        uid: props.uid,
+        targetRoomId: roomList.value[changeIndex.value].roomId,
+        resetAvatar: true
+    }
+    console.log('headChangeIndex.value==', headChangeIndex.value);
+    UpdateRoomInfo(headChangeIndex.value === 1 ? page1: page2)
+        .then((data) => {
+            updateRoomInfoData.value = data;
+            console.log('updateRoomInfoData.value==', updateRoomInfoData.value);
+            showUserInfoPopup.value = false;
+            showChangeAvatar.value = false
+            userList()
+        })
+        .catch((err) => {
+            //   loading.value = false;
+            //   showToast(err.message);
+        });
+}
 
+// 点击修改用户信息
+const headChangeIndex = ref(0)
+function handleChangeUser(ind) {
+    headChangeIndex.value = ind
+    showUnBlock.value = true
+}
+
+const handleChange = () => {
+    getUpdateRoomInfo()
+
+}
 
 // 封禁原因
 const banReason = ref('');
 
 onMounted(() => {
     // 初始化代码
+    getRoomList()
 });
 </script>

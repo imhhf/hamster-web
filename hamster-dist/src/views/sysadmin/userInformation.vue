@@ -12,7 +12,7 @@
             </div>
         </div>
         <div class="user-list-container">
-            <template v-if="userListData?.length>0 && !isSearch">
+            <template v-if="userListData?.length > 0 && !isSearch">
                 <div class="user-item" v-for="(user, index) in userListData" :key="user.id"
                     :class="{ 'active': selectedUserId === user.id }">
                     <div class="user-info-box f">
@@ -20,7 +20,8 @@
                         <div class="user-info">
                             <div class="username f">
                                 <van-notice-bar class="name" :text="user?.nick" :speed="20" />
-                                <img class="ex" v-if="user?.gender===1" src="../../assets/img/sysadmin/ixon-ex.png" alt="">
+                                <img class="ex" v-if="user?.gender === 1" src="../../assets/img/sysadmin/ixon-ex.png"
+                                    alt="">
                                 <img class="ex" v-else src="../../assets/img/sysadmin/ixon-ex.png" alt="">
                                 <img class="count" :src="user?.countryNationalFlag" alt="">
                             </div>
@@ -37,14 +38,15 @@
             </template>
 
             <template v-else>
-                <div class="user-item" >
+                <div class="user-item">
                     <div class="user-info-box f">
                         <img class="img" :src="searchInfo?.avatar" alt="">
 
                         <div class="user-info">
                             <div class="username f">
                                 <van-notice-bar class="name" :text="searchInfo?.nick" :speed="20" />
-                                <img class="ex" v-if="searchInfo?.gender===1" src="../../assets/img/sysadmin/ixon-ex.png" alt="">
+                                <img class="ex" v-if="searchInfo?.gender === 1"
+                                    src="../../assets/img/sysadmin/ixon-ex.png" alt="">
                                 <img class="ex" v-else src="../../assets/img/sysadmin/ixon-ex.png" alt="">
                                 <img class="count" :src="searchInfo?.countryNationalFlag" alt="">
                             </div>
@@ -62,7 +64,7 @@
             </template>
         </div>
         <!-- 没有数据 -->
-        <div class="none-data" v-if="userListData?.length<0 && !isSearch || searchInfo === null && isSearch">
+        <div class="none-data" v-if="userListData?.length < 0 && !isSearch || searchInfo === null && isSearch">
             <img src="../../assets/img/sysadmin/none.png" alt="">
             <p>No Data</p>
         </div>
@@ -80,12 +82,12 @@
                     <div class="user-basic-info">
                         <div class="avatar-section">
                             <div class="avatar-container">
-                                <img :src="isSearch ? searchInfo.avatar: userListData[changeIndex].avatar" alt="User Avatar" class="user-avatar">
+                                <img :src="userInfoData?.avatar" alt="User Avatar" class="user-avatar">
                             </div>
                         </div>
                         <div class="user-details">
-                            <h3 class="username">{{ isSearch ? searchInfo.nick:userListData[changeIndex].nick }}</h3>
-                            <p class="user-id">ID:{{ isSearch ? searchInfo.erbanNo:userListData[changeIndex].erbanNo }}</p>
+                            <h3 class="username">{{ userInfoData?.nick }}</h3>
+                            <p class="user-id">ID:{{ userInfoData?.erbanNo }}</p>
                         </div>
                     </div>
 
@@ -93,23 +95,23 @@
                     <div class="user-detail-info">
                         <div class="info-item">
                             <span class="info-label">Gender</span>
-                            <span class="info-value">{{ isSearch ? searchInfo?.gender : userInfoData?.gender }}</span>
+                            <span class="info-value">{{ userInfoData?.gender }}</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Country</span>
-                            <span class="info-value">{{ isSearch ? searchInfo?.countryName:userInfoData?.countryName }}</span>
+                            <span class="info-value">{{ userInfoData?.countryName }}</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Wealth</span>
-                            <span class="info-value wealth">{{ isSearch ? searchInfo?.experLevelName:userInfoData?.experLevelName }}</span>
+                            <span class="info-value wealth">{{ userInfoData?.experLevelName }}</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Charm</span>
-                            <span class="info-value charm">{{ isSearch ? searchInfo?.charmLevelName:userInfoData?.charmLevelName }}</span>
+                            <span class="info-value charm">{{ userInfoData?.charmLevelName }}</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Agency</span>
-                            <span class="info-value">{{isSearch ? searchInfo?.agencyName: userInfoData?.agencyName }}</span>
+                            <span class="info-value">{{ userInfoData?.agencyName }}</span>
                         </div>
                     </div>
                 </div>
@@ -135,8 +137,11 @@
 
         <!-- 恢复默认头像弹窗 -->
         <van-popup v-model:show="showChangeAvatar" round class="showChangeAvatar">
-            <p class="pop-tit">{{headChangeIndex===1?'Change avatar':headChangeIndex===2?'Change name':'Change Bio'}}</p>
-            <p class="tips">{{ headChangeIndex===1?'Change the user avatar to the default avatar.':headChangeIndex===2?'Change user name to default name':'Delete personalized signature' }}</p>
+            <p class="pop-tit">{{ headChangeIndex === 1 ? 'Change avatar' : headChangeIndex === 2 ? 'Change name' :
+                'Change Bio'
+                }}
+            </p>
+            <p class="tips">{{ headChangeIndex === 1 ? 'Change the user avatar to the default avatar.':headChangeIndex===2?'Change user name to default name':'Delete personalized signature' }}</p>
             <!-- 操作按钮区域 -->
             <div class="action-buttons f-c">
                 <van-button class="action-btn Cancle f-c" @click="showChangeAvatar = false">
@@ -162,12 +167,13 @@
                     <div class="user-basic-info">
                         <div class="avatar-section">
                             <div class="avatar-container">
-                                <img :src="isSearch ? searchInfo?.avatar: userListData[changeIndex].avatar" alt="User Avatar" class="user-avatar">
+                                <img :src="userInfoData.avatar" alt="User Avatar" class="user-avatar">
                             </div>
                         </div>
                         <div class="user-details">
-                            <h3 class="username">{{ isSearch ? searchInfo?.nick: userListData[changeIndex].nick }}</h3>
-                            <p class="user-id">ID:{{ isSearch ? searchInfo?.erbanNo: userListData[changeIndex].erbanNo }}</p>
+                            <h3 class="username">{{ userInfoData.nick }}</h3>
+                            <p class="user-id">ID:{{ userInfoData.erbanNo
+                            }}</p>
                         </div>
                     </div>
 
@@ -209,7 +215,8 @@
 
                 <!-- 操作按钮 -->
                 <div class="action-buttons">
-                    <van-button class="action-btn ban-btn" @click="!banReason.trim()?'':showBanUser=true" :disabled="!banReason.trim()">
+                    <van-button class="action-btn ban-btn" @click="!banReason.trim() ? '' : showBanUser = true"
+                        :disabled="!banReason.trim()">
                         Ban the User
                     </van-button>
                 </div>
@@ -268,70 +275,72 @@ function userList() {
 const userInfoData = ref()
 
 function UserInfo(targetUid) {
-  getUserInfo({
-    uid: props.uid,
-    targetUid:targetUid
-  })
-    .then((data) => {
-      userInfoData.value = data;
+    getUserInfo({
+        uid: props.uid,
+        targetUid: targetUid
     })
-    .catch((err) => {
-    //   loading.value = false;
-      showToast(err.message);
-    });
+        .then((data) => {
+            userInfoData.value = data;
+        })
+        .catch((err) => {
+            //   loading.value = false;
+            showToast(err.message);
+        });
 }
 
 // 编辑用户
 const changeIndex = ref(0)
 const handleEdit = (ind) => {
     changeIndex.value = ind
+
     // showToast(`Edit user: ${user.username} (ID: ${user.id})`);
     // 这里可以打开编辑模态框或跳转到编辑页面
     showUserInfoPopup.value = true
-    UserInfo(userListData.value[ind].uid)
+    UserInfo(isSearch.value ? searchInfo.value.uid : userListData.value[ind].uid)
+
 };
 
-const updateUserInfoData  = ref()
+const updateUserInfoData = ref()
 function getUpdateUserInfoData() {
     // 修改用户信息
     var page1 = {
         uid: props.uid,
-        targetUid:userListData.value[changeIndex.value].uid,
-        resetAvatar:true
+        targetUid: userListData.value[changeIndex.value].uid,
+        resetAvatar: true
     }
     var page2 = {
         uid: props.uid,
-        targetUid:userListData.value[changeIndex.value].uid,
-        resetNick:true
+        targetUid: userListData.value[changeIndex.value].uid,
+        resetNick: true
     }
     var page3 = {
         uid: props.uid,
-        targetUid:userListData.value[changeIndex.value].uid,
-        resetSignture:true
+        targetUid: userListData.value[changeIndex.value].uid,
+        resetSignture: true
     }
     console.log('headChangeIndex.value==', headChangeIndex.value);
-  updateUserInfo(headChangeIndex.value === 1?page1:headChangeIndex.value === 2?page2:page3)
-    .then((data) => {
-      updateUserInfoData.value = data;
-      console.log('updateUserInfoData.value==', updateUserInfoData.value);
-      showUserInfoPopup.value = false;
-      showChangeAvatar.value = false
-      userList()
-    })
-    .catch((err) => {
-    //   loading.value = false;
-    //   showToast(err.message);
-    });
+    updateUserInfo(headChangeIndex.value === 1 ? page1 : headChangeIndex.value === 2 ? page2 : page3)
+        .then((data) => {
+            updateUserInfoData.value = data;
+            console.log('updateUserInfoData.value==', updateUserInfoData.value);
+            showUserInfoPopup.value = false;
+            showChangeAvatar.value = false
+            userList()
+        })
+        .catch((err) => {
+            //   loading.value = false;
+            //   showToast(err.message);
+        });
 }
 
 // 点击修改用户信息
 const headChangeIndex = ref(0)
-function handleChangeUser(ind){
+function handleChangeUser(ind) {
     headChangeIndex.value = ind
     showChangeAvatar.value = true
 }
 
-const handleChange = ()=>{
+const handleChange = () => {
     getUpdateUserInfoData()
 
 }
@@ -375,7 +384,7 @@ const handleSearch = () => {
 };
 
 // 清空id
-const clearApi = ()=>{
+const clearApi = () => {
     isSearch.value = false
     userList()
 }
@@ -471,23 +480,23 @@ const banUserData = ref()
 function handleChangeBanUser() {
     // 手动进行URL编码
     const encodedReason = encodeURIComponent(banReason.value);
-    
+
     BanUser({
         uid: props.uid,
         targetUid: userListData.value[changeIndex.value].uid,
         timeType: selectedBanTime.value,
         desc: encodedReason  // 使用编码后的值
     })
-    .then((data) => {
-        banUserData.value = data;
-        showToast('The user is banned and cannot be banned repeatedly;');
-        showBanUser.value = false;
-        showBanPopup.value = false;
-        userList();
-    })
-    .catch((err) => {
-        showToast(err.message);
-    });
+        .then((data) => {
+            banUserData.value = data;
+            showToast('The user is banned and cannot be banned repeatedly;');
+            showBanUser.value = false;
+            showBanPopup.value = false;
+            userList();
+        })
+        .catch((err) => {
+            showToast(err.message);
+        });
 }
 
 //确定封禁

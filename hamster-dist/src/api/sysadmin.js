@@ -73,3 +73,30 @@ export function GetBanInfo(params) {
     params,
   });
 }
+
+// 房间列表
+export function GetRoomList(params) {
+  return service({
+    method: "get",
+    url: `${prefix}getRoomList`,
+    params,
+  });
+}
+
+// 房间信息
+export function GetRoomInfo(params) {
+  return service({
+    method: "get",
+    url: `${prefix}getRoomInfo`,
+    params,
+  });
+}
+
+// 修改房间信息
+export function UpdateRoomInfo(params) {
+  return service({
+    method: "get",
+    url: `${prefix}updateRoomInfo`,
+    params,
+  });
+}
