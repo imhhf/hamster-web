@@ -2,7 +2,7 @@
     <div class="index">
         <div class="top">
             <img @click="AppClose()" class="back" src="../../assets/img/sysadmin/icon-back.png" alt="">
-            <p class="top-title">Admin Center</p>
+            <p class="top-title">{{ $t('sysadmin.Adm') }}</p>
         </div>
         <div class="user f">
             <div class="left">
@@ -23,32 +23,32 @@
             <div class="box f">
                 <div class="li">
                     <p class="p1">{{ info?.bdCount }}</p>
-                    <p class="p2">BD</p>
+                    <p class="p2">{{ $t('sysadmin.BD') }}</p>
                 </div>
                 <div class="li">
                     <p class="p1">{{ info?.agencyCount }}</p>
-                    <p class="p2">Agency</p>
+                    <p class="p2">{{ $t('sysadmin.Age') }}</p>
                 </div>
                 <div class="li">
                     <p class="p1">{{ info?.hostCount }}</p>
-                    <p class="p2">Host</p>
+                    <p class="p2">{{ $t('sysadmin.Host') }}</p>
                 </div>
             </div>
         </div>
 
-        <p class="lable-title">User Management</p>
+        <p class="lable-title">{{ $t('sysadmin.Use') }}</p>
         <div class="page-list">
             <div class="li f-s" @click="$router.push(`/sysadmin/userInformation?uid=${props.uid}&lang=en`)">
                 <div class="left f">
                     <img src="@/assets/img/sysadmin/icon-infomation.png" alt="">
-                    <span>User Information</span>
+                    <span>{{ $t('sysadmin.Use1') }}</span>
                 </div>
                 <img class="go" src="@/assets/img/sysadmin/icon-right.png" alt="">
             </div>
             <div class="li f-s" @click="$router.push(`/sysadmin/banList?uid=${props.uid}&lang=en`)">
                 <div class="left f">
                     <img src="@/assets/img/sysadmin/icon-banList.png" alt="">
-                    <span>User ban list</span>
+                    <span>{{ $t('sysadmin.Use2') }}</span>
                 </div>
                 <img class="go" src="@/assets/img/sysadmin/icon-right.png" alt="">
             </div>
@@ -61,30 +61,30 @@
             </div>
         </div>
 
-        <p class="lable-title">Room Management</p>
+        <p class="lable-title">{{ $t('sysadmin.Roo') }}</p>
         <div class="page-list">
             <div class="li f-s" @click="$router.push(`/sysadmin/roomInformation?uid=${props.uid}&lang=en`)">
                 <div class="left f">
                     <img src="@/assets/img/sysadmin/icon-room.png" alt="">
-                    <span>Room information</span>
+                    <span>{{ $t('sysadmin.Roo3') }}</span>
                 </div>
                 <img class="go" src="@/assets/img/sysadmin/icon-right.png" alt="">
             </div>
         </div>
 
-        <p class="lable-title">BD Management</p>
+        <p class="lable-title">{{ $t('sysadmin.BDM') }}</p>
         <div class="page-list">
             <div class="li f-s" @click="showCreateBD = true">
                 <div class="left f">
                     <img src="@/assets/img/sysadmin/icon-createBD.png" alt="">
-                    <span>Create BD</span>
+                    <span>{{ $t('sysadmin.Cre') }}</span>
                 </div>
                 <img class="go" src="@/assets/img/sysadmin/icon-right.png" alt="">
             </div>
             <div class="li f-s" @click="$router.push(`/sysadmin/dataBD?uid=${props.uid}&lang=en`)">
                 <div class="left f">
                     <img src="@/assets/img/sysadmin/icon-bdData.png" alt="">
-                    <span>BD data</span>
+                    <span>{{ $t('sysadmin.BDd') }}</span>
                 </div>
                 <img class="go" src="@/assets/img/sysadmin/icon-right.png" alt="">
             </div>
@@ -92,7 +92,7 @@
 
         <!-- create BD -->
         <van-popup v-model:show="showCreateBD" position="bottom" round class="showCreateBD">
-            <createBD :isUid="props.uid"></createBD>
+            <createBD :isUid="props.uid" @success="handleCreateBDSuccess" @close="handleCreateBDClose"></createBD>
         </van-popup>
     </div>
 
@@ -119,7 +119,19 @@ const lang = getLang();
 
 // create BD 
 const showCreateBD = ref(false)
+// 处理创建BD成功
+const handleCreateBDSuccess = (data) => {
+  console.log("Create BD success:", data);
+  // 关闭弹窗
+  showCreateBD.value = false;
+  getHome()
+  // 可以在这里添加其他成功后的逻辑，比如刷新列表等
+};
 
+// 处理关闭弹窗
+const handleCreateBDClose = () => {
+  showCreateBD.value = false;
+};
 
 // 首页
 const info = ref()

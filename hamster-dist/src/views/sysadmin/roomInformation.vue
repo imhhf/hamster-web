@@ -12,33 +12,31 @@
             </div>
         </div>
 
-        <div class="user-list-container">
-            <template v-if="roomList?.length > 0 && !isSearch">
-                <div class="user-item" v-for="(user, index) in roomList" :key="user.id"
-                    :class="{ 'active': selectedUserId === user.id }">
-                    <div class="user-info-box f">
-                        <img class="img" :src="user.avatar" alt="" />
+        <div class="user-list-container" v-if="roomList !== null && roomList?.length > 0">
+            <div class="user-item" v-for="(user, index) in roomList" :key="user.id"
+                :class="{ 'active': selectedUserId === user.id }">
+                <div class="user-info-box f">
+                    <img class="img" :src="user.avatar" alt="" />
 
-                        <div class="user-info">
-                            <div class="username f">
-                                <div class="name">{{ user.title }}</div>
-                                <img class="ex" v-if="user?.gender === 1" src="../../assets/img/sysadmin/ixon-ex.png"
-                                    alt="" />
-                                <img class="ex" v-else src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
-                                <img class="count" :src="user?.countryNationalFlag" alt="" />
-                            </div>
-                            <p class="user-id">ID:{{ user.roomNo }}</p>
+                    <div class="user-info">
+                        <div class="username f">
+                            <div class="name">{{ user.title }}</div>
+                            <img class="ex" v-if="user?.gender === 1" src="../../assets/img/sysadmin/ixon-ex.png"
+                                alt="" />
+                            <img class="ex" v-else src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
+                            <img class="count" :src="user?.countryNationalFlag" alt="" />
                         </div>
-                    </div>
-
-                    <div class="user-actions">
-                        <div class="view f" @click="popShowBanInformation(index)">
-                            View<img class="ex" src="../../assets/img/sysadmin/icon-right.png" alt="" />
-                        </div>
+                        <p class="user-id">ID:{{ user.roomNo }}</p>
                     </div>
                 </div>
-            </template>
-            <template v-if="roomInfo&&roomInfo !== null && isSearch">
+
+                <div class="user-actions">
+                    <div class="view f" @click="popShowBanInformation(index)">
+                        View<img class="ex" src="../../assets/img/sysadmin/icon-right.png" alt="" />
+                    </div>
+                </div>
+            </div>
+            <!-- <template v-if="roomInfo && roomInfo !== null && isSearch">
                 <div class="user-item">
                     <div class="user-info-box f">
                         <img class="img" :src="roomInfo?.avatar" alt="" />
@@ -60,14 +58,11 @@
                         </div>
                     </div>
                 </div>
-            </template>
+            </template> -->
         </div>
-        
+
         <!-- 没有数据 -->
-        <div class="none-data" v-if="
-            (roomList===null && !isSearch) ||
-            (!roomInfo&&roomInfo === null && isSearch)
-        ">
+        <div class="none-data" v-if="roomList === null">
             <img src="../../assets/img/sysadmin/none.png" alt="" />
             <p>No Data</p>
         </div>
@@ -77,7 +72,7 @@
             <div class="popup-container">
                 <!-- 弹窗头部 -->
                 <div class="popup-header">
-                    <h2 class="popup-title">User information</h2>
+                    <h2 class="popup-title">room information</h2>
                     <van-icon class="close-icon" @click="showBanInformation = false" />
                 </div>
                 <div class="ban-box">
@@ -118,11 +113,11 @@
 
                 <!-- 操作按钮区域 -->
                 <div class="action-buttons">
-                    <van-button class="action-btn change-avatar-btn f-c"  @click="handleChangeUser(1)">
+                    <van-button class="action-btn change-avatar-btn f-c" @click="handleChangeUser(1)">
                         <img class="ex" src="../../assets/img/sysadmin/icon1.png" alt="">
                         Change avatar
                     </van-button>
-                    <van-button class="action-btn change-name-btn f-c"  @click="handleChangeUser(2)">
+                    <van-button class="action-btn change-name-btn f-c" @click="handleChangeUser(2)">
                         <img class="ex" src="../../assets/img/sysadmin/icon2.png" alt="">
                         Change name
                     </van-button>
@@ -177,14 +172,14 @@ const handleSearch = () => {
         return;
     }
     isSearch.value = true;
-    getRoomInfo();
+    getRoomList(searchId.value);
 };
 
 
 // 清空id
 const clearApi = () => {
     isSearch.value = false
-    getRoomList()
+    getRoomList(null)
 }
 
 
@@ -195,9 +190,10 @@ const goBack = () => {
 
 const roomList = ref();
 // 房间列表
-function getRoomList(targetUid) {
+function getRoomList(searchKey) {
     GetRoomList({
         uid: props.uid,
+        searchKey: searchKey,
         pageNum: 1,
         pageSize: 50,
     })
@@ -214,7 +210,7 @@ const roomInfo = ref();
 function getRoomInfo(targetUid) {
     GetRoomInfo({
         uid: props.uid,
-        roomId: isSearch.value ? searchId.value : roomList.value[banIndex.value].roomId,
+        roomId: roomList.value[banIndex.value].roomId,
     })
         .then((data) => {
             roomInfo.value = data;
@@ -239,22 +235,22 @@ function getUpdateRoomInfo() {
     // 修改用户信息
     var page1 = {
         uid: props.uid,
-        roomId: isSearch.value ? searchId.value : roomList.value[banIndex.value].roomId,
+        roomId: roomList.value[banIndex.value].roomId,
         resetAvatar: true
     }
     var page2 = {
         uid: props.uid,
-        roomId: isSearch.value ? searchId.value : roomList.value[banIndex.value].roomId,
+        roomId: roomList.value[banIndex.value].roomId,
         resetTitle: true
     }
     console.log('headChangeIndex.value==', headChangeIndex.value);
-    UpdateRoomInfo(headChangeIndex.value === 1 ? page1: page2)
+    UpdateRoomInfo(headChangeIndex.value === 1 ? page1 : page2)
         .then((data) => {
             updateRoomInfoData.value = data;
             console.log('updateRoomInfoData.value==', updateRoomInfoData.value);
             showBanInformation.value = false;
             showUnBlock.value = false
-            getRoomList()
+            getRoomList(null)
         })
         .catch((err) => {
             //   loading.value = false;
@@ -274,11 +270,8 @@ const handleChange = () => {
 
 }
 
-// 封禁原因
-const banReason = ref('');
-
 onMounted(() => {
     // 初始化代码
-    getRoomList()
+    getRoomList(null)
 });
 </script>

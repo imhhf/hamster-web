@@ -12,36 +12,36 @@
       </div>
     </div>
 
-    <div class="user-list-container">
-      <template v-if="userBanList?.length > 0 && !isSearch">
-        <div class="user-item" v-for="(user, index) in userBanList" :key="user.id"
-          :class="{ active: selectedUserId === user.id }">
-          <div class="user-info-box f">
-            <img class="img" :src="user.avatar" alt="" />
+    <div v-if="userBanList !== null && userBanList?.length > 0" class="user-list-container">
+      <!-- <template> -->
+      <div class="user-item" v-for="(user, index) in userBanList" :key="user.id"
+        :class="{ active: selectedUserId === user.id }">
+        <div class="user-info-box f">
+          <img class="img" :src="user.avatar" alt="" />
 
-            <div class="user-info">
-              <div class="username f">
-                <div class="name">{{ user.nick }}</div>
-                <img class="ex" v-if="user?.gender === 1" src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
-                <img class="ex" v-else src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
-                <img class="count" :src="user?.countryNationalFlag" alt="" />
-              </div>
-              <p class="user-id">ID:{{ user.erbanNo }}</p>
+          <div class="user-info">
+            <div class="username f">
+              <div class="name">{{ user.nick }}</div>
+              <img class="ex" v-if="user?.gender === 1" src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
+              <img class="ex" v-else src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
+              <img class="count" :src="user?.countryNationalFlag" alt="" />
             </div>
-          </div>
-
-          <div class="user-actions">
-            <p class="banned" :class="user.blockStatus === 1 ? '' : 'Unblocked'">
-              {{ user.blockStatus === 1 ? "Banned" : "Unblocked" }}
-            </p>
-            <div class="view f" @click="popShowBanInformation(index)">
-              View<img class="ex" src="../../assets/img/sysadmin/icon-right.png" alt="" />
-            </div>
+            <p class="user-id">ID:{{ user.erbanNo }}</p>
           </div>
         </div>
-      </template>
 
-      <template v-if="banInfo&&banInfo !== null && isSearch">
+        <div class="user-actions">
+          <p class="banned" :class="user.blockStatus === 1 ? '' : 'Unblocked'">
+            {{ user.blockStatus === 1 ? "Banned" : "Unblocked" }}
+          </p>
+          <div class="view f" @click="popShowBanInformation(index)">
+            View<img class="ex" src="../../assets/img/sysadmin/icon-right.png" alt="" />
+          </div>
+        </div>
+      </div>
+      <!-- </template> -->
+
+      <!-- <template v-if="banInfo&&banInfo !== null && isSearch">
         <div class="user-item">
           <div class="user-info-box f">
             <img class="img" :src="banInfo?.avatar" alt="" />
@@ -65,13 +65,12 @@
             </div>
           </div>
         </div>
-      </template>
+      </template> -->
     </div>
 
     <!-- 没有数据 -->
     <div class="none-data" v-if="
-      (userBanList===null && !isSearch) ||
-      (banInfo === null && isSearch)
+      userBanList === null
     ">
       <img src="../../assets/img/sysadmin/none.png" alt="" />
       <p>No Data</p>
@@ -103,7 +102,7 @@
           </div>
 
           <div class="ban-tit">Ban time</div>
-          <div class="day">{{ banInfo?.blockTime }}</div>
+          <div class="day">{{ myTimeDay(banInfo?.blockTime) }}</div>
 
           <div class="ban-tit">Reason for ban</div>
           <div class="tit">
@@ -113,8 +112,9 @@
 
         <!-- 操作按钮 -->
         <div class="action-buttons">
-          <van-button class="action-btn ban-btn" :class="banInfo?.blockStatus === 1?'active':''" @click="banInfo?.blockStatus === 1?handleBanUser():''">
-            {{banInfo?.blockStatus === 1 ? 'Unblock this User':'This user has been unblocked'}}
+          <van-button class="action-btn ban-btn" :class="banInfo?.blockStatus === 1 ? 'active' : ''"
+            @click="banInfo?.blockStatus === 1 ? handleBanUser() : ''">
+            {{ banInfo?.blockStatus === 1 ? 'Unblock this User' : 'This user has been unblocked' }}
           </van-button>
         </div>
       </div>
@@ -170,9 +170,10 @@ const selectedUserId = ref("");
 
 const userBanList = ref();
 // 封禁记录
-function getUserBanList(targetUid) {
+function getUserBanList(searchKey) {
   GetUserBanList({
     uid: props.uid,
+    searchKey: searchKey,
     pageNum: 1,
     pageSize: 50,
   })
@@ -190,7 +191,7 @@ const banInfo = ref();
 function getBanInfo(targetUid) {
   GetBanInfo({
     uid: props.uid,
-    blockId: isSearch.value ? searchId.value : userBanList.value[banIndex.value]?.blockId,
+    blockId: userBanList.value[banIndex.value]?.blockId,
   })
     .then((data) => {
       banInfo.value = data;
@@ -209,16 +210,16 @@ const popShowBanInformation = (ind) => {
 };
 
 // 解除封禁
-const getUnbanUser=()=>{
+const getUnbanUser = () => {
   UnbanUser({
     uid: props.uid,
-    blockId: isSearch.value ? searchId.value : userBanList.value[banIndex.value].blockId,
+    blockId: userBanList.value[banIndex.value].blockId,
   })
     .then((data) => {
-        banInfo.value = data;
-        showBanInformation.value = false;
-        showUnBlock.value = false
-        getUserBanList()
+      banInfo.value = data;
+      showBanInformation.value = false;
+      showUnBlock.value = false
+      getUserBanList(null)
     })
     .catch((err) => {
       //   loading.value = false;
@@ -226,13 +227,13 @@ const getUnbanUser=()=>{
     });
 }
 
-const handleBanUser = ()=>{
-    showUnBlock.value = true
+const handleBanUser = () => {
+  showUnBlock.value = true
 }
 
 // 二次确认解封
-const handleChange = () =>{
-    getUnbanUser()
+const handleChange = () => {
+  getUnbanUser()
 }
 // 返回上一页
 const goBack = () => {
@@ -249,12 +250,12 @@ const handleSearch = () => {
     return;
   }
   isSearch.value = true;
-  getBanInfo();
+  getUserBanList(searchId.value);
 }
 // 清空id
 const clearApi = () => {
-    isSearch.value = false
-    getUserBanList()
+  isSearch.value = false
+  getUserBanList(null)
 }
 
 // 封禁原因
@@ -262,6 +263,6 @@ const banReason = ref("");
 
 onMounted(() => {
   // 初始化代码
-  getUserBanList();
+  getUserBanList(null);
 });
 </script>
