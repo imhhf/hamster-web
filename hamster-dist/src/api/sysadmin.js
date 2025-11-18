@@ -74,6 +74,15 @@ export function GetBanInfo(params) {
   });
 }
 
+// 解除封禁
+export function UnbanUser(params) {
+  return service({
+    method: "post",
+    url: `${prefix}unbanUser`,
+    params,
+  });
+}
+
 // 房间列表
 export function GetRoomList(params) {
   return service({
@@ -95,8 +104,45 @@ export function GetRoomInfo(params) {
 // 修改房间信息
 export function UpdateRoomInfo(params) {
   return service({
-    method: "get",
+    method: "post",
     url: `${prefix}updateRoomInfo`,
+    params,
+  });
+}
+
+// 绑定bd
+export function BindBd(params) {
+  return service({
+    method: "post",
+    url: `${prefix}bindBd`,
+    params,
+  });
+}
+
+
+// 解绑bd
+export function UnBindBd(params) {
+  return service({
+    method: "post",
+    url: `${prefix}unBindBd`,
+    params,
+  });
+}
+
+// bd列表
+export function GetBdList(params) {
+  return service({
+    method: "get",
+    url: `${prefix}getBdList`,
+    params,
+  });
+}
+
+// bd数据
+export function GetBdData(params) {
+  return service({
+    method: "get",
+    url: `${prefix}getBdData`,
     params,
   });
 }

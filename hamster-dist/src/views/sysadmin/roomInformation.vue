@@ -7,7 +7,7 @@
 
         <div class="search-section">
             <div class="search-container">
-                <van-search class="van-search" @clear="clearApi" v-model="searchId" placeholder="Enter the user ID" />
+                <van-search class="van-search" @clear="clearApi" v-model="searchId" placeholder="Enter the room ID" />
                 <button class="search-btn" @click="handleSearch">Search</button>
             </div>
         </div>
@@ -38,20 +38,20 @@
                     </div>
                 </div>
             </template>
-            <template v-else>
+            <template v-if="roomInfo&&roomInfo !== null && isSearch">
                 <div class="user-item">
                     <div class="user-info-box f">
-                        <img class="img" :src="searchInfo?.avatar" alt="" />
+                        <img class="img" :src="roomInfo?.avatar" alt="" />
 
                         <div class="user-info">
                             <div class="username f">
-                                <div class="name">{{ searchInfo?.nick }}</div>
-                                <img class="ex" v-if="searchInfo?.gender === 1"
+                                <div class="name">{{ roomInfo?.title }}</div>
+                                <img class="ex" v-if="roomInfo?.gender === 1"
                                     src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
                                 <img class="ex" v-else src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
-                                <img class="count" :src="searchInfo?.countryNationalFlag" alt="" />
+                                <img class="count" :src="roomInfo?.countryNationalFlag" alt="" />
                             </div>
-                            <p class="user-id">ID:{{ searchInfo?.erbanNo }}</p>
+                            <p class="user-id">ID:{{ roomInfo?.roomNo }}</p>
                         </div>
                     </div>
                     <div class="user-actions">
@@ -62,11 +62,11 @@
                 </div>
             </template>
         </div>
-
+        
         <!-- 没有数据 -->
         <div class="none-data" v-if="
-            (userBanList?.length < 0 && !isSearch) ||
-            (searchInfo === null && isSearch)
+            (roomList===null && !isSearch) ||
+            (!roomInfo&&roomInfo === null && isSearch)
         ">
             <img src="../../assets/img/sysadmin/none.png" alt="" />
             <p>No Data</p>
@@ -168,21 +168,6 @@ const showUnBlock = ref(false)
 const searchId = ref("");
 // 当前选中的用户ID
 const selectedUserId = ref("");
-// 搜索用户
-const searchInfo = ref()
-function getSearchUser() {
-    searchUser({
-        uid: props.uid,
-        erbanNo: searchId.value
-    })
-        .then((data) => {
-            searchInfo.value = data
-            console.log('data==', searchInfo.value);
-        })
-        .catch((err) => {
-            showToast(err.message);
-        });
-}
 
 // 搜索用户
 const isSearch = ref(false);
@@ -192,8 +177,16 @@ const handleSearch = () => {
         return;
     }
     isSearch.value = true;
-    getSearchUser();
+    getRoomInfo();
 };
+
+
+// 清空id
+const clearApi = () => {
+    isSearch.value = false
+    getRoomList()
+}
+
 
 // 返回上一页
 const goBack = () => {
@@ -221,7 +214,7 @@ const roomInfo = ref();
 function getRoomInfo(targetUid) {
     GetRoomInfo({
         uid: props.uid,
-        roomId: isSearch.value ? searchInfo.value.roomId : roomList.value[banIndex.value].roomId,
+        roomId: isSearch.value ? searchId.value : roomList.value[banIndex.value].roomId,
     })
         .then((data) => {
             roomInfo.value = data;
@@ -246,22 +239,22 @@ function getUpdateRoomInfo() {
     // 修改用户信息
     var page1 = {
         uid: props.uid,
-        targetRoomId: roomList.value[changeIndex.value].roomId,
-        resetTitle: true
+        roomId: isSearch.value ? searchId.value : roomList.value[banIndex.value].roomId,
+        resetAvatar: true
     }
     var page2 = {
         uid: props.uid,
-        targetRoomId: roomList.value[changeIndex.value].roomId,
-        resetAvatar: true
+        roomId: isSearch.value ? searchId.value : roomList.value[banIndex.value].roomId,
+        resetTitle: true
     }
     console.log('headChangeIndex.value==', headChangeIndex.value);
     UpdateRoomInfo(headChangeIndex.value === 1 ? page1: page2)
         .then((data) => {
             updateRoomInfoData.value = data;
             console.log('updateRoomInfoData.value==', updateRoomInfoData.value);
-            showUserInfoPopup.value = false;
-            showChangeAvatar.value = false
-            userList()
+            showBanInformation.value = false;
+            showUnBlock.value = false
+            getRoomList()
         })
         .catch((err) => {
             //   loading.value = false;

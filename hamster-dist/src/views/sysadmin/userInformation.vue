@@ -37,20 +37,20 @@
                 </div>
             </template>
 
-            <template v-else>
+            <template v-if="userInfoData&&userInfoData !== null && isSearch">
                 <div class="user-item">
                     <div class="user-info-box f">
-                        <img class="img" :src="searchInfo?.avatar" alt="">
+                        <img class="img" :src="userInfoData?.avatar" alt="">
 
                         <div class="user-info">
                             <div class="username f">
-                                <van-notice-bar class="name" :text="searchInfo?.nick" :speed="20" />
-                                <img class="ex" v-if="searchInfo?.gender === 1"
+                                <van-notice-bar class="name" :text="userInfoData?.nick" :speed="20" />
+                                <img class="ex" v-if="userInfoData?.gender === 1"
                                     src="../../assets/img/sysadmin/ixon-ex.png" alt="">
                                 <img class="ex" v-else src="../../assets/img/sysadmin/ixon-ex.png" alt="">
-                                <img class="count" :src="searchInfo?.countryNationalFlag" alt="">
+                                <img class="count" :src="userInfoData?.countryNationalFlag" alt="">
                             </div>
-                            <p class="user-id">ID:{{ searchInfo?.erbanNo }}</p>
+                            <p class="user-id">ID:{{ userInfoData?.erbanNo }}</p>
                         </div>
                     </div>
 
@@ -64,7 +64,7 @@
             </template>
         </div>
         <!-- 没有数据 -->
-        <div class="none-data" v-if="userListData?.length < 0 && !isSearch || searchInfo === null && isSearch">
+        <div class="none-data" v-if="userListData===null && !isSearch || userInfoData === null && isSearch">
             <img src="../../assets/img/sysadmin/none.png" alt="">
             <p>No Data</p>
         </div>
@@ -167,12 +167,12 @@
                     <div class="user-basic-info">
                         <div class="avatar-section">
                             <div class="avatar-container">
-                                <img :src="userInfoData.avatar" alt="User Avatar" class="user-avatar">
+                                <img :src="userInfoData?.avatar" alt="User Avatar" class="user-avatar">
                             </div>
                         </div>
                         <div class="user-details">
-                            <h3 class="username">{{ userInfoData.nick }}</h3>
-                            <p class="user-id">ID:{{ userInfoData.erbanNo
+                            <h3 class="username">{{ userInfoData?.nick }}</h3>
+                            <p class="user-id">ID:{{ userInfoData?.erbanNo
                             }}</p>
                         </div>
                     </div>
@@ -273,7 +273,6 @@ function userList() {
 
 // 用户信息
 const userInfoData = ref()
-
 function UserInfo(targetUid) {
     getUserInfo({
         uid: props.uid,
@@ -296,7 +295,7 @@ const handleEdit = (ind) => {
     // showToast(`Edit user: ${user.username} (ID: ${user.id})`);
     // 这里可以打开编辑模态框或跳转到编辑页面
     showUserInfoPopup.value = true
-    UserInfo(isSearch.value ? searchInfo.value.uid : userListData.value[ind].uid)
+    UserInfo(isSearch.value ? searchId.value : userListData.value[ind].uid)
 
 };
 
@@ -305,17 +304,17 @@ function getUpdateUserInfoData() {
     // 修改用户信息
     var page1 = {
         uid: props.uid,
-        targetUid: userListData.value[changeIndex.value].uid,
+        targetUid: isSearch.value ? searchId.value : userListData.value[changeIndex.value].uid,
         resetAvatar: true
     }
     var page2 = {
         uid: props.uid,
-        targetUid: userListData.value[changeIndex.value].uid,
+        targetUid: isSearch.value ? searchId.value : userListData.value[changeIndex.value].uid,
         resetNick: true
     }
     var page3 = {
         uid: props.uid,
-        targetUid: userListData.value[changeIndex.value].uid,
+        targetUid: isSearch.value ? searchId.value : userListData.value[changeIndex.value].uid,
         resetSignture: true
     }
     console.log('headChangeIndex.value==', headChangeIndex.value);
@@ -342,7 +341,6 @@ function handleChangeUser(ind) {
 
 const handleChange = () => {
     getUpdateUserInfoData()
-
 }
 
 // 返回上一页
@@ -356,21 +354,6 @@ const searchId = ref("");
 // 当前选中的用户ID
 const selectedUserId = ref("");
 
-// 搜索用户
-const searchInfo = ref()
-function getSearchUser() {
-    searchUser({
-        uid: props.uid,
-        erbanNo: searchId.value
-    })
-        .then((data) => {
-            searchInfo.value = data
-            console.log('data==', searchInfo.value);
-        })
-        .catch((err) => {
-            showToast(err.message);
-        });
-}
 
 // 搜索用户
 const isSearch = ref(false)
@@ -380,7 +363,7 @@ const handleSearch = () => {
         return;
     }
     isSearch.value = true
-    getSearchUser()
+    UserInfo(isSearch.value ? searchId.value : userListData.value[ind].uid)
 };
 
 // 清空id
@@ -392,10 +375,8 @@ const clearApi = () => {
 
 // 封禁/解封用户
 const handleBan = (user) => {
-    // user.isBanned = !user.isBanned;
-    // const action = user.isBanned ? "banned" : "unbanned";
     showBanPopup.value = true
-    // showToast(`User ${user.username} ${action}`);
+    UserInfo(isSearch.value ? searchId.value : userListData.value[ind].uid)
     // 这里应该调用API更新用户状态
 };
 
@@ -483,7 +464,7 @@ function handleChangeBanUser() {
 
     BanUser({
         uid: props.uid,
-        targetUid: userListData.value[changeIndex.value].uid,
+        targetUid: isSearch.value ? searchId.value : userListData.value[changeIndex.value].uid,
         timeType: selectedBanTime.value,
         desc: encodedReason  // 使用编码后的值
     })

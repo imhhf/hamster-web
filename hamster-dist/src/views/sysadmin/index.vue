@@ -92,7 +92,7 @@
 
         <!-- create BD -->
         <van-popup v-model:show="showCreateBD" position="bottom" round class="showCreateBD">
-            <createBD></createBD>
+            <createBD :isUid="props.uid"></createBD>
         </van-popup>
     </div>
 

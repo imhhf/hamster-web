@@ -265,18 +265,20 @@
             height: 34px;
             border-radius: 30px;
             margin: 0 6px;
+            background: #CBCBCB;
+            color: #7F7F7F;
+            cursor: not-allowed;
+            border: none;
+
+            &.active{
+                color: white;
+                background: #ff4d4f;
+            }
 
             .ban-btn {
                 background: #ff4d4f;
                 color: white;
                 border-radius: 30px;
-                border: none;
-            }
-
-            .ban-btn:disabled {
-                background: #CBCBCB;
-                color: #7F7F7F;
-                cursor: not-allowed;
             }
         }
     }

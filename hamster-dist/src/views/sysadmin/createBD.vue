@@ -1,119 +1,152 @@
 <template>
-    <div class="createBD-page">
-        <!-- 弹窗头部 -->
-        <div class="popup-header">
-            <h2 class="popup-title">Create BD</h2>
-            <van-icon class="close-icon" @click="showBanInformation = false" />
-        </div>
-
-        <div class="nav">
-            <p class="lable">Please check the user ID</p>
-            <div class="inp-box f-s">
-                <van-search class="van-search" v-model="searchId" placeholder="Search user ID" />
-                <van-button class="action-btn Search f-c" @click="handleChangeName">
-                    Search
-                </van-button>
-            </div>
-            <p class="lable lable2">Please check the user ID</p>
-            <!-- <input class="input" type="text"> -->
-            <div class="reason-input-container">
-                <textarea v-model="banReason" class="reason-input" placeholder="Please check the user ID" maxlength="30"
-                    rows="3"></textarea>
-            </div>
-        </div>
-
-        <!-- 操作按钮 -->
-        <div class="action-buttons">
-            <van-button class="action-btn ban-btn" @click="handleBanUser" :disabled="!banReason.trim()">
-                Ban the User
-            </van-button>
-        </div>
-
+  <div class="createBD-page">
+    <!-- 弹窗头部 -->
+    <div class="popup-header">
+      <h2 class="popup-title">Create BD</h2>
+      <van-icon class="close-icon" @click="showBanInformation = false" />
     </div>
 
+    <div class="nav">
+      <p class="lable">Please check the user ID</p>
+      <!-- 搜索用户 -->
+      <div v-if="!closeOFF" class="inp-box f-s">
+        <van-search
+          class="van-search"
+          v-model="searchId"
+          placeholder="Search user ID"
+        />
+        <van-button class="action-btn Search f-c" @click="handleSearch()">
+          Search
+        </van-button>
+      </div>
+      <!-- 有搜索用户 -->
+      <div v-if="closeOFF" class="user-box f-s">
+        <div class="user-basic-info">
+          <div class="avatar-section">
+            <div class="avatar-container">
+              <img
+                :src="searchInfo?.avatar"
+                alt="User Avatar"
+                class="user-avatar"
+              />
+            </div>
+          </div>
+          <div class="user-details">
+            <h3 class="username">{{ searchInfo?.nick }}</h3>
+            <p class="user-id">ID:{{ searchInfo?.erbanNo }}</p>
+          </div>
+        </div>
+        <img
+          @click="clickOff"
+          class="right"
+          src="../../assets/img/sysadmin/off.png"
+          alt=""
+        />
+      </div>
+
+      <p class="lable lable2">WhatsApp</p>
+      <div class="reason-input-container">
+        <textarea
+          v-model="banReason"
+          class="reason-input"
+          placeholder="Please enter the WhatsApp"
+          maxlength="30"
+          rows="3"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- 操作按钮 -->
+    <div class="action-buttons">
+      <van-button
+        class="action-btn ban-btn"
+        @click="handleBanUser"
+        :disabled="!banReason.trim()"
+      >
+        Ban the User
+      </van-button>
+    </div>
+  </div>
 </template>
 <style lang="scss" src="./scss/createBD.scss" scoped></style>
 
 <script setup>
-import { ref, onMounted, reactive, computed } from "vue";
+import { ref, onMounted, reactive, computed, defineProps } from "vue";
 import { useRouter } from "vue-router";
 import { showToast } from "vant";
+import { searchUser, BindBd } from "@/api/sysadmin";
+const props = defineProps(["isUid", "ticket", "memberUid"]);
 
 const router = useRouter();
 
 // 封禁用户弹窗
-const showBanInformation = ref(false)
+const showBanInformation = ref(false);
 // 解封状态
-const showUnBlock = ref(false)
+const showUnBlock = ref(false);
 
 // 搜索的用户ID
 const searchId = ref("");
 // 当前选中的用户ID
 const selectedUserId = ref("");
-
-// 用户列表数据
-const userList = ref([
-    { id: "12415", username: "Username", isBanned: false },
-    { id: "12416", username: "Username", isBanned: true },
-    { id: "12417", username: "Username", isBanned: false },
-    { id: "12418", username: "Username", isBanned: false },
-    { id: "12419", username: "Username", isBanned: true }
-]);
-
-// 返回上一页
-const goBack = () => {
-    router.back();
-};
+// 搜索用户
+const searchInfo = ref({});
+function getSearchUser() {
+  searchUser({
+    uid: props.isUid,
+    erbanNo: searchId.value,
+  })
+    .then((data) => {
+      searchInfo.value = data;
+      console.log("data==", searchInfo.value);
+    })
+    .catch((err) => {
+      showToast(err.message);
+    });
+}
 
 // 搜索用户
 const handleSearch = () => {
-    if (!searchId.value.trim()) {
-        showToast("Please enter user ID");
-        return;
-    }
-
-    // 模拟搜索逻辑
-    const foundUser = userList.value.find(user => user.id === searchId.value);
-    if (foundUser) {
-        userList.value = [foundUser];
-        selectedUserId.value = foundUser.id;
-        showToast("User found");
-    } else {
-        showToast("User not found");
-        // 重置用户列表
-        resetUserList();
-    }
+  if (!searchId.value.trim()) {
+    showToast("Please enter user ID");
+    return;
+  }
+  closeOFF.value = true;
+  getSearchUser();
 };
 
-// 重置用户列表
-const resetUserList = () => {
-    userList.value = [
-        { id: "12415", username: "Username", isBanned: false },
-        { id: "12416", username: "Username", isBanned: true },
-        { id: "12417", username: "Username", isBanned: false },
-        { id: "12418", username: "Username", isBanned: false },
-        { id: "12419", username: "Username", isBanned: true }
-    ];
-    selectedUserId.value = "";
+// 关闭搜索
+const closeOFF = ref(false);
+const clickOff = () => {
+  closeOFF.value = false;
+};
+// 返回上一页
+const goBack = () => {
+  router.back();
+};
+const banReason = ref("");
+// 绑定
+const getBindBd = () => {
+  BindBd({
+    uid: props.isUid,
+    bdUid: searchInfo.value?.uid,
+    whatsApp: banReason.value,
+  })
+    .then((data) => {
+      searchInfo.value = data;
+      closeOFF.value = false;
+      banReason.value = "";
+      console.log("data==", searchInfo.value);
+    })
+    .catch((err) => {
+      showToast(err.message);
+    });
 };
 
-// 用户信息数据
-const userInfo = reactive({
-    id: '12415',
-    username: 'Username',
-    avatar: ('../../assets/img/sysadmin/icon-back.png'), // 使用默认头像
-    gender: 'Female',
-    country: 'USA',
-    wealth: 'LV.12',
-    charm: 'LV.12',
-    agency: 'Agency name'
-});
-
-
-// 封禁原因
-const banReason = ref('');
+const handleBanUser = () => {
+  getBindBd();
+};
 
 onMounted(() => {
-    // 初始化代码
+  // 初始化代码
 });
 </script>

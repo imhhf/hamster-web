@@ -41,24 +41,24 @@
         </div>
       </template>
 
-      <template v-else>
+      <template v-if="banInfo&&banInfo !== null && isSearch">
         <div class="user-item">
           <div class="user-info-box f">
-            <img class="img" :src="searchInfo?.avatar" alt="" />
+            <img class="img" :src="banInfo?.avatar" alt="" />
 
             <div class="user-info">
               <div class="username f">
-                <div class="name">{{ searchInfo?.nick }}</div>
-                <img class="ex" v-if="searchInfo?.gender === 1" src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
+                <div class="name">{{ banInfo?.nick }}</div>
+                <img class="ex" v-if="banInfo?.gender === 1" src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
                 <img class="ex" v-else src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
-                <img class="count" :src="searchInfo?.countryNationalFlag" alt="" />
+                <img class="count" :src="banInfo?.countryNationalFlag" alt="" />
               </div>
-              <p class="user-id">ID:{{ searchInfo?.erbanNo }}</p>
+              <p class="user-id">ID:{{ banInfo?.erbanNo }}</p>
             </div>
           </div>
           <div class="user-actions">
-            <p class="banned" :class="searchInfo?.blockStatus === 1 ? '' : 'Unblocked'">
-              {{ searchInfo?.blockStatus === 1 ? "Banned" : "Unblocked" }}
+            <p class="banned" :class="banInfo?.blockStatus === 1 ? '' : 'Unblocked'">
+              {{ banInfo?.blockStatus === 1 ? "Banned" : "Unblocked" }}
             </p>
             <div class="view f" @click="popShowBanInformation(index)">
               View<img class="ex" src="../../assets/img/sysadmin/icon-right.png" alt="" />
@@ -70,8 +70,8 @@
 
     <!-- 没有数据 -->
     <div class="none-data" v-if="
-      (userBanList?.length < 0 && !isSearch) ||
-      (searchInfo === null && isSearch)
+      (userBanList===null && !isSearch) ||
+      (banInfo === null && isSearch)
     ">
       <img src="../../assets/img/sysadmin/none.png" alt="" />
       <p>No Data</p>
@@ -90,31 +90,31 @@
           <div class="user-basic-info">
             <div class="avatar-section">
               <div class="avatar-container">
-                <img :src="banInfo[banIndex].avatar" alt="User Avatar" class="user-avatar" />
+                <img :src="banInfo?.avatar" alt="User Avatar" class="user-avatar" />
               </div>
             </div>
             <div class="user-details">
-              <h3 class="username">{{ banInfo[banIndex].nick }}</h3>
-              <p class="user-id">ID:{{ banInfo[banIndex].erbanNo }}</p>
+              <h3 class="username">{{ banInfo?.nick }}</h3>
+              <p class="user-id">ID:{{ banInfo?.erbanNo }}</p>
             </div>
             <div class="right">
-              Ban time: {{ myTimeDay(banInfo[banIndex].blockStartTime) }}
+              Ban time: {{ myTimeDay(banInfo?.blockStartTime) }}
             </div>
           </div>
 
           <div class="ban-tit">Ban time</div>
-          <div class="day">{{ banInfo[banIndex].blockTime }}</div>
+          <div class="day">{{ banInfo?.blockTime }}</div>
 
           <div class="ban-tit">Reason for ban</div>
           <div class="tit">
-            {{ banInfo[banIndex].blockDesc }}
+            {{ banInfo?.blockDesc }}
           </div>
         </div>
 
         <!-- 操作按钮 -->
         <div class="action-buttons">
-          <van-button class="action-btn ban-btn" @click="handleBanUser" :disabled="!banReason.trim()">
-            Unblock this User
+          <van-button class="action-btn ban-btn" :class="banInfo?.blockStatus === 1?'active':''" @click="banInfo?.blockStatus === 1?handleBanUser():''">
+            {{banInfo?.blockStatus === 1 ? 'Unblock this User':'This user has been unblocked'}}
           </van-button>
         </div>
       </div>
@@ -129,7 +129,7 @@
         <van-button class="action-btn Cancle f-c" @click="showUnBlock = false">
           Cancle
         </van-button>
-        <van-button class="action-btn Confirm f-c" @click="handleChangeName">
+        <van-button class="action-btn Confirm f-c" @click="handleChange">
           Confirm
         </van-button>
       </div>
@@ -142,7 +142,7 @@
 import { ref, onMounted, reactive, computed } from "vue";
 import { useRouter } from "vue-router";
 import { showToast } from "vant";
-import { GetUserBanList, GetBanInfo, searchUser } from "@/api/sysadmin";
+import { GetUserBanList, GetBanInfo, searchUser, UnbanUser } from "@/api/sysadmin";
 const props = defineProps(["uid", "ticket", "memberUid"]);
 
 // xx.xx.xx 时间格式
@@ -165,8 +165,6 @@ const showBanInformation = ref(false);
 // 解封状态
 const showUnBlock = ref(false);
 
-// 搜索的用户ID
-const searchId = ref("");
 // 当前选中的用户ID
 const selectedUserId = ref("");
 
@@ -192,7 +190,7 @@ const banInfo = ref();
 function getBanInfo(targetUid) {
   GetBanInfo({
     uid: props.uid,
-    blockId: isSearch.value ? searchInfo.value.blockId : userBanList.value[banIndex.value].blockId,
+    blockId: isSearch.value ? searchId.value : userBanList.value[banIndex.value]?.blockId,
   })
     .then((data) => {
       banInfo.value = data;
@@ -210,37 +208,54 @@ const popShowBanInformation = (ind) => {
   getBanInfo();
 };
 
+// 解除封禁
+const getUnbanUser=()=>{
+  UnbanUser({
+    uid: props.uid,
+    blockId: isSearch.value ? searchId.value : userBanList.value[banIndex.value].blockId,
+  })
+    .then((data) => {
+        banInfo.value = data;
+        showBanInformation.value = false;
+        showUnBlock.value = false
+        getUserBanList()
+    })
+    .catch((err) => {
+      //   loading.value = false;
+      showToast(err.message);
+    });
+}
+
+const handleBanUser = ()=>{
+    showUnBlock.value = true
+}
+
+// 二次确认解封
+const handleChange = () =>{
+    getUnbanUser()
+}
 // 返回上一页
 const goBack = () => {
   router.back();
 };
 
 // 搜索用户
-const searchInfo = ref()
-function getSearchUser() {
-  searchUser({
-    uid: props.uid,
-    erbanNo: searchId.value
-  })
-    .then((data) => {
-      searchInfo.value = data
-      console.log('data==', searchInfo.value);
-    })
-    .catch((err) => {
-      showToast(err.message);
-    });
-}
-
-// 搜索用户
 const isSearch = ref(false);
+// 搜索的用户ID
+const searchId = ref("");
 const handleSearch = () => {
   if (!searchId.value.trim()) {
     showToast("Please enter user ID");
     return;
   }
   isSearch.value = true;
-  getSearchUser();
-};
+  getBanInfo();
+}
+// 清空id
+const clearApi = () => {
+    isSearch.value = false
+    getUserBanList()
+}
 
 // 封禁原因
 const banReason = ref("");

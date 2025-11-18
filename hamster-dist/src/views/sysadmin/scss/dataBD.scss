@@ -1,11 +1,10 @@
-@import './common.scss';
+@import "./common.scss";
 
 .information-page {
     min-width: 100vw;
     min-height: 100vh;
     background-color: #f5f5f5;
 }
-
 
 .search-section {
     padding: 20px 10px 17px 10px;
@@ -26,7 +25,7 @@
         :deep(.van-cell) {
             width: 295px;
             height: 41px;
-            background: #FFFFFF;
+            background: #ffffff;
             border-radius: 21px;
             padding: 0 15px;
             box-sizing: border-box;
@@ -46,7 +45,9 @@
         }
 
         .search-btn {
-            font-family: PingFangSC, PingFang SC;
+            font-family:
+                PingFangSC,
+                PingFang SC;
             font-weight: 500;
             font-size: 14px;
             color: #000000;
@@ -62,7 +63,7 @@
     .user-item {
         width: 355px;
         height: 82px;
-        background: #FFFFFF;
+        background: #ffffff;
         border-radius: 6px;
         display: flex;
         justify-content: space-between;
@@ -97,7 +98,7 @@
 
             .user-id {
                 font-size: 14px;
-                color: #A19B95;
+                color: #a19b95;
                 margin: 0;
             }
         }
@@ -109,18 +110,18 @@
                 font-family: Helvetica, Helvetica;
                 font-weight: bold;
                 font-size: 13px;
-                color: #EC6762;
+                color: #ec6762;
                 line-height: 16px;
 
                 &.Unblocked {
-                    color: #A19B95;
+                    color: #a19b95;
                 }
             }
 
             .view {
                 font-family: Helvetica;
                 font-size: 13px;
-                color: #A19B95;
+                color: #a19b95;
                 line-height: 16px;
                 justify-content: right;
                 margin-top: 5px;
@@ -130,13 +131,12 @@
                     height: 12px;
                 }
             }
-
         }
     }
 }
 
 :deep(.showBanInformation) {
-    background-color: #F1F1F1;
+    background-color: #f1f1f1;
     height: 462px;
 
     .popup-container {
@@ -163,9 +163,8 @@
             .close-icon {
                 width: 18px;
                 height: 11px;
-                @include bgImage('icon-up');
+                @include bgImage("icon-up");
             }
-
         }
     }
 
@@ -200,8 +199,6 @@
                 }
             }
 
-
-
             .user-details {
                 flex: 1;
 
@@ -214,7 +211,7 @@
 
                 .user-id {
                     font-size: 14px;
-                    color: #A19B95;
+                    color: #a19b95;
                     margin: 0;
                 }
             }
@@ -224,6 +221,34 @@
                 font-size: 13px;
                 color: #000000;
                 line-height: 16px;
+                img {
+                    width: 12px;
+                    margin: 0 2px;
+                }
+                .native-month-dropdown {
+                    width: 100px;
+                    height: 32px;
+                    padding: 0 8px;
+                    margin-right: 8px;
+                    border: none;
+                    border-radius: 4px;
+                    font-size: 14px;
+                    color: #333;
+                    background-color: #fff;
+                    appearance: none; // 清除默认下拉箭头
+                    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23666' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E");
+                    background-repeat: no-repeat;
+                    background-position: right 8px center;
+                    background-size: 12px 8px;
+                    outline: none;
+                }
+
+                .user-basic-info {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    width: 100%;
+                }
             }
         }
 
@@ -239,7 +264,7 @@
             .left {
                 font-family: Helvetica;
                 font-size: 14px;
-                color: #A19B95;
+                color: #a19b95;
                 line-height: 17px;
             }
 
@@ -257,12 +282,11 @@
                 }
 
                 &.color {
-                    color: #E8A138;
+                    color: #e8a138;
                 }
             }
         }
     }
-
 
     .action-buttons {
         display: flex;
@@ -276,18 +300,17 @@
             font-size: 14px;
             font-weight: 500;
             border: none;
-            background-image: linear-gradient(to bottom, #EC6762, #EC6762);
+            background-image: linear-gradient(to bottom, #ec6762, #ec6762);
             color: white;
             border-radius: 30px;
         }
     }
 }
 
-
 :deep(.showChangeAvatar) {
     width: 327px;
     height: 205px;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
 
     .pop-tit {
         font-family: Helvetica, Helvetica;
@@ -319,13 +342,13 @@
             margin: 0 6px;
 
             &.Cancle {
-                color: #7F7F7F;
-                background-image: linear-gradient(to bottom, #CBCBCB, #CBCBCB);
+                color: #7f7f7f;
+                background-image: linear-gradient(to bottom, #cbcbcb, #cbcbcb);
             }
 
             &.Confirm {
-                color: #FFFFFF;
-                background-image: linear-gradient(to bottom, #AC41F6, #520BF5);
+                color: #ffffff;
+                background-image: linear-gradient(to bottom, #ac41f6, #520bf5);
             }
         }
     }
