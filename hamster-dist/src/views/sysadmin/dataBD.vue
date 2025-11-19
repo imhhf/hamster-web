@@ -280,6 +280,7 @@ const selectedMonth = ref("");
 const monthOptions = ref([]);
 
 // 初始化近6个月下拉选项
+// 初始化近6个月下拉选项
 function initMonthOptions() {
   const now = new Date();
   const currentYear = now.getFullYear();
@@ -297,10 +298,12 @@ function initMonthOptions() {
       month += 12;
     }
 
-    // 格式化为 YYYY/MM（补零）
-    const monthStr = String(month).padStart(2, "0");
-    const dateStr = `${year}/${monthStr}`;
-    options.push({ label: dateStr, value: dateStr });
+    // 格式化为 YYYYMM（纯数字，月份补零）
+    const monthValue = parseInt(`${year}${String(month).padStart(2, "0")}`);
+    // 显示格式保持 YYYY/MM 以便用户阅读
+    const displayLabel = `${year}/${String(month).padStart(2, "0")}`;
+
+    options.push({ label: displayLabel, value: monthValue });
   }
 
   monthOptions.value = options;

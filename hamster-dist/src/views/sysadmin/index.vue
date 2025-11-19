@@ -52,13 +52,13 @@
                 </div>
                 <img class="go" src="@/assets/img/sysadmin/icon-right.png" alt="">
             </div>
-            <div class="li f-s">
+            <!-- <div class="li f-s">
                 <div class="left f">
                     <img src="@/assets/img/sysadmin/icon-free.png" alt="">
                     <span>Free gift package</span>
                 </div>
                 <img class="go" src="@/assets/img/sysadmin/icon-right.png" alt="">
-            </div>
+            </div> -->
         </div>
 
         <p class="lable-title">{{ $t('sysadmin.Roo') }}</p>

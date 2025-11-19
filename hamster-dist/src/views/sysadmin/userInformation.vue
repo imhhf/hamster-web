@@ -381,6 +381,7 @@ const clearApi = () => {
 
 // 封禁/解封用户
 const handleBan = (ind) => {
+    changeIndex.value = ind
     showBanPopup.value = true
     UserInfo(userListData.value[ind].uid)
     // 这里应该调用API更新用户状态
@@ -476,7 +477,8 @@ function handleChangeBanUser() {
     })
         .then((data) => {
             banUserData.value = data;
-            showToast('The user is banned and cannot be banned repeatedly;');
+            showToast('successful');
+            //showToast('The user is banned and cannot be banned repeatedly;');
             showBanUser.value = false;
             showBanPopup.value = false;
             userList(null);
