@@ -2,17 +2,17 @@
   <div class="createBD-page">
     <!-- 弹窗头部 -->
     <div class="popup-header">
-      <h2 class="popup-title">Create BD</h2>
+      <h2 class="popup-title">{{ $t('sysadmin.Cre') }}</h2>
       <van-icon class="close-icon" @click="handleClose" />
     </div>
 
     <div class="nav">
-      <p class="lable">Please check the user ID</p>
+      <p class="lable">{{ $t('sysadmin.Ple20') }}</p>
       <!-- 搜索用户 -->
       <div v-if="!closeOFF" class="inp-box f-s">
-        <van-search class="van-search" v-model="searchId" placeholder="Search user ID" />
+        <van-search class="van-search" v-model="searchId" :placeholder="$t('sysadmin.Sea21')" />
         <van-button class="action-btn Search f-c" @click="handleSearch()">
-          Search
+          {{ $t('sysadmin.Sea') }}
         </van-button>
       </div>
       <!-- 有搜索用户 -->
@@ -31,9 +31,9 @@
         <img @click="clickOff" class="right" src="../../assets/img/sysadmin/off.png" alt="" />
       </div>
 
-      <p class="lable lable2">WhatsApp</p>
+      <p class="lable lable2">{{ $t('sysadmin.Wha') }}</p>
       <div class="reason-input-container">
-        <textarea v-model="banReason" class="reason-input" placeholder="Please enter the WhatsApp" maxlength="30"
+        <textarea v-model="banReason" class="reason-input" :placeholder="$t('sysadmin.Ple22')" maxlength="30"
           rows="3"></textarea>
       </div>
     </div>
@@ -41,7 +41,7 @@
     <!-- 操作按钮 -->
     <div class="action-buttons">
       <van-button class="action-btn ban-btn" @click="handleBanUser" :disabled="!banReason.trim()">
-        Create BD
+        {{ $t('sysadmin.Cre') }}
       </van-button>
     </div>
   </div>
@@ -53,6 +53,8 @@ import { ref, onMounted, reactive, computed, defineProps } from "vue";
 import { useRouter } from "vue-router";
 import { showToast } from "vant";
 import { searchUser, BindBd } from "@/api/sysadmin";
+import i18n from '@/i18n/index.js';
+const { t } = i18n.global;
 const props = defineProps(["isUid", "ticket", "memberUid"]);
 // 定义发射事件
 const emit = defineEmits(["success", "close"]);
@@ -89,7 +91,8 @@ function getSearchUser() {
 // 搜索用户
 const handleSearch = () => {
   if (!searchId.value.trim()) {
-    showToast("Please enter user ID");
+    showToast(t('sysadmin.plea'));
+
     return;
   }
   // closeOFF.value = true;
@@ -117,8 +120,8 @@ const getBindBd = () => {
       searchInfo.value = data;
       closeOFF.value = false;
       banReason.value = "";
-      showToast('Change successful');
-
+      showToast(t('sysadmin.succ'));
+      
       setTimeout(() => {
         // 成功时发射事件
         emit("success", data);

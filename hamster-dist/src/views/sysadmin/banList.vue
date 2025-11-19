@@ -2,13 +2,13 @@
   <div class="information-page">
     <div class="top">
       <img class="back" src="../../assets/img/sysadmin/icon-back.png" alt="" @click="goBack" />
-      <p class="top-title">User ban list</p>
+      <p class="top-title">{{ $t('sysadmin.Use2') }}</p>
     </div>
 
     <div class="search-section">
       <div class="search-container">
-        <van-search class="van-search" @clear="clearApi" v-model="searchId" placeholder="Enter the user ID" />
-        <button class="search-btn" @click="handleSearch">Search</button>
+        <van-search class="van-search" @clear="clearApi" v-model="searchId" :placeholder="$t('sysadmin.Ent')" />
+        <button class="search-btn" @click="handleSearch">{{ $t('sysadmin.Sea') }}</button>
       </div>
     </div>
 
@@ -34,7 +34,7 @@
             {{ user.blockStatus === 1 ? "Banned" : "Unblocked" }}
           </p>
           <div class="view f" @click="popShowBanInformation(index)">
-            View<img class="ex" src="../../assets/img/sysadmin/icon-right.png" alt="" />
+            {{ $t('sysadmin.View') }}<img class="ex" src="../../assets/img/sysadmin/icon-right.png" alt="" />
           </div>
         </div>
       </div>
@@ -45,7 +45,7 @@
       userBanList === null
     ">
       <img src="../../assets/img/sysadmin/none.png" alt="" />
-      <p>No Data</p>
+      <p>{{ $t('sysadmin.no') }}</p>
     </div>
 
     <!-- 用户信息弹窗 -->
@@ -53,7 +53,7 @@
       <div class="popup-container">
         <!-- 弹窗头部 -->
         <div class="popup-header">
-          <h2 class="popup-title">Ban information</h2>
+          <h2 class="popup-title">{{ $t('sysadmin.Ban13') }}</h2>
           <van-icon class="close-icon" @click="showBanInformation = false" />
         </div>
         <div class="ban-box">
@@ -69,14 +69,16 @@
               <p class="user-id">ID:{{ banInfo?.erbanNo }}</p>
             </div>
             <div class="right">
-              Ban time: {{ myTimeDay(banInfo?.blockStartTime) }}
+              {{ $t('sysadmin.Ban14') }} {{ myTimeDay(banInfo?.blockStartTime) }}
             </div>
           </div>
 
-          <div class="ban-tit">Ban time</div>
-          <div class="day">{{ banInfo?.timeType === 'lasting' ? 'Forever' : Number(banInfo?.timeType) === 1 ? '1 day' : Number(banInfo?.timeType) === 3 ? '3day': Number(banInfo?.timeType)===7?'7 day' :Number(banInfo?.timeType)===30?'30 day':''}}</div>
+          <div class="ban-tit">{{ $t('sysadmin.Ban8') }}</div>
+          <div class="day">{{ banInfo?.timeType === 'lasting' ? 'Forever' : Number(banInfo?.timeType) === 1 ? '1 day' :
+            Number(banInfo?.timeType) === 3 ? '3day' : Number(banInfo?.timeType) === 7 ? '7 day'
+              : Number(banInfo?.timeType)===30?'30 day':''}}</div>
 
-          <div class="ban-tit">Reason for ban</div>
+          <div class="ban-tit">{{ $t('sysadmin.Rea') }}</div>
           <div class="tit">
             {{ banInfo?.blockDesc }}
           </div>
@@ -86,7 +88,7 @@
         <div class="action-buttons">
           <van-button class="action-btn ban-btn" :class="banInfo?.blockStatus === 1 ? 'active' : ''"
             @click="banInfo?.blockStatus === 1 ? handleBanUser() : ''">
-            {{ banInfo?.blockStatus === 1 ? 'Unblock this User' : 'This user has been unblocked' }}
+            {{ banInfo?.blockStatus === 1 ? $t('sysadmin.Unb15') : $t('sysadmin.The') }}
           </van-button>
         </div>
       </div>
@@ -94,15 +96,15 @@
 
     <!-- 解封弹窗 -->
     <van-popup v-model:show="showUnBlock" round class="showChangeAvatar">
-      <p class="pop-tit">Unblock this user</p>
-      <p class="tips">Whether to confirm the unblocking of this user?</p>
+      <p class="pop-tit">{{ $t('sysadmin.Unb15') }}</p>
+      <p class="tips">{{ $t('sysadmin.Whe') }}</p>
       <!-- 操作按钮区域 -->
       <div class="action-buttons f-c">
         <van-button class="action-btn Cancle f-c" @click="showUnBlock = false">
-          Cancle
+          {{ $t('sysadmin.Can') }}
         </van-button>
         <van-button class="action-btn Confirm f-c" @click="handleChange">
-          Confirm
+          {{ $t('sysadmin.Con') }}
         </van-button>
       </div>
     </van-popup>
@@ -115,6 +117,8 @@ import { ref, onMounted, reactive, computed } from "vue";
 import { useRouter } from "vue-router";
 import { showToast } from "vant";
 import { GetUserBanList, GetBanInfo, searchUser, UnbanUser } from "@/api/sysadmin";
+import i18n from '@/i18n/index.js';
+const { t } = i18n.global;
 const props = defineProps(["uid", "ticket", "memberUid"]);
 
 // xx.xx.xx 时间格式
@@ -218,7 +222,7 @@ const isSearch = ref(false);
 const searchId = ref("");
 const handleSearch = () => {
   if (!searchId.value.trim()) {
-    showToast("Please enter user ID");
+    showToast(t('sysadmin.plea'));
     return;
   }
   isSearch.value = true;

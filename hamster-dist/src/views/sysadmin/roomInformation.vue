@@ -2,13 +2,14 @@
     <div class="information-page">
         <div class="top">
             <img class="back" src="../../assets/img/sysadmin/icon-back.png" alt="" @click="goBack">
-            <p class="top-title">Room information</p>
+            <p class="top-title">{{ $t('sysadmin.Roo3') }}</p>
         </div>
 
         <div class="search-section">
             <div class="search-container">
-                <van-search class="van-search" @clear="clearApi" v-model="searchId" placeholder="Enter the room ID" />
-                <button class="search-btn" @click="handleSearch">Search</button>
+                <van-search class="van-search" @clear="clearApi" v-model="searchId"
+                    :placeholder="$t('sysadmin.Ent16')" />
+                <button class="search-btn" @click="handleSearch">{{ $t('sysadmin.Sea') }}</button>
             </div>
         </div>
 
@@ -32,7 +33,8 @@
 
                 <div class="user-actions">
                     <div class="view f" @click="popShowBanInformation(index)">
-                        View<img class="ex" src="../../assets/img/sysadmin/icon-right.png" alt="" />
+                        {{ $t('sysadmin.View') }}<img class="ex" src="../../assets/img/sysadmin/icon-right.png"
+                            alt="" />
                     </div>
                 </div>
             </div>
@@ -41,7 +43,7 @@
         <!-- 没有数据 -->
         <div class="none-data" v-if="roomList === null">
             <img src="../../assets/img/sysadmin/none.png" alt="" />
-            <p>No Data</p>
+            <p>{{ $t('sysadmin.no') }}</p>
         </div>
 
         <!-- 用户信息弹窗 -->
@@ -49,7 +51,7 @@
             <div class="popup-container">
                 <!-- 弹窗头部 -->
                 <div class="popup-header">
-                    <h2 class="popup-title">room information</h2>
+                    <h2 class="popup-title">{{ $t('sysadmin.Roo3') }}</h2>
                     <van-icon class="close-icon" @click="showBanInformation = false" />
                 </div>
                 <div class="ban-box">
@@ -67,23 +69,23 @@
                     </div>
 
                     <div class="cell f-s">
-                        <div class="left">Owner</div>
+                        <div class="left">{{ $t('sysadmin.Owner') }}</div>
                         <div class="right">{{ roomInfo?.ownerNick }}</div>
                     </div>
                     <div class="cell f-s">
-                        <div class="left">Country</div>
+                        <div class="left">{{ $t('sysadmin.Cou') }}</div>
                         <div class="right">{{ roomInfo?.countryName }}</div>
                     </div>
                     <div class="cell f-s">
-                        <div class="left">Agency</div>
+                        <div class="left">{{ $t('sysadmin.Age') }}</div>
                         <div class="right">{{ roomInfo?.agencyName }}</div>
                     </div>
                     <div class="cell f-s">
-                        <div class="left">Administrator</div>
+                        <div class="left">{{ $t('sysadmin.Adm17') }}</div>
                         <div class="right">{{ roomInfo?.adminCount }}</div>
                     </div>
                     <div class="cell f-s">
-                        <div class="left">Member</div>
+                        <div class="left">{{ $t('sysadmin.Mem') }}</div>
                         <div class="right">{{ roomInfo?.memberCount }}</div>
                     </div>
                 </div>
@@ -92,11 +94,11 @@
                 <div class="action-buttons">
                     <van-button class="action-btn change-avatar-btn f-c" @click="handleChangeUser(1)">
                         <img class="ex" src="../../assets/img/sysadmin/icon1.png" alt="">
-                        Change avatar
+                        {{ $t('sysadmin.Cha') }}
                     </van-button>
                     <van-button class="action-btn change-name-btn f-c" @click="handleChangeUser(2)">
                         <img class="ex" src="../../assets/img/sysadmin/icon2.png" alt="">
-                        Change name
+                        {{ $t('sysadmin.Cha4') }}
                     </van-button>
                 </div>
             </div>
@@ -105,16 +107,16 @@
 
         <!-- 解封弹窗 -->
         <van-popup v-model:show="showUnBlock" round class="showChangeAvatar">
-            <p class="pop-tit"> {{ headChangeIndex === 1 ? 'Change avatar' : 'Change name' }}
+            <p class="pop-tit"> {{ headChangeIndex === 1 ? $t('sysadmin.Cha') : $t('sysadmin.Cha4') }}
             </p>
-            <p class="tips">{{ headChangeIndex === 1 ? 'Change the room avatar to the default avator.' : 'Change the room name to the default avator.'}}</p>
+            <p class="tips">{{ headChangeIndex === 1 ? $('sysadmin.Cha18') : $('sysadmin.Cha19') }}</p>
             <!-- 操作按钮区域 -->
             <div class="action-buttons f-c">
                 <van-button class="action-btn Cancle f-c" @click="showUnBlock = false">
-                    Cancle
+                    {{ $t('sysadmin.Can') }}
                 </van-button>
                 <van-button class="action-btn Confirm f-c" @click="handleChange">
-                    Confirm
+                    {{ $t('sysadmin.Con') }}
                 </van-button>
             </div>
         </van-popup>
@@ -128,7 +130,8 @@ import { ref, onMounted, reactive, computed } from "vue";
 import { useRouter } from "vue-router";
 import { showToast } from "vant";
 import { GetRoomList, GetRoomInfo, searchUser, UpdateRoomInfo } from "@/api/sysadmin";
-
+import i18n from '@/i18n/index.js';
+const { t } = i18n.global;
 const router = useRouter();
 const props = defineProps(["uid", "ticket", "memberUid"]);
 
@@ -146,7 +149,8 @@ const selectedUserId = ref("");
 const isSearch = ref(false);
 const handleSearch = () => {
     if (!searchId.value.trim()) {
-        showToast("Please enter user ID");
+        showToast(t('sysadmin.plea'));
+
         return;
     }
     isSearch.value = true;

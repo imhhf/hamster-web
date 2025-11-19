@@ -508,6 +508,12 @@ const EN = {
     Cre24: 'Creation time',
     Rem: 'Remove BD',
     Are25: 'Are you sure you want to remove BD?',
+    no: 'No Data',
+    succ: 'Change successful',
+    plea: 'Please enter user ID',
+    rem: 'Remove successfully',
+    useri: 'User ID not found',
+    successful: 'successful'
   },
 };
 

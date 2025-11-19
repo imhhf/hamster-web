@@ -39,7 +39,7 @@
         <!-- 没有数据 -->
         <div class="none-data" v-if="userListData === null">
             <img src="../../assets/img/sysadmin/none.png" alt="">
-            <p>No Data</p>
+            <p>{{ $t('sysadmin.no') }}</p>
         </div>
         <!-- 用户信息弹窗 -->
         <van-popup v-model:show="showUserInfoPopup" position="bottom" round class="user-info-popup">
@@ -68,8 +68,8 @@
                     <div class="user-detail-info">
                         <div class="info-item">
                             <span class="info-label">{{ $t('sysadmin.Gen') }}</span>
-                            <img class="ex" v-if="userInfoData?.gender === 1" src="../../assets/img/sysadmin/ixon-ex.png"
-                                alt="">
+                            <img class="ex" v-if="userInfoData?.gender === 1"
+                                src="../../assets/img/sysadmin/ixon-ex.png" alt="">
                             <img class="ex" v-else src="../../assets/img/sysadmin/icon-g.png" alt="">
                         </div>
                         <div class="info-item">
@@ -150,7 +150,7 @@
                         <div class="user-details">
                             <h3 class="username">{{ userInfoData?.nick }}</h3>
                             <p class="user-id">ID:{{ userInfoData?.erbanNo
-                                }}</p>
+                            }}</p>
                         </div>
                     </div>
 
@@ -224,9 +224,10 @@ import { ref, onMounted, reactive, computed } from "vue";
 import { useRouter } from "vue-router";
 import { showToast } from "vant";
 import { searchUser, getUserList, getUserInfo, updateUserInfo, BanUser } from "@/api/sysadmin";
-
+import i18n from '@/i18n/index.js';
+const { t } = i18n.global;
 const router = useRouter();
-const props = defineProps(["uid", "lang", "memberUid"]);
+const props = defineProps(["uid", "lang", "ticket"]);
 // const lang = getLang();
 
 // 封禁用户弹窗
@@ -302,8 +303,7 @@ function getUpdateUserInfoData() {
             console.log('updateUserInfoData.value==', updateUserInfoData.value);
             showUserInfoPopup.value = false;
             showChangeAvatar.value = false
-            showToast('Change successful');
-
+            showToast(t('sysadmin.succ'));
             userList(null)
         })
         .catch((err) => {
@@ -339,7 +339,8 @@ const selectedUserId = ref("");
 const isSearch = ref(false)
 const handleSearch = () => {
     if (!searchId.value.trim()) {
-        showToast("Please enter user ID");
+        showToast(t('sysadmin.plea'));
+
         return;
     }
     isSearch.value = true
@@ -422,20 +423,20 @@ const selectBanTime = (timeValue) => {
     showTimeDropdown.value = false;
 };
 
-// 处理封禁用户
-const handleBanUser = () => {
+// // 处理封禁用户
+// const handleBanUser = () => {
 
-    if (!banReason.value.trim()) {
-        showToast('Please enter ban reason');
-        return;
-    }
-    showBanUser.value = true
-    // 关闭弹窗
-    closePopup();
+//     if (!banReason.value.trim()) {
+//         showToast('Please enter ban reason');
+//         return;
+//     }
+//     showBanUser.value = true
+//     // 关闭弹窗
+//     closePopup();
 
-    // 触发封禁成功事件，供父组件监听
-    emit('banSuccess', banData);
-};
+//     // 触发封禁成功事件，供父组件监听
+//     emit('banSuccess', banData);
+// };
 
 // 封禁用户
 const banUserData = ref()
@@ -451,7 +452,8 @@ function handleChangeBanUser() {
     })
         .then((data) => {
             banUserData.value = data;
-            showToast('successful');
+            showToast(t('sysadmin.successful'));
+
             //showToast('The user is banned and cannot be banned repeatedly;');
             showBanUser.value = false;
             showBanPopup.value = false;

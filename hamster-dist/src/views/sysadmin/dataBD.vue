@@ -2,13 +2,13 @@
   <div class="information-page">
     <div class="top">
       <img class="back" src="../../assets/img/sysadmin/icon-back.png" alt="" @click="goBack" />
-      <p class="top-title">BD data</p>
+      <p class="top-title">{{ $t('sysadmin.BDd') }}</p>
     </div>
 
     <div class="search-section">
       <div class="search-container">
-        <van-search class="van-search" @clear="clearApi" v-model="searchId" placeholder="Enter the user ID" />
-        <button class="search-btn" @click="handleSearch">Search</button>
+        <van-search class="van-search" @clear="clearApi" v-model="searchId" :placeholder="$t('sysadmin.Ent')" />
+        <button class="search-btn" @click="handleSearch">{{ $t('sysadmin.Sea') }}</button>
       </div>
     </div>
 
@@ -31,7 +31,7 @@
 
         <div class="user-actions">
           <div class="view f" @click="popShowBanInformation(index)">
-            View<img class="ex" src="../../assets/img/sysadmin/icon-right.png" alt="" />
+            {{ $t('sysadmin.View') }}<img class="ex" src="../../assets/img/sysadmin/icon-right.png" alt="" />
           </div>
         </div>
       </div>
@@ -39,7 +39,7 @@
     <!-- 没有数据 -->
     <div class="none-data" v-if="bdList === null">
       <img src="../../assets/img/sysadmin/none.png" alt="" />
-      <p>No Data</p>
+      <p>{{ $t('sysadmin.no') }}</p>
     </div>
 
     <!-- 用户信息弹窗 -->
@@ -47,7 +47,7 @@
       <div class="popup-container">
         <!-- 弹窗头部 -->
         <div class="popup-header">
-          <h2 class="popup-title">User information</h2>
+          <h2 class="popup-title">{{ $t('sysadmin.Use1') }}</h2>
           <van-icon class="close-icon" @click="showBanInformation = false" />
         </div>
         <div class="ban-box">
@@ -74,22 +74,22 @@
           </div>
 
           <div class="cell f-s">
-            <div class="left">Total agency</div>
+            <div class="left">{{ $t('sysadmin.Tot') }}</div>
             <div class="right">{{ bdData?.totalAgencyCount }}</div>
           </div>
           <div class="cell f-s">
-            <div class="left">New agency</div>
+            <div class="left">{{ $t('sysadmin.New') }}</div>
             <div class="right">{{ bdData?.newAgencyCount }}</div>
           </div>
           <div class="cell f-s">
-            <div class="left">Agency income</div>
+            <div class="left">{{ $t('sysadmin.Age23') }}</div>
             <div class="right color f">
               <img class="ex" src="../../assets/img/sysadmin/icon-coins.png" alt="" />
               {{ bdData?.agencyIncome }}
             </div>
           </div>
           <div class="cell f-s">
-            <div class="left">Creation time</div>
+            <div class="left">{{ $t('sysadmin.Cre24') }}</div>
             <div class="right">{{ myTimeDay(bdData?.bdBindTime) }}</div>
           </div>
         </div>
@@ -97,7 +97,7 @@
         <!-- 操作按钮区域 -->
         <div class="action-buttons">
           <van-button class="action-btn ban-btn" @click="handleRemove">
-            Remove BD
+            {{ $t('sysadmin.Rem') }}
           </van-button>
         </div>
       </div>
@@ -105,15 +105,15 @@
 
     <!-- 解封弹窗 -->
     <van-popup v-model:show="showUnBlock" round class="showChangeAvatar">
-      <p class="pop-tit">Remove BD</p>
-      <p class="tips">Are you sure you want to remove BD?</p>
+      <p class="pop-tit">{{ $t('sysadmin.Rem') }}</p>
+      <p class="tips">{{ $t('sysadmin.Are25') }}</p>
       <!-- 操作按钮区域 -->
       <div class="action-buttons f-c">
         <van-button class="action-btn Cancle f-c" @click="showUnBlock = false">
-          Cancle
+          {{ $t('sysadmin.Can') }}
         </van-button>
         <van-button class="action-btn Confirm f-c" @click="handleChange">
-          Confirm
+          {{ $t('sysadmin.Con') }}
         </van-button>
       </div>
     </van-popup>
@@ -126,8 +126,9 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 // 仅保留必要的 Vant 组件（弹窗、提示、图标），下拉框用原生
 import { showToast } from "vant";
-
 import { searchUser, GetBdList, GetBdData, UnBindBd } from "@/api/sysadmin";
+import i18n from '@/i18n/index.js';
+const { t } = i18n.global;
 const props = defineProps(["uid", "ticket", "memberUid"]);
 
 const router = useRouter();
@@ -151,7 +152,8 @@ const selectedUserId = ref("");
 const isSearch = ref(false);
 const handleSearch = () => {
   if (!searchId.value.trim()) {
-    showToast("Please enter user ID");
+    showToast(t('sysadmin.plea'));
+
     return;
   }
   isSearch.value = true;
@@ -258,7 +260,8 @@ const handleChange = () => {
   const targetBdUid = bdList.value[banIndex.value]?.uid;
 
   if (!targetBdUid) {
-    showToast("User ID not found");
+    showToast(t('sysadmin.useri'));
+    
     showUnBlock.value = false;
     return;
   }
@@ -268,7 +271,8 @@ const handleChange = () => {
     bdUid: targetBdUid,
   })
     .then(() => {
-      showToast("Remove successfully");
+      showToast(t('sysadmin.rem'));
+
       showBanInformation.value = false;
       showUnBlock.value = false;
       getBdList(null); // 移除后刷新列表
