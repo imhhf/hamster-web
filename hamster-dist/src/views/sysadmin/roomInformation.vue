@@ -23,7 +23,7 @@
                             <div class="name">{{ user.title }}</div>
                             <img class="ex" v-if="user?.gender === 1" src="../../assets/img/sysadmin/ixon-ex.png"
                                 alt="" />
-                            <img class="ex" v-else src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
+                            <img class="ex" v-else src="../../assets/img/sysadmin/icon-g.png" alt="" />
                             <img class="count" :src="user?.countryNationalFlag" alt="" />
                         </div>
                         <p class="user-id">ID:{{ user.roomNo }}</p>
@@ -36,29 +36,6 @@
                     </div>
                 </div>
             </div>
-            <!-- <template v-if="roomInfo && roomInfo !== null && isSearch">
-                <div class="user-item">
-                    <div class="user-info-box f">
-                        <img class="img" :src="roomInfo?.avatar" alt="" />
-
-                        <div class="user-info">
-                            <div class="username f">
-                                <div class="name">{{ roomInfo?.title }}</div>
-                                <img class="ex" v-if="roomInfo?.gender === 1"
-                                    src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
-                                <img class="ex" v-else src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
-                                <img class="count" :src="roomInfo?.countryNationalFlag" alt="" />
-                            </div>
-                            <p class="user-id">ID:{{ roomInfo?.roomNo }}</p>
-                        </div>
-                    </div>
-                    <div class="user-actions">
-                        <div class="view f" @click="popShowBanInformation(index)">
-                            View<img class="ex" src="../../assets/img/sysadmin/icon-right.png" alt="" />
-                        </div>
-                    </div>
-                </div>
-            </template> -->
         </div>
 
         <!-- 没有数据 -->
@@ -128,8 +105,9 @@
 
         <!-- 解封弹窗 -->
         <van-popup v-model:show="showUnBlock" round class="showChangeAvatar">
-            <p class="pop-tit">Change avatar</p>
-            <p class="tips">Change the room avatar to the default avator.</p>
+            <p class="pop-tit"> {{ headChangeIndex === 1 ? 'Change avatar' : 'Change name' }}
+            </p>
+            <p class="tips">{{ headChangeIndex === 1 ? 'Change the room avatar to the default avator.' : 'Change the room name to the default avator.'}}</p>
             <!-- 操作按钮区域 -->
             <div class="action-buttons f-c">
                 <van-button class="action-btn Cancle f-c" @click="showUnBlock = false">

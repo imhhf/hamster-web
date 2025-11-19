@@ -22,7 +22,7 @@
                             <van-notice-bar class="name" :text="user?.nick" :speed="20" />
                             <img class="ex" v-if="user?.gender === 1" src="../../assets/img/sysadmin/ixon-ex.png"
                                 alt="">
-                            <img class="ex" v-else src="../../assets/img/sysadmin/ixon-ex.png" alt="">
+                            <img class="ex" v-else src="../../assets/img/sysadmin/icon-g.png" alt="">
                             <img class="count" :src="user?.countryNationalFlag" alt="">
                         </div>
                         <p class="user-id">ID:{{ user.erbanNo }}</p>
@@ -35,33 +35,6 @@
                     </button>
                 </div>
             </div>
-            <!-- </template> -->
-
-            <!-- <template v-if="userInfoData&&userInfoData !== null && isSearch">
-                <div class="user-item">
-                    <div class="user-info-box f">
-                        <img class="img" :src="userInfoData?.avatar" alt="">
-
-                        <div class="user-info">
-                            <div class="username f">
-                                <van-notice-bar class="name" :text="userInfoData?.nick" :speed="20" />
-                                <img class="ex" v-if="userInfoData?.gender === 1"
-                                    src="../../assets/img/sysadmin/ixon-ex.png" alt="">
-                                <img class="ex" v-else src="../../assets/img/sysadmin/ixon-ex.png" alt="">
-                                <img class="count" :src="userInfoData?.countryNationalFlag" alt="">
-                            </div>
-                            <p class="user-id">ID:{{ userInfoData?.erbanNo }}</p>
-                        </div>
-                    </div>
-
-                    <div class="user-actions f-w">
-                        <button class="edit-btn" @click="handleEdit(index)">Edit</button>
-                        <button class="ban-btn" @click="handleBan(index)">
-                            Ban
-                        </button>
-                    </div>
-                </div>
-            </template> -->
         </div>
         <!-- 没有数据 -->
         <div class="none-data" v-if="userListData === null">
@@ -97,7 +70,7 @@
                             <span class="info-label">{{ $t('sysadmin.Gen') }}</span>
                             <img class="ex" v-if="userInfoData?.gender === 1" src="../../assets/img/sysadmin/ixon-ex.png"
                                 alt="">
-                            <img class="ex" v-else src="../../assets/img/sysadmin/ixon-ex.png" alt="">
+                            <img class="ex" v-else src="../../assets/img/sysadmin/icon-g.png" alt="">
                         </div>
                         <div class="info-item">
                             <span class="info-label">{{ $t('sysadmin.Cou') }}</span>
@@ -199,7 +172,7 @@
                                 <div v-for="time in banTimeOptions" :key="time.value" class="time-option"
                                     @click="selectBanTime(time.value)">
                                     {{ time.label }}
-                                    <img class="icon-yes" v-if="selectedBanTime === time.value"
+                                    <img class="icon-yes" :class="props.lang" v-if="selectedBanTime === time.value"
                                         src="../../assets/img/sysadmin/icon-yes.png" alt="">
                                 </div>
                             </div>
@@ -253,7 +226,8 @@ import { showToast } from "vant";
 import { searchUser, getUserList, getUserInfo, updateUserInfo, BanUser } from "@/api/sysadmin";
 
 const router = useRouter();
-const props = defineProps(["uid", "ticket", "memberUid"]);
+const props = defineProps(["uid", "lang", "memberUid"]);
+// const lang = getLang();
 
 // 封禁用户弹窗
 const showBanUser = ref(false)

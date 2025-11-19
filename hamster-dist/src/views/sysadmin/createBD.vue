@@ -117,6 +117,8 @@ const getBindBd = () => {
       searchInfo.value = data;
       closeOFF.value = false;
       banReason.value = "";
+      showToast('Change successful');
+
       setTimeout(() => {
         // 成功时发射事件
         emit("success", data);

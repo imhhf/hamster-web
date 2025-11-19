@@ -38,14 +38,14 @@
 
         <p class="lable-title">{{ $t('sysadmin.Use') }}</p>
         <div class="page-list">
-            <div class="li f-s" @click="$router.push(`/sysadmin/userInformation?uid=${props.uid}&lang=en`)">
+            <div class="li f-s" @click="$router.push(`/sysadmin/userInformation?uid=${props.uid}&lang=${lang}`)">
                 <div class="left f">
                     <img src="@/assets/img/sysadmin/icon-infomation.png" alt="">
                     <span>{{ $t('sysadmin.Use1') }}</span>
                 </div>
                 <img class="go" src="@/assets/img/sysadmin/icon-right.png" alt="">
             </div>
-            <div class="li f-s" @click="$router.push(`/sysadmin/banList?uid=${props.uid}&lang=en`)">
+            <div class="li f-s" @click="$router.push(`/sysadmin/banList?uid=${props.uid}&lang=${lang}`)">
                 <div class="left f">
                     <img src="@/assets/img/sysadmin/icon-banList.png" alt="">
                     <span>{{ $t('sysadmin.Use2') }}</span>
@@ -63,7 +63,7 @@
 
         <p class="lable-title">{{ $t('sysadmin.Roo') }}</p>
         <div class="page-list">
-            <div class="li f-s" @click="$router.push(`/sysadmin/roomInformation?uid=${props.uid}&lang=en`)">
+            <div class="li f-s" @click="$router.push(`/sysadmin/roomInformation?uid=${props.uid}&lang=${lang}`)">
                 <div class="left f">
                     <img src="@/assets/img/sysadmin/icon-room.png" alt="">
                     <span>{{ $t('sysadmin.Roo3') }}</span>
@@ -81,7 +81,7 @@
                 </div>
                 <img class="go" src="@/assets/img/sysadmin/icon-right.png" alt="">
             </div>
-            <div class="li f-s" @click="$router.push(`/sysadmin/dataBD?uid=${props.uid}&lang=en`)">
+            <div class="li f-s" @click="$router.push(`/sysadmin/dataBD?uid=${props.uid}&lang=${lang}`)">
                 <div class="left f">
                     <img src="@/assets/img/sysadmin/icon-bdData.png" alt="">
                     <span>{{ $t('sysadmin.BDd') }}</span>

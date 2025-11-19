@@ -1,55 +1,28 @@
 <template>
   <div class="information-page">
     <div class="top">
-      <img
-        class="back"
-        src="../../assets/img/sysadmin/icon-back.png"
-        alt=""
-        @click="goBack"
-      />
+      <img class="back" src="../../assets/img/sysadmin/icon-back.png" alt="" @click="goBack" />
       <p class="top-title">BD data</p>
     </div>
 
     <div class="search-section">
       <div class="search-container">
-        <van-search
-          class="van-search"
-          @clear="clearApi"
-          v-model="searchId"
-          placeholder="Enter the user ID"
-        />
+        <van-search class="van-search" @clear="clearApi" v-model="searchId" placeholder="Enter the user ID" />
         <button class="search-btn" @click="handleSearch">Search</button>
       </div>
     </div>
 
-    <div
-      class="user-list-container"
-      v-if="isSearch !== null && bdList?.length > 0 && !isSearch"
-    >
-      <div
-        class="user-item"
-        v-for="(user, index) in bdList"
-        :key="user.id"
-        :class="{ active: selectedUserId === user.id }"
-      >
+    <div class="user-list-container" v-if="bdList !== null && bdList?.length > 0">
+      <div class="user-item" v-for="(user, index) in bdList" :key="user.id"
+        :class="{ active: selectedUserId === user.id }">
         <div class="user-info-box f">
           <img class="img" :src="user?.avatar" alt="" />
 
           <div class="user-info">
             <div class="username f">
               <div class="name">{{ user?.nick }}</div>
-              <img
-                class="ex"
-                v-if="user?.gender === 1"
-                src="../../assets/img/sysadmin/ixon-ex.png"
-                alt=""
-              />
-              <img
-                class="ex"
-                v-else
-                src="../../assets/img/sysadmin/ixon-ex.png"
-                alt=""
-              />
+              <img class="ex" v-if="user?.gender === 1" src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
+              <img class="ex" v-else src="../../assets/img/sysadmin/icon-g.png" alt="" />
               <img class="count" :src="user?.countryNationalFlag" alt="" />
             </div>
             <p class="user-id">ID:{{ user.erbanNo }}</p>
@@ -58,66 +31,19 @@
 
         <div class="user-actions">
           <div class="view f" @click="popShowBanInformation(index)">
-            View<img
-              class="ex"
-              src="../../assets/img/sysadmin/icon-right.png"
-              alt=""
-            />
+            View<img class="ex" src="../../assets/img/sysadmin/icon-right.png" alt="" />
           </div>
         </div>
       </div>
-      <!-- <template v-if="isSearch !==null  && bdList?.length > 0 && bdList">
-        <div class="user-item">
-          <div class="user-info-box f">
-            <img class="img" :src="bdList?.avatar" alt="" />
-            <div class="user-info">
-              <div class="username f">
-                <div class="name">{{ bdList?.nick }}</div>
-                <img
-                  class="ex"
-                  v-if="bdList?.gender === 1"
-                  src="../../assets/img/sysadmin/ixon-ex.png"
-                  alt=""
-                />
-                <img
-                  class="ex"
-                  v-else
-                  src="../../assets/img/sysadmin/ixon-ex.png"
-                  alt=""
-                />
-                <img class="count" :src="bdList?.countryNationalFlag" alt="" />
-              </div>
-              <p class="user-id">ID:{{ bdList?.erbanNo }}</p>
-            </div>
-          </div>
-          <div class="user-actions">
-            <div class="view f" @click="popShowBanInformation(0)">
-              View<img
-                class="ex"
-                src="../../assets/img/sysadmin/icon-right.png"
-                alt=""
-              />
-            </div>
-          </div>
-        </div>
-      </template> -->
     </div>
     <!-- 没有数据 -->
-    <div
-      class="none-data"
-      v-if="((isSearch === null?.length) === 0 && !isSearch) || isSearch"
-    >
+    <div class="none-data" v-if="bdList === null">
       <img src="../../assets/img/sysadmin/none.png" alt="" />
       <p>No Data</p>
     </div>
 
     <!-- 用户信息弹窗 -->
-    <van-popup
-      v-model:show="showBanInformation"
-      position="bottom"
-      round
-      class="showBanInformation"
-    >
+    <van-popup v-model:show="showBanInformation" position="bottom" round class="showBanInformation">
       <div class="popup-container">
         <!-- 弹窗头部 -->
         <div class="popup-header">
@@ -129,11 +55,7 @@
           <div class="user-basic-info">
             <div class="avatar-section">
               <div class="avatar-container">
-                <img
-                  :src="bdData?.avatar"
-                  alt="User Avatar"
-                  class="user-avatar"
-                />
+                <img :src="bdData?.avatar" alt="User Avatar" class="user-avatar" />
               </div>
             </div>
             <div class="user-details">
@@ -142,16 +64,8 @@
             </div>
             <!-- 原生下拉框（无 Vant 依赖） -->
             <div class="right f">
-              <select
-                class="native-month-dropdown"
-                v-model="selectedMonth"
-                @change="handleMonthChange"
-              >
-                <option
-                  v-for="option in monthOptions"
-                  :key="option.value"
-                  :value="option.value"
-                >
+              <select class="native-month-dropdown" v-model="selectedMonth" @change="handleMonthChange">
+                <option v-for="option in monthOptions" :key="option.value" :value="option.value">
                   {{ option.label }}
                 </option>
               </select>
@@ -170,11 +84,7 @@
           <div class="cell f-s">
             <div class="left">Agency income</div>
             <div class="right color f">
-              <img
-                class="ex"
-                src="../../assets/img/sysadmin/icon-coins.png"
-                alt=""
-              />
+              <img class="ex" src="../../assets/img/sysadmin/icon-coins.png" alt="" />
               {{ bdData?.agencyIncome }}
             </div>
           </div>
@@ -317,9 +227,7 @@ function handleMonthChange() {
 
 // 使用选中的月份作为参数
 function getBdData() {
-  const targetBdUid = isSearch.value
-    ? bdList.value?.uid
-    : bdList.value[banIndex.value]?.uid;
+  const targetBdUid = bdList.value[banIndex.value]?.uid;
 
   if (!targetBdUid) {
     showToast("User ID not found");
@@ -347,9 +255,7 @@ const handleRemove = () => {
 
 // 移除二次确认
 const handleChange = () => {
-  const targetBdUid = isSearch.value
-    ? bdList.value?.uid
-    : bdList.value[banIndex.value]?.uid;
+  const targetBdUid = bdList.value[banIndex.value]?.uid;
 
   if (!targetBdUid) {
     showToast("User ID not found");

@@ -13,7 +13,6 @@
     </div>
 
     <div v-if="userBanList !== null && userBanList?.length > 0" class="user-list-container">
-      <!-- <template> -->
       <div class="user-item" v-for="(user, index) in userBanList" :key="user.id"
         :class="{ active: selectedUserId === user.id }">
         <div class="user-info-box f">
@@ -23,7 +22,7 @@
             <div class="username f">
               <div class="name">{{ user.nick }}</div>
               <img class="ex" v-if="user?.gender === 1" src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
-              <img class="ex" v-else src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
+              <img class="ex" v-else src="../../assets/img/sysadmin/icon-g.png" alt="" />
               <img class="count" :src="user?.countryNationalFlag" alt="" />
             </div>
             <p class="user-id">ID:{{ user.erbanNo }}</p>
@@ -39,33 +38,6 @@
           </div>
         </div>
       </div>
-      <!-- </template> -->
-
-      <!-- <template v-if="banInfo&&banInfo !== null && isSearch">
-        <div class="user-item">
-          <div class="user-info-box f">
-            <img class="img" :src="banInfo?.avatar" alt="" />
-
-            <div class="user-info">
-              <div class="username f">
-                <div class="name">{{ banInfo?.nick }}</div>
-                <img class="ex" v-if="banInfo?.gender === 1" src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
-                <img class="ex" v-else src="../../assets/img/sysadmin/ixon-ex.png" alt="" />
-                <img class="count" :src="banInfo?.countryNationalFlag" alt="" />
-              </div>
-              <p class="user-id">ID:{{ banInfo?.erbanNo }}</p>
-            </div>
-          </div>
-          <div class="user-actions">
-            <p class="banned" :class="banInfo?.blockStatus === 1 ? '' : 'Unblocked'">
-              {{ banInfo?.blockStatus === 1 ? "Banned" : "Unblocked" }}
-            </p>
-            <div class="view f" @click="popShowBanInformation(index)">
-              View<img class="ex" src="../../assets/img/sysadmin/icon-right.png" alt="" />
-            </div>
-          </div>
-        </div>
-      </template> -->
     </div>
 
     <!-- 没有数据 -->
@@ -102,7 +74,7 @@
           </div>
 
           <div class="ban-tit">Ban time</div>
-          <div class="day">{{ myTimeDay(banInfo?.blockTime) }}</div>
+          <div class="day">{{ banInfo?.timeType === 'lasting' ? 'Forever' : Number(banInfo?.timeType) === 1 ? '1 day' : Number(banInfo?.timeType) === 3 ? '3day': Number(banInfo?.timeType)===7?'7 day' :Number(banInfo?.timeType)===30?'30 day':''}}</div>
 
           <div class="ban-tit">Reason for ban</div>
           <div class="tit">

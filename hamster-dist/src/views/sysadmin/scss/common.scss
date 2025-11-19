@@ -3,17 +3,20 @@
     background-size: 100% 100%;
     background-repeat: no-repeat;
 }
-.none-data{
+
+.none-data {
     width: 160px;
     height: 160px;
     position: relative;
     margin: 130px auto 0;
-    img{
+
+    img {
         display: block;
         width: 160px;
         height: 160px;
     }
-    p{
+
+    p {
         position: absolute;
         font-family: Helvetica;
         font-size: 16px;
@@ -26,9 +29,11 @@
         transform: translateX(-50%);
     }
 }
+
 button {
     background: none;
 }
+
 .van-notice-bar {
     background: none;
     padding: 0;
@@ -79,4 +84,18 @@ button {
         text-align: center;
         padding-top: 56px;
     }
+}
+
+.ara {
+    .go {
+        transform: rotate(180deg);
+    }
+
+    :deep(.time-dropdown) {
+        :deep(.icon-yes) {
+            left: 0;
+            right: auto;
+        }
+    }
+
 }
