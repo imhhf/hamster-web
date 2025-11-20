@@ -150,7 +150,7 @@ getGuildRecommend(); //获取推荐公会数据
         <span>{{ $t("guild.title") }}</span>
       </template>
       <template #right_slot>
-        <div class="create" @click="onCreate">{{ $t("guild.btn.create") }}</div>
+        <!-- <div class="create" @click="onCreate">{{ $t("guild.btn.create") }}</div> -->
       </template>
     </nav-bars>
 
