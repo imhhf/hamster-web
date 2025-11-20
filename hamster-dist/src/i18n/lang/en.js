@@ -513,7 +513,18 @@ const EN = {
     plea: 'Please enter user ID',
     rem: 'Remove successfully',
     useri: 'User ID not found',
-    successful: 'successful'
+    successful: 'successful',
+    crea: 'Create the Agency',
+    agen: 'Agency data',
+    agenl: 'Agency list',
+    angId: 'Agency agent ID',
+    angName: 'Agency name',
+    please: 'Please enter the Agency name',
+    Create: 'Create',
+    agency: 'Agency agent',
+    host: 'Agency host',
+    income: 'Agency income',
+    time: 'Data time'
   },
 };
 
