@@ -92,7 +92,7 @@
 
         <!-- create BD -->
         <van-popup v-model:show="showCreateBD" position="bottom" round class="showCreateBD">
-            <createBD :isUid="props.uid" @success="handleCreateBDSuccess" @close="handleCreateBDClose"></createBD>
+            <createBD :isUid="props.uid" :ticket="props.ticket" @success="handleCreateBDSuccess" @close="handleCreateBDClose"></createBD>
         </van-popup>
     </div>
 
@@ -135,7 +135,7 @@ const info = ref()
 function getHome() {
     home({
         uid: props.uid,
-        // ticket: props.ticket,
+        ticket: props.ticket,
     })
         .then((data) => {
             info.value = data

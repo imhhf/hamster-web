@@ -149,6 +149,7 @@ const userBanList = ref();
 function getUserBanList(searchKey) {
   GetUserBanList({
     uid: props.uid,
+    ticket: props.ticket,
     searchKey: searchKey,
     pageNum: 1,
     pageSize: 50,
@@ -167,6 +168,7 @@ const banInfo = ref();
 function getBanInfo(targetUid) {
   GetBanInfo({
     uid: props.uid,
+    ticket: props.ticket,
     blockId: userBanList.value[banIndex.value]?.blockId,
   })
     .then((data) => {
@@ -189,6 +191,7 @@ const popShowBanInformation = (ind) => {
 const getUnbanUser = () => {
   UnbanUser({
     uid: props.uid,
+    ticket: props.ticket,
     blockId: userBanList.value[banIndex.value].blockId,
   })
     .then((data) => {

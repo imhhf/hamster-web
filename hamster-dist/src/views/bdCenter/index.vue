@@ -2,7 +2,7 @@
     <div class="index">
         <div class="top">
             <img @click="AppClose()" class="back" src="../../assets/img/bdCenter/icon-back.png" alt="">
-            <p class="top-title">{{ $t('sysadmin.Adm') }}</p>
+            <p class="top-title">{{ $t('sysadmin.bdcen') }}</p>
         </div>
         <div class="user f">
             <div class="left">
@@ -88,7 +88,7 @@
         </div>
 
         <van-popup v-model:show="showCreateBD" position="bottom" round class="showCreateBD">
-            <createBD :clickCreate="clickCreate" :guildId="currentGuildId" :selectedMonth="currentSelectedMonth"
+            <createBD :clickCreate="clickCreate" :ticket=" props.ticket" :guildId="currentGuildId" :selectedMonth="currentSelectedMonth"
                 :isUid="props.uid" @success="handleCreateBDSuccess" @close="handleCreateBDClose">
             </createBD>
         </van-popup>
@@ -257,7 +257,8 @@ function getAgencyList() {
             uid: props.uid,
             timeMonth: selectedMonth.value,
             pageNum: pageNum.value,
-            pageSize: pageSize.value
+            pageSize: pageSize.value,
+            ticket: props.ticket
         })
             .then((data) => {
                 if (data && data.length > 0) {
@@ -300,6 +301,7 @@ function getHome() {
     home({
         uid: props.uid,
         timeMonth: selectedMonth.value,
+        ticket: props.ticket
     })
         .then((data) => {
             info.value = data

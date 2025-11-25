@@ -2,7 +2,7 @@
   <div class="createBD-page">
     <!-- 弹窗头部 -->
     <div class="popup-header">
-      <h2 class="popup-title">{{ $t('sysadmin.crea') }}</h2>
+      <h2 class="popup-title">{{ props.clickCreate === 2 ? $t('sysadmin.Agencyd') : $t('sysadmin.crea') }}</h2>
       <van-icon class="close-icon" @click="handleClose" />
     </div>
 
@@ -125,6 +125,7 @@ function getSearchUser() {
   searchUser({
     uid: props.isUid,
     erbanNo: searchId.value,
+    ticket: props.ticket
   })
     .then((data) => {
       searchInfo.value = data;
@@ -165,7 +166,8 @@ const getBindBd = () => {
   CreateAgency({
     uid: props.isUid,
     agencyUid: searchInfo.value?.uid,
-    guildName: banReason.value
+    guildName: banReason.value,
+    ticket: props.ticket
   })
     .then((data) => {
       searchInfo.value = data;
@@ -207,7 +209,8 @@ const getAgencyData = () => {
   AgencyData({
     uid: props.isUid,
     guildId: props.guildId,
-    timeMonth: props.selectedMonth
+    timeMonth: props.selectedMonth,
+    ticket: props.ticket
   })
     .then((data) => {
       agencyData.value = data;

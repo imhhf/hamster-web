@@ -172,6 +172,7 @@ const bdList = ref([]);
 function getBdList(getBdListId) {
   GetBdList({
     uid: props.uid,
+    ticket: props.ticket,
     searchKey: getBdListId,
     pageNum: 1,
     pageSize: 50,
@@ -238,6 +239,7 @@ function getBdData() {
   console.log("selectedMonth==", selectedMonth.value);
   GetBdData({
     uid: props.uid,
+    ticket: props.ticket,
     bdUid: targetBdUid,
     timeMonth: selectedMonth.value, // 下拉选中的月份
   })
@@ -268,6 +270,7 @@ const handleChange = () => {
 
   UnBindBd({
     uid: props.uid,
+    ticket: props.ticket,
     bdUid: targetBdUid,
   })
     .then(() => {

@@ -524,7 +524,9 @@ const EN = {
     agency: 'Agency agent',
     host: 'Agency host',
     income: 'Agency income',
-    time: 'Data time'
+    time: 'Data time',
+    bdcen: 'BD Center',
+    Agencyd: 'Agency Data',
   },
 };
 

@@ -75,6 +75,7 @@ function getSearchUser() {
   searchUser({
     uid: props.isUid,
     erbanNo: searchId.value,
+    ticket: props.ticket
   })
     .then((data) => {
       searchInfo.value = data;
@@ -115,6 +116,7 @@ const getBindBd = () => {
     uid: props.isUid,
     bdUid: searchInfo.value?.uid,
     whatsApp: banReason.value,
+    ticket: props.ticket
   })
     .then((data) => {
       searchInfo.value = data;

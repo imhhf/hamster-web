@@ -240,7 +240,8 @@ function userList(searchId) {
         uid: props.uid,
         searchKey: searchId,
         pageNum: 1,
-        pageSize: 50
+        pageSize: 50,
+        ticket: props.ticket
     })
         .then((data) => {
             userListData.value = data
@@ -255,7 +256,8 @@ const userInfoData = ref()
 function UserInfo(targetUid) {
     getUserInfo({
         uid: props.uid,
-        targetUid: targetUid
+        targetUid: targetUid,
+        ticket: props.ticket
     })
         .then((data) => {
             userInfoData.value = data;
@@ -283,16 +285,19 @@ function getUpdateUserInfoData() {
     // 修改用户信息
     var page1 = {
         uid: props.uid,
+        ticket: props.ticket,
         targetUid: userListData.value[changeIndex.value].uid,
         resetAvatar: true
     }
     var page2 = {
         uid: props.uid,
+        ticket: props.ticket,
         targetUid: userListData.value[changeIndex.value].uid,
         resetNick: true
     }
     var page3 = {
         uid: props.uid,
+        ticket: props.ticket,
         targetUid: userListData.value[changeIndex.value].uid,
         resetSignture: true
     }
@@ -446,6 +451,7 @@ function handleChangeBanUser() {
 
     BanUser({
         uid: props.uid,
+        ticket: props.ticket,
         targetUid: userListData.value[changeIndex.value].uid,
         timeType: selectedBanTime.value,
         desc: encodedReason  // 使用编码后的值

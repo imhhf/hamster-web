@@ -109,7 +109,7 @@
         <van-popup v-model:show="showUnBlock" round class="showChangeAvatar">
             <p class="pop-tit"> {{ headChangeIndex === 1 ? $t('sysadmin.Cha') : $t('sysadmin.Cha4') }}
             </p>
-            <p class="tips">{{ headChangeIndex === 1 ? $('sysadmin.Cha18') : $('sysadmin.Cha19') }}</p>
+            <p class="tips">{{ headChangeIndex === 1 ? $t('sysadmin.Cha18') : $t('sysadmin.Cha19') }}</p>
             <!-- 操作按钮区域 -->
             <div class="action-buttons f-c">
                 <van-button class="action-btn Cancle f-c" @click="showUnBlock = false">
@@ -175,6 +175,7 @@ const roomList = ref();
 function getRoomList(searchKey) {
     GetRoomList({
         uid: props.uid,
+        ticket: props.ticket,
         searchKey: searchKey,
         pageNum: 1,
         pageSize: 50,
@@ -192,6 +193,7 @@ const roomInfo = ref();
 function getRoomInfo(targetUid) {
     GetRoomInfo({
         uid: props.uid,
+        ticket: props.ticket,
         roomId: roomList.value[banIndex.value].roomId,
     })
         .then((data) => {
@@ -217,11 +219,13 @@ function getUpdateRoomInfo() {
     // 修改用户信息
     var page1 = {
         uid: props.uid,
+        ticket: props.ticket,
         roomId: roomList.value[banIndex.value].roomId,
         resetAvatar: true
     }
     var page2 = {
         uid: props.uid,
+        ticket: props.ticket,
         roomId: roomList.value[banIndex.value].roomId,
         resetTitle: true
     }
@@ -236,7 +240,7 @@ function getUpdateRoomInfo() {
         })
         .catch((err) => {
             //   loading.value = false;
-            //   showToast(err.message);
+              showToast(err.message);
         });
 }
 
