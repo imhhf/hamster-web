@@ -894,7 +894,7 @@ getMyGuildDetail(); //获取用户公会主页数据
           flex: 1;
           flex-shrink: 0;
           height: 78px;
-          background: linear-gradient(180deg, #f4e19f 0%, #fff8ca 100%);
+          background: linear-gradient(180deg, rgba(179, 122, 247, 0.37) 0%, rgba(179, 122, 247, 0.14) 100%);
           border-radius: 6px;
           display: flex;
           flex-direction: column;
@@ -1134,7 +1134,7 @@ getMyGuildDetail(); //获取用户公会主页数据
       width: 100%;
       height: 453px;
       border-radius: 15px 15px 0px 0px;
-      background: linear-gradient(#ffe2bf, #fefbf3);
+      background: linear-gradient(#ffffff, #ffffff);
       display: flex;
       flex-direction: column;
 
@@ -1254,8 +1254,8 @@ getMyGuildDetail(); //获取用户公会主页数据
                 }
 
                 .consent {
-                  color: #000000;
-                  background: linear-gradient(#ffc800, #ffc928);
+                  color: #ffffff;
+                  background: linear-gradient(#B936FF, #5C00FE);
                 }
               }
             }
@@ -1328,7 +1328,7 @@ getMyGuildDetail(); //获取用户公会主页数据
 
       .search {
         width: 100%;
-        background: rgba(178, 144, 64, 0.2);
+        background: rgba(130, 130, 130, .1);
         border-radius: 6px;
         padding: 5px;
 
@@ -1355,9 +1355,9 @@ getMyGuildDetail(); //获取用户公会主页数据
           font-family: Helvetica, Helvetica;
           font-weight: bold;
           font-size: 12px;
-          color: #000000;
+          color: #ffffff;
           font-style: normal;
-          background: linear-gradient(#ffc800, #ffc928);
+          background: linear-gradient(#AC41F6, #520BF5);
           border-radius: 18px;
         }
       }
@@ -1435,7 +1435,7 @@ getMyGuildDetail(); //获取用户公会主页数据
     .diss,
     .quit {
       width: 100%;
-      background: linear-gradient(#ffe2bf, #fefbf3);
+      background: linear-gradient(#E7CDFF, #F5EBFF);
       border-radius: 15px;
       overflow: hidden;
       padding: 30px 18px;
@@ -1486,8 +1486,8 @@ getMyGuildDetail(); //获取用户公会主页数据
         }
 
         .confirm {
-          color: #000000;
-          background: linear-gradient(#ffc800, #ffc928);
+          color: #ffffff;
+          background: linear-gradient(#B936FF, #5C00FF);
         }
       }
     }

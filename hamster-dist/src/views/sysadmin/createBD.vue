@@ -112,6 +112,9 @@ const goBack = () => {
 const banReason = ref("");
 // 绑定
 const getBindBd = () => {
+  if (!searchId.value.trim()){
+    return
+  }
   BindBd({
     uid: props.isUid,
     bdUid: searchInfo.value?.uid,

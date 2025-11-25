@@ -74,10 +74,10 @@ getGuildMemberCard(); //获取用户公会名片数据
           xmlns="http://www.w3.org/2000/svg" p-id="1716" width="200" height="200">
           <path
             d="M705.43 800.05000001l-322.99000001-322.99000001c-21.87-21.87-57.33-21.87-79.2 0-21.87 21.87-21.87 57.33 0 79.2l323.00000001 322.99c21.87 21.87 57.33 21.87 79.2 0 21.86-21.87 21.86-57.33-0.01-79.19999999z"
-            fill="#BE9021" p-id="1717"></path>
+            fill="#FFFFFF" p-id="1717"></path>
           <path
             d="M294.25 468.05L617.24 145.07c21.87-21.87 57.33-21.87 79.2 0 21.87 21.87 21.87 57.33 0 79.2l-322.99 322.99c-21.87 21.87-57.33 21.87-79.2 0-21.87-21.88-21.87-57.34 0-79.21z"
-            fill="#BE9021" p-id="1718"></path>
+            fill="#FFFFFF" p-id="1718"></path>
         </svg>
       </template>
     </nav-bars>
@@ -137,6 +137,14 @@ getGuildMemberCard(); //获取用户公会名片数据
 </template>
 
 <style lang="scss" scoped>
+:deep(.van-nav-bar){
+  background: linear-gradient(180deg, RGBA(182, 52, 255, 1) 0%, RGBA(90, 0, 255, 1) 100%) !important;
+}
+:deep(.van-nav-bar__title){
+  span{
+      color: #FFFFFF !important;
+  }
+}
 .card {
   width: 100%;
   height: 100%;
@@ -200,7 +208,7 @@ getGuildMemberCard(); //获取用户公会名片数据
 
       .total {
         width: 108px;
-        background: linear-gradient(180deg, #f4e19f 0%, #fff8ca 100%);
+        background: linear-gradient(180deg, rgba(179, 122, 247, 0.37) 0%, rgba(179, 122, 247, 0.14) 100%);
         border-radius: 6px;
         display: flex;
         flex-direction: column;

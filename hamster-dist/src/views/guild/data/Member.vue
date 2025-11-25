@@ -188,10 +188,10 @@ getGuildHistoryData(); //获取公会全部成员历史数据
           xmlns="http://www.w3.org/2000/svg" p-id="1716" width="200" height="200">
           <path
             d="M705.43 800.05000001l-322.99000001-322.99000001c-21.87-21.87-57.33-21.87-79.2 0-21.87 21.87-21.87 57.33 0 79.2l323.00000001 322.99c21.87 21.87 57.33 21.87 79.2 0 21.86-21.87 21.86-57.33-0.01-79.19999999z"
-            fill="#BE9021" p-id="1717"></path>
+            fill="#FFFFFF" p-id="1717"></path>
           <path
             d="M294.25 468.05L617.24 145.07c21.87-21.87 57.33-21.87 79.2 0 21.87 21.87 21.87 57.33 0 79.2l-322.99 322.99c-21.87 21.87-57.33 21.87-79.2 0-21.87-21.88-21.87-57.34 0-79.21z"
-            fill="#BE9021" p-id="1718"></path>
+            fill="#FFFFFF" p-id="1718"></path>
         </svg>
       </template>
     </nav-bars>
@@ -324,6 +324,14 @@ getGuildHistoryData(); //获取公会全部成员历史数据
 </template>
 
 <style lang="scss" scoped>
+:deep(.van-nav-bar){
+  background: linear-gradient(180deg, RGBA(182, 52, 255, 1) 0%, RGBA(90, 0, 255, 1) 100%) !important;
+}
+:deep(.van-nav-bar__title){
+  span{
+      color: #FFFFFF !important;
+  }
+}
 .data {
   width: 100%;
   height: 100%;
@@ -401,12 +409,12 @@ getGuildHistoryData(); //获取公会全部成员历史数据
 
         .remove {
           height: auto;
-          background: #ffe278;
+          background: linear-gradient(180deg, #AC41F6 0%, #520BF5 100%);
           padding: 6px 12px;
           font-family: Helvetica, Helvetica;
           font-weight: bold;
           font-size: 12px;
-          color: #606060;
+          color: #FFFFFF;
           font-style: normal;
           border-radius: 22px;
           border: none;
@@ -422,7 +430,7 @@ getGuildHistoryData(); //获取公会全部成员历史数据
           border-radius: 6px;
           margin: 0px auto 20px;
           padding: 20px 10px;
-          background: linear-gradient(#f4e19f, #fff8ca);
+          background: linear-gradient(rgba(179, 122, 247, 0.37), rgba(179, 122, 247, 0.14));
           display: flex;
           flex-wrap: wrap;
           justify-content: center;
@@ -507,7 +515,7 @@ getGuildHistoryData(); //获取公会全部成员历史数据
           margin: 20px auto 10px;
 
           .month {
-            background: linear-gradient(#ffdfb9, #ffecda);
+            background: linear-gradient(#FAE0BE, #FCEDDC);
           }
         }
 
@@ -515,7 +523,7 @@ getGuildHistoryData(); //获取公会全部成员历史数据
           margin: 10px auto 20px;
 
           .month {
-            background: linear-gradient(#febebe, #ffe8e2);
+            background: linear-gradient(#F4C1BF, #FBE9E3);
           }
         }
       }

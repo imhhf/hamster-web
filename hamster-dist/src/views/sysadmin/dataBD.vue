@@ -11,7 +11,6 @@
         <button class="search-btn" @click="handleSearch">{{ $t('sysadmin.Sea') }}</button>
       </div>
     </div>
-
     <div class="user-list-container" v-if="bdList !== null && bdList?.length > 0">
       <div class="user-item" v-for="(user, index) in bdList" :key="user.id"
         :class="{ active: selectedUserId === user.id }">
@@ -178,7 +177,7 @@ function getBdList(getBdListId) {
     pageSize: 50,
   })
     .then((data) => {
-      bdList.value = data || [];
+      bdList.value = data;
       console.log("bd list data==", bdList.value);
     })
     .catch((err) => {

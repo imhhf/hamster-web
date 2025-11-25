@@ -140,10 +140,10 @@ getGuildRecommend(); //获取推荐公会数据
           xmlns="http://www.w3.org/2000/svg" p-id="1716" width="200" height="200">
           <path
             d="M705.43 800.05000001l-322.99000001-322.99000001c-21.87-21.87-57.33-21.87-79.2 0-21.87 21.87-21.87 57.33 0 79.2l323.00000001 322.99c21.87 21.87 57.33 21.87 79.2 0 21.86-21.87 21.86-57.33-0.01-79.19999999z"
-            fill="#BE9021" p-id="1717"></path>
+            fill="#FFFFFF" p-id="1717"></path>
           <path
             d="M294.25 468.05L617.24 145.07c21.87-21.87 57.33-21.87 79.2 0 21.87 21.87 21.87 57.33 0 79.2l-322.99 322.99c-21.87 21.87-57.33 21.87-79.2 0-21.87-21.88-21.87-57.34 0-79.21z"
-            fill="#BE9021" p-id="1718"></path>
+            fill="#FFFFFF" p-id="1718"></path>
         </svg>
       </template>
       <template #title_slot>
@@ -155,7 +155,7 @@ getGuildRecommend(); //获取推荐公会数据
     </nav-bars>
 
     <van-search class="search" v-model="searchKey" show-action maxlength="8" clear-trigger="always" action-text="Search"
-      background="#FDF5E0" placeholder="Enter the Agency ID to search" @clear="onReset">
+       placeholder="Enter the Agency ID to search" @clear="onReset">
       <template #action>
         <div @click="onSearch">{{ $t("guild.btn.search") }}</div>
       </template></van-search>
@@ -189,6 +189,14 @@ getGuildRecommend(); //获取推荐公会数据
 </template>
 
 <style lang="scss" scoped>
+:deep(.van-nav-bar){
+  background: linear-gradient(180deg, RGBA(182, 52, 255, 1) 0%, RGBA(90, 0, 255, 1) 100%) !important;
+}
+:deep(.van-nav-bar__title){
+  span{
+      color: #FFFFFF !important;
+  }
+}
 .list {
   width: 100%;
   height: 100%;
@@ -300,7 +308,7 @@ getGuildRecommend(); //获取推荐公会数据
 <style lang="scss">
 .views_wrap,
 .list {
-  background: #fdf5e0;
+  background: #ffffff;
 }
 
 .list {
