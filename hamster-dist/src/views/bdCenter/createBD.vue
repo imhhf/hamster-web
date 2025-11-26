@@ -95,6 +95,7 @@ import { ref, onMounted, watch, defineProps, defineEmits, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import { showToast } from "vant";
 import { searchUser, CreateAgency, AgencyData } from "@/api/bdCenter";
+import { createThrottleClick } from "@/utils";
 import i18n from '@/i18n/index.js';
 const { t } = i18n.global;
 
@@ -248,9 +249,12 @@ const handleClose = () => {
   emit("close");
 };
 
-const handleBanUser = () => {
+const handleBanUser = createThrottleClick(() => {
   getBindBd();
-};
+});
+// const handleBanUser = () => {
+//   getBindBd();
+// };
 
 // 年.月.日 时间格式
 function myTimeDay(timestamp) {

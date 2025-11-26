@@ -508,8 +508,8 @@ getGuildInfo(); //获取公会详情数据
   }
 
   .new_act {
-    color: #000000;
-    background: linear-gradient(90deg, #ffc800, #ffc928) !important;
+    color: #ffffff;
+    background: linear-gradient(90deg, #AC41F6, #520BF5) !important;
   }
 }
 </style>

@@ -13,7 +13,9 @@ import { Locale } from "vant";
 import enUS from "vant/es/locale/lang/en-US";
 import arSA from '@/i18n/ar-SA';
 import nodata from "@/assets/img/guild/nodata.png";
+import i18n from '@/i18n/index.js';
 
+const { t } = i18n.global;
 // 接收参数
 const props = defineProps([
   "uid",
@@ -169,7 +171,10 @@ function kickOutMember() {
     deviceId: props.deviceId,
   })
     .then(() => {
-      refreshGuildHistoryData(); //刷新公会成员历史数据
+      showToast(t('sysadmin.succ'));
+      setTimeout(() => {
+        refreshGuildHistoryData(); //刷新公会成员历史数据
+      }, 1000);
     })
     .catch((err) => {
       showToast(err.message);

@@ -53,7 +53,9 @@ import { ref, onMounted, reactive, computed, defineProps } from "vue";
 import { useRouter } from "vue-router";
 import { showToast } from "vant";
 import { searchUser, BindBd } from "@/api/sysadmin";
+import { createThrottleClick } from "@/utils";
 import i18n from '@/i18n/index.js';
+
 const { t } = i18n.global;
 const props = defineProps(["isUid", "ticket", "memberUid"]);
 // 定义发射事件
@@ -112,7 +114,7 @@ const goBack = () => {
 const banReason = ref("");
 // 绑定
 const getBindBd = () => {
-  if (!searchId.value.trim()){
+  if (!searchId.value.trim()) {
     return
   }
   BindBd({
@@ -126,7 +128,7 @@ const getBindBd = () => {
       closeOFF.value = false;
       banReason.value = "";
       showToast(t('sysadmin.succ'));
-      
+
       setTimeout(() => {
         // 成功时发射事件
         emit("success", data);
@@ -143,9 +145,12 @@ const handleClose = () => {
   emit("close");
 };
 
-const handleBanUser = () => {
+const handleBanUser = createThrottleClick(() => {
   getBindBd();
-};
+});
+// const handleBanUser = () => {
+
+// };
 
 onMounted(() => {
   // 初始化代码

@@ -185,3 +185,25 @@ export function isSafari() {
     return false;
   }
 }
+
+
+/**
+ * 生成节流点击函数的高阶函数
+ * @param {Function} callback - 原始点击回调
+ * @param {number} delay - 限制时间（默认2000ms）
+ * @returns {Function} 节流后的点击处理函数
+ */
+export function createThrottleClick(callback, delay = 2000) {
+  let lastClickTime = 0; // 记录上次点击时间
+
+  return function (...args) {
+    const now = Date.now();
+    // 计算距离上次点击的时间差，小于delay则拦截
+    if (now - lastClickTime < delay) return;
+
+    // 执行回调并传递参数
+    callback.apply(this, args);
+    // 更新上次点击时间
+    lastClickTime = now;
+  };
+}

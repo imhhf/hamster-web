@@ -105,9 +105,10 @@ import i18n from '@/i18n/index.js';
 import { showToast } from "vant";
 import { home } from "@/api/sysadmin";
 import createBD from './createBD.vue'
-import { getLang } from "@/utils";
+import { getLang, createThrottleClick } from "@/utils";
 import { AppClose } from "@/utils/client";
 const { t } = i18n.global;
+
 // import Common from '@/utils/common';
 
 // 接收参数

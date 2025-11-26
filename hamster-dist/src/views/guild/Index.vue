@@ -191,7 +191,7 @@ function onCtrl(key) {
 
 // 前往数据页
 function toData() {
-  const role = infos.memberRole;
+  const role = infos?.memberRole;
 
   if (role == 1 || role == 2) {
     // 公会长和管理员可以查看所有成员数据
@@ -472,17 +472,17 @@ getMyGuildDetail(); //获取用户公会主页数据
 
       <div class="mine">
         <div class="avatar_box">
-          <van-image fit="cover" class="avatar" :src="infos.coverPicUrl" />
+          <van-image fit="cover" class="avatar" :src="infos?.coverPicUrl" />
         </div>
-        <div class="nick">{{ infos.guildName || "-" }}</div>
+        <div class="nick">{{ infos?.guildName || "-" }}</div>
         <ul class="base">
           <li class="id">
             <span>ID:</span>
-            <span>{{ infos.guildNo || "-" }}</span>
+            <span>{{ infos?.guildNo || "-" }}</span>
           </li>
           <li class="fans">
             <van-image fit="cover" class="icon" :src="fans" />
-            <span class="num">{{ infos.memberCount || "-" }}</span>
+            <span class="num">{{ infos?.memberCount || "-" }}</span>
           </li>
         </ul>
       </div>
@@ -498,15 +498,15 @@ getMyGuildDetail(); //获取用户公会主页数据
 
         <ul class="list">
           <li class="item">
-            <div class="val">{{ infos.guildData.charmValue }}</div>
+            <div class="val">{{ infos?.guildData.charmValue }}</div>
             <div class="lab">{{ $t("guild.label.totalIncome") }}</div>
           </li>
           <li class="item">
-            <div class="val">{{ minuteToHour(infos.guildData.micBroadcastDuration) }}</div>
+            <div class="val">{{ minuteToHour(infos?.guildData.micBroadcastDuration) }}</div>
             <div class="lab">{{ $t("guild.label.hours") }}</div>
           </li>
           <li class="item">
-            <div class="val">{{ infos.guildData.validDays }}</div>
+            <div class="val">{{ infos?.guildData.validDays }}</div>
             <div class="lab">{{ $t("guild.label.validDays") }}</div>
           </li>
         </ul>
@@ -519,16 +519,16 @@ getMyGuildDetail(); //获取用户公会主页数据
         </div>
 
         <div class="info" @click="toCard">
-          <van-image fit="cover" class="avatar" round :src="infos.memberCard.memberAvatar" />
+          <van-image fit="cover" class="avatar" round :src="infos?.memberCard.memberAvatar" />
           <div class="base">
-            <div class="nick clamp-1">{{ infos.memberCard.memberNick }}</div>
+            <div class="nick clamp-1">{{ infos?.memberCard.memberNick }}</div>
             <div class="lv">
-              <van-image v-if="infos.memberCard.memberVipIcon" fit="cover" class="icon"
-                :src="infos.memberCard.memberVipIcon" />
-              <van-image v-if="infos.memberCard.memberExperLevelIcon" fit="cover" class="icon"
-                :src="infos.memberCard.memberExperLevelIcon" />
-              <van-image v-if="infos.memberCard.memberCharmLevelIcon" fit="cover" class="icon"
-                :src="infos.memberCard.memberCharmLevelIcon" />
+              <van-image v-if="infos?.memberCard.memberVipIcon" fit="cover" class="icon"
+                :src="infos?.memberCard.memberVipIcon" />
+              <van-image v-if="infos?.memberCard.memberExperLevelIcon" fit="cover" class="icon"
+                :src="infos?.memberCard.memberExperLevelIcon" />
+              <van-image v-if="infos?.memberCard.memberCharmLevelIcon" fit="cover" class="icon"
+                :src="infos?.memberCard.memberCharmLevelIcon" />
             </div>
           </div>
           <van-image fit="cover" class="link" :src="link" />
@@ -542,8 +542,8 @@ getMyGuildDetail(); //获取用户公会主页数据
         </div>
 
         <ul class="list">
-          <template v-if="infos.roomList && infos.roomList.length > 0">
-            <li class="item" v-for="(item, idx) in infos.roomList" :key="idx" @click.stop="toRoom(item.roomId)">
+          <template v-if="infos?.roomList && infos?.roomList.length > 0">
+            <li class="item" v-for="(item, idx) in infos?.roomList" :key="idx" @click.stop="toRoom(item.roomId)">
               <van-image fit="cover" class="avatar" :src="item.avatar" />
               <div class="info">
                 <div class="base">
@@ -573,13 +573,13 @@ getMyGuildDetail(); //获取用户公会主页数据
             $t("guild.more.order") }}</van-button>
           <van-button class="ctrl" @click="onCtrl('withdraw')">{{
             $t("guild.more.withdraw") }}</van-button>
-          <van-button v-if="infos.memberRole == 1 || infos.memberRole == 2" class="ctrl"
+          <van-button v-if="infos?.memberRole == 1 || infos?.memberRole == 2" class="ctrl"
             @click="onCtrl('information')">{{ $t("guild.more.information") }}</van-button>
-          <van-button v-if="infos.memberRole == 1 || infos.memberRole == 2" class="ctrl" @click="onCtrl('invite')">{{
+          <van-button v-if="infos?.memberRole == 1 || infos?.memberRole == 2" class="ctrl" @click="onCtrl('invite')">{{
             $t("guild.more.invite") }}</van-button>
-          <van-button v-if="infos.memberRole == 1" class="ctrl danger" @click="onCtrl('dissolve')">{{
+          <van-button v-if="infos?.memberRole == 1" class="ctrl danger" @click="onCtrl('dissolve')">{{
             $t("guild.more.dissolve") }}</van-button>
-          <van-button v-if="infos.memberRole == 3" class="ctrl danger" @click="onCtrl('quit')">{{ $t("guild.more.quit")
+          <van-button v-if="infos?.memberRole == 3" class="ctrl danger" @click="onCtrl('quit')">{{ $t("guild.more.quit")
             }}</van-button>
         </div>
         <van-button class="cancel" @click="onCtrl('cancel')">{{
@@ -668,7 +668,7 @@ getMyGuildDetail(); //获取用户公会主页数据
             </div>
             <van-button class="btn" @click="onSendInvite"
               :disabled="pops.invite.target.inviteStatus == 1 ? true : false"
-              :class="pops.invite.target.inviteStatus == 0 ? 'act' : 'def'">{{ $t("guild.more.invite") }}</van-button>
+              :class="pops.invite.target.inviteStatus == 0 ? 'act' : 'def'">{{ pops.invite.target.inviteStatus == 0 ? $t("guild.more.invite"):$t("guild.more.invite") }}</van-button>
           </div>
         </div>
       </template>
@@ -1414,8 +1414,8 @@ getMyGuildDetail(); //获取用户公会主页数据
         }
 
         .act {
-          background: #ffe278;
-          color: #606060;
+          background: #B37AF7;
+          color: #FFFFFF;
         }
 
         .def {
