@@ -1,7 +1,7 @@
 @import './common.scss';
 
 .weekActivity {
-    background: #1F1600;
+    background: #1F0B00;
     padding-bottom: 40px;
 }
 
@@ -25,9 +25,9 @@
         padding-top: 15px;
 
         .li {
-            width: 96px;
-            height: 194px;
-            margin: 0 20px;
+            width: 120px;
+            height: 195px;
+            margin: 0 5px;
             position: relative;
             box-sizing: border-box;
 
@@ -48,13 +48,17 @@
             }
 
             &.li0 {
-                width: 228px;
-                height: 273px;
+                width: 190px;
+                height: 265px;
                 padding-top: 30px;
-                margin: 0 80px;
+                margin: 0 95px;
+                position: relative;
 
                 &::before {
                     @include bgImage('rank1');
+                    left: 50%;
+                    transform: translateX(-50%);
+                    right: auto;
                 }
 
                 .img {
@@ -249,8 +253,8 @@
     }
 
     .tit {
-        width: 247px;
-        height: 40px;
+        width: 242px;
+        height: 58px;
         @include bgImage('tit-bg');
         margin: 0 auto;
         display: flex;
@@ -259,8 +263,8 @@
 
         span {
             font-weight: 800;
-            font-size: 18px;
-            color: #FFFAA9;
+            font-size: 15px;
+            color: #FFE096;
             line-height: 13px;
             text-align: center;
         }
@@ -276,21 +280,21 @@
 
     .btnBox {
         transition: 700ms;
-        @include btnBox(133px, 50px, 'icon-tab1-hidden');
+        @include btnBox(121px, 58px, 'icon-tab1-hidden');
 
         span {
             text-align: center;
-            font-size: 16px;
-            color: #9D9A64
+            font-size: 15px;
+            color: #9D7864
         }
 
         &.tab-show {
-            @include btnBox(133px, 60px, 'icon-tab1');
+            @include btnBox(137px, 58px, 'icon-tab1');
             // margin: 0 -10px 0;
 
             span {
                 font-weight: 800;
-                font-size: 18px;
+                font-size: 15px;
                 color: #FFF9D9;
                 line-height: 15px;
             }
@@ -371,22 +375,40 @@
 
 .rank {
     width: 100%;
-    height: 1220px;
-    @include bgImage('bg1');
+    min-height: 762px;
+    // @include bgImage('bg1');
     position: relative;
     margin-bottom: 60px;
+
+    &::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 577px;
+        top: 0;
+        @include bgImage('rank-t')
+    }
+
+    &::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 185px;
+        @include bgImage('rank-b')
+    }
 
     .top-list {
         display: flex;
         align-items: center;
         justify-content: space-between;
         flex-wrap: wrap;
-        padding-top: 40px;
+        // padding-top: 40px;
 
         .li {
-            width: 102px;
-            height: 162px;
-            margin: 0 20px;
+            width: 118px;
+            height: 188px;
+            margin: 0 10px;
             position: relative;
             box-sizing: border-box;
 
@@ -419,7 +441,7 @@
                 .img {
                     width: 90px;
                     height: 90px;
-                    margin-top: 10px;
+                    margin-top: 28px;
 
                     // @include bgImage('rank-h1');
 
@@ -442,6 +464,7 @@
                     width: 97px;
                     // @include bgImage('rank-n-bg1');
                     // margin: 20px auto 0;
+                    margin-top: 15px;
 
                     .user-name {
                         width: 60px;
@@ -511,7 +534,7 @@
             .img {
                 width: 60px;
                 height: 60px;
-                margin: -15px auto 0;
+                margin: 8px auto 0;
                 position: relative;
                 display: flex;
                 align-items: center;
@@ -544,7 +567,7 @@
                 align-items: center;
                 justify-content: center;
                 font-weight: bold;
-                font-size: 18px;
+                font-size: 15px;
                 color: #FFF25C;
                 text-align: center;
                 position: relative;
@@ -555,7 +578,7 @@
                 position: relative;
                 width: 82px;
                 height: 15px;
-                margin: 2px auto 0;
+                margin: 10px auto 0;
                 box-sizing: border-box;
                 // padding: 0 10px;
                 z-index: 1;
@@ -600,7 +623,7 @@
 
                 .user-num {
                     width: 35px;
-                    height: 20px;
+                    height: 15px;
                     padding: 0 2px;
                     color: #ffffff;
                     background: none;
@@ -612,18 +635,22 @@
 
 .rank-list,
 .self {
+    position: relative;
     // padding: 0 37px;
     box-sizing: border-box;
-    height: 600px;
-    overflow: auto;
+    // height: 500px;
+    // overflow: auto;
     margin-top: 10px;
+    padding-top: 20px;
+    padding-bottom: 102px;
+    z-index: 1;
 
     &.moreList {
         height: 420px;
     }
 
     .li {
-        width: 346px;
+        width: 100%;
         height: 82px;
         margin: 0 auto;
         box-sizing: border-box;
@@ -671,7 +698,7 @@
                     height: 100%;
                     top: 0;
                     right: 0;
-                    z-index: 2;
+                    z-index: 02;
                     @include bgImage('rank-h-oth');
                 }
 
@@ -718,9 +745,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
-            font-size: 14px;
-            color: #ffffff;
+            font-weight: bold;
+            font-size: 18px;
+            color: #FFD851;
 
             .user-num {
                 width: 80px;
@@ -788,30 +815,36 @@
             }
         }
 
-        .right {
-            font-weight: 800;
-            font-size: 15px;
-            color: #ffffff;
-            line-height: 20px;
-        }
+        // .right {
+        //     font-weight: 800;
+        //     font-size: 15px;
+        //     color: #ffffff;
+        //     line-height: 20px;
+        // }
     }
 }
 
 
 .reward {
     width: 100%;
-    height: 545px;
+    height: 582px;
     @include bgImage('bg2');
     box-sizing: border-box;
-    padding-top: 66px;
+    // padding-top: 66px;
     margin-bottom: 13px;
 
     .tit {
-        font-family: Impact;
+        width: 206px;
+        height: 44px;
+        font-weight: 800;
         font-size: 16px;
-        color: #FFE472;
+        color: #FFE096;
         text-align: center;
-        // transform: skewY(20deg);
+        @include bgImage('bg2-tit');
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .tit-bg1 {
@@ -833,7 +866,7 @@
         align-items: center;
         justify-content: center;
         flex-wrap: wrap;
-        margin-top: 45px;
+        margin-top: 60px;
 
         .giftBox {
             box-sizing: border-box;
@@ -846,11 +879,12 @@
             }
 
             p {
-                font-weight: 800;
-                font-size: 21px;
-                color: #FFFFFF;
-                text-align: center;
+                width: 100%;
+                font-weight: bold;
+                font-size: 10px;
+                color: #FFFAE3;
                 bottom: -25px;
+                @include bgImage('bg2-tit-name');
             }
         }
     }
@@ -866,17 +900,22 @@
     height: 550px;
     overflow-y: auto;
     margin: 0 auto;
+    box-sizing: border-box;
+    padding-top: 14px;
 
     .popLastDay-box {
         width: 100%;
         height: 500px;
-        margin: 10px auto 0;
-
         @include bgImage('bg3');
+        box-sizing: border-box;
+        padding-top: 25px;
     }
 
     .title {
-        position: relative;
+        position: absolute;
+        top: 5px;
+        left: 50%;
+        transform: translateX(-50%);
         width: 231px;
         height: 51px;
         @include bgImage('tit2');
@@ -885,12 +924,12 @@
         font-size: 15px;
         color: #ffffff;
         line-height: 15px;
-        margin: -10px auto;
         text-align: center;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 10px 50px 0;
+        padding: 0 25px;
+        box-sizing: border-box;
     }
 
     .top-list-box {
@@ -921,6 +960,9 @@
                 flex-wrap: wrap;
                 padding-top: 15px;
                 padding: 0 16px;
+                position: relative;
+                height: 140px;
+                margin-top: 10px;
 
 
                 .li {
@@ -929,6 +971,8 @@
                     // margin: 0 20px;
                     position: relative;
                     box-sizing: border-box;
+                    position: absolute;
+                    top: 20px;
 
                     &::before {
                         content: '';
@@ -941,18 +985,38 @@
                     }
 
                     &.li0 {
+                        width: 118px;
+                        height: 132px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        top: 0;
+
                         &::before {
                             @include bgImage('icon-top1');
+                        }
+
+                        .name {
+                            margin: 5px auto 0;
+
+                        }
+
+                        .num-box {
+                            top: 15px;
+
                         }
                     }
 
                     &.li1 {
+                        left: 18px;
+
                         &::before {
                             @include bgImage('icon-top2');
                         }
                     }
 
                     &.li2 {
+                        right: 18px;
+
                         &::before {
                             @include bgImage('icon-top3');
                         }
@@ -965,7 +1029,7 @@
                     }
 
                     .img {
-                        width: 80px;
+                        width: 30px;
                         height: 80px;
                         margin: 0 auto;
                         position: relative;
@@ -984,9 +1048,9 @@
                         }
 
                         img {
-                            margin-top: 10px;
-                            width: 80px;
-                            height: 80px;
+                            margin-top: 30px;
+                            width: 55px;
+                            height: 55px;
                             border-radius: 50%;
                             z-index: 0;
                         }
@@ -1003,15 +1067,18 @@
                         font-size: 13px;
                         color: #FFF25C;
                         text-align: center;
-                        position: relative;
+                        position: absolute;
                         z-index: 1;
+                        top: 8px;
+                        left: 50%;
+                        transform: translateX(-50%);
                     }
 
                     .name {
                         position: relative;
-                        width: 82px;
+                        width: 70px;
                         height: 15px;
-                        margin: 10px auto 0;
+                        margin: 16px auto 0;
                         box-sizing: border-box;
                         // padding: 0 10px;
                         z-index: 1;

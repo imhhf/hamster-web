@@ -13,7 +13,8 @@
                         <div class="img" @click="toUser(topRank?.[0]?.uid)">
                             <img v-if="topRank?.[0]?.avatar" :src="topRank?.[0]?.avatar" alt="">
                         </div>
-                        <img class="top-img" src="../../assets/img/weekActivity/top1.png" alt="">
+                        <div class="top-img"></div>
+                        <!-- <img class="top-img" src="../../assets/img/weekActivity/top1.png" alt=""> -->
                         <div class="name"><van-notice-bar class="user-name" :text="topRank?.[0]?.nick" :speed="20" />
                         </div>
                         <div class="num">
@@ -26,13 +27,13 @@
                     </template>
                 </div>
                 <div class="li li1">
-                    <template v-if="topRank?.[1]">
+                    <template v-if="!topRank?.[1]">
                         <div class="img" @click="toUser(topRank?.[1]?.uid)">
                             <img v-if="topRank?.[1]?.avatar" :src="topRank?.[1]?.avatar" alt="">
+                            <!-- <img v-else class="top-img" src="../../assets/img/weekActivity/top2.png" alt=""> -->
                         </div>
-
-                        <img class="top-img" src="../../assets/img/weekActivity/top2.png" alt="">
-
+                        <div class="top-img"></div>
+                        <!-- <img class="top-img" src="../../assets/img/weekActivity/top2.png" alt=""> -->
                         <div class="name"><van-notice-bar class="user-name" :text="topRank?.[1]?.nick" :speed="20" />
                         </div>
                         <div class="num">
@@ -44,13 +45,12 @@
                     </template>
                 </div>
                 <div class="li li2">
-                    <template v-if="topRank?.[2]">
+                    <template v-if="!topRank?.[2]">
                         <div class="img" @click="toUser(topRank?.[2]?.uid)">
                             <img v-if="topRank?.[2]?.avatar" :src="topRank?.[2]?.avatar" alt="">
                         </div>
-
-                        <img class="top-img" src="../../assets/img/weekActivity/top3.png" alt="">
-
+                        <div class="top-img"></div>
+                        <!-- <img class="top-img" src="../../assets/img/weekActivity/top3.png" alt=""> -->
                         <div class="name"><van-notice-bar class="user-name" :text="topRank?.[2]?.nick" :speed="20" />
                         </div>
                         <div class="num">
@@ -87,19 +87,19 @@
                 <template #default="timeData">
                     <span class="time days">{{
                         timeData.days > 9 ? timeData.days : "0" + timeData.days
-                        }}</span>
+                    }}</span>
                     <span class="colon">D</span>
                     <span class="time hours">{{
                         timeData.hours > 9 ? timeData.hours : "0" + timeData.hours
-                        }}</span>
+                    }}</span>
                     <span class="colon">:</span>
                     <span class="time minutes">{{
                         timeData.minutes > 9 ? timeData.minutes : "0" + timeData.minutes
-                        }}</span>
+                    }}</span>
                     <span class="colon">:</span>
                     <span class="time seconds">{{
                         timeData.seconds > 9 ? timeData.seconds : "0" + timeData.seconds
-                        }}</span>
+                    }}</span>
                     <!-- <span class="colon">s</span> -->
                 </template>
             </van-count-down>
@@ -120,7 +120,8 @@
                             <div class="img" @click="toUser(info?.rankList[0]?.uid)">
                                 <img v-if="info?.rankList[0]?.avatar" :src="info?.rankList[0]?.avatar" alt="">
                             </div>
-                            <img class="top-img" src="../../assets/img/weekActivity/top1-1.png" alt="">
+                            <div class="top-img"></div>
+                            <!-- <img class="top-img" src="../../assets/img/weekActivity/top1-1.png" alt=""> -->
                             <div class="name"><van-notice-bar class="user-name" :text="info?.rankList[0]?.nick"
                                     :speed="20" />
                             </div>
@@ -138,9 +139,8 @@
                             <div class="img" @click="toUser(info?.rankList[1]?.uid)">
                                 <img v-if="info?.rankList[1]?.avatar" :src="info?.rankList[1]?.avatar" alt="">
                             </div>
-
-                            <img class="top-img" src="../../assets/img/weekActivity/top2-2.png" alt="">
-
+                            <div class="top-img"></div>
+                            <!-- <img class="top-img" src="../../assets/img/weekActivity/top2-2.png" alt=""> -->
                             <div class="name"><van-notice-bar class="user-name" :text="info?.rankList[1]?.nick"
                                     :speed="20" />
                             </div>
@@ -157,9 +157,8 @@
                             <div class="img" @click="toUser(info?.rankList[2]?.uid)">
                                 <img v-if="info?.rankList[2]?.avatar" :src="info?.rankList[2]?.avatar" alt="">
                             </div>
-
-                            <img class="top-img" src="../../assets/img/weekActivity/top3-3.png" alt="">
-
+                            <div class="top-img"></div>
+                            <!-- <img class="top-img" src="../../assets/img/weekActivity/top3-3.png" alt=""> -->
                             <div class="name"><van-notice-bar class="user-name" :text="info?.rankList[2]?.nick"
                                     :speed="20" />
                             </div>
@@ -219,15 +218,38 @@
 
         <!-- 奖励 -->
         <template v-else>
-            <div class="reward" v-for="(item, index) in rewList" :key="index">
-                <div class="tit">{{ index === 0 ? $t('weekActivity.TOP') : index === 1
-                    ? $t('weekActivity.TOP2') : $t('weekActivity.TOP3') }}</div>
+            <div class="reward">
+                <div class="tit">{{ $t('weekActivity.TOP') }}</div>
 
                 <div class="list">
-                    <div class="giftBox" :class="'giftBox' + ind" v-for="(it, ind) in item.imgs" :key="ind">
-                        <img class="top-img" :src="it.img" alt="">
+                    <div class="giftBox" :class="'giftBox' + ind" v-for="(it, ind) in rewardList.rewardTop1" :key="ind">
+                        <img class="top-img" :src="it.rewardPicUrl" alt="">
                         <p>
-                            {{ it.day }}
+                            {{ it.rewardDesc }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="reward">
+                <div class="tit">{{ $t('weekActivity.TOP2') }}</div>
+
+                <div class="list">
+                    <div class="giftBox" :class="'giftBox' + ind" v-for="(it, ind) in rewardList.rewardTop2" :key="ind">
+                        <img class="top-img" :src="it.rewardPicUrl" alt="">
+                        <p>
+                            {{ it.rewardDesc }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="reward">
+                <div class="tit">{{ $t('weekActivity.TOP3') }}</div>
+
+                <div class="list">
+                    <div class="giftBox" :class="'giftBox' + ind" v-for="(it, ind) in rewardList.rewardTop3" :key="ind">
+                        <img class="top-img" :src="it.rewardPicUrl" alt="">
+                        <p>
+                            {{ it.rewardDesc }}
                         </p>
                     </div>
                 </div>
@@ -237,7 +259,7 @@
         <!-- 荣耀墙 -->
         <van-popup class="popLastDay" v-model:show="popLastDay" position="center">
             <div class="popLastDay-box">
-                <div class="title">{{ $t('weekActivity.activ') }}</div>
+                <div class="title">{{ $t('weekActivity.Las') }}</div>
 
                 <div class="top-list-box" v-if="honorHall?.length > 0 || honorHall !== null">
                     <div class="top-list" v-for="(item, index) in honorHall" :key="index">
@@ -251,9 +273,9 @@
                                 </div>
                                 <div class="name"><van-notice-bar class="user-name" :text="it?.nick" :speed="20" />
                                 </div>
-                                <div class="num">
+                                <!-- <div class="num">
                                     ID:{{ it?.erbanNo }}
-                                </div>
+                                </div> -->
 
                                 <div class="num-box">
                                     {{ setKM(it?.goldNum) }}
@@ -279,7 +301,7 @@ import { getLang } from "@/utils";
 import i18n from '@/i18n/index.js';
 import { OpenUserSpace, OpenRoom, OpengetToke } from "@/utils/client";
 import { showToast } from "vant";
-import { GET_StarWeek, GET_StarWeek_top, GET_StarWeek_honorHall } from "@/api/weekActivity";
+import { GET_StarWeek, GET_StarWeek_top, GET_StarWeek_honorHall, GET_StarWeek_reward } from "@/api/weekActivity";
 // import { ramadanUrl, ramadanGiftUrl } from "./js/data"
 const { t } = i18n.global;
 // import Common from '@/utils/common';
@@ -349,6 +371,9 @@ const clickTab = (ind) => {
     } else if (isTabe.value === 1) {
         console.log(232);
         getStarWeek(2)
+    } else {
+        console.log(888);
+        getReward()
     }
 
 }
@@ -411,6 +436,22 @@ function getStarWeek_honorHall() {
             //     // showToast(t('weekActivity.no'));
             // }
             console.log('data==', info.value);
+        })
+        .catch((err) => {
+            showToast(err.message);
+        });
+}
+
+// 获取榜单奖励
+const rewardList = ref()
+function getReward() {
+    GET_StarWeek_reward({
+        uid: props.uid,
+        // rankType: type
+    })
+        .then((data) => {
+            rewardList.value = data
+            console.log(rewardList.value);
         })
         .catch((err) => {
             showToast(err.message);
