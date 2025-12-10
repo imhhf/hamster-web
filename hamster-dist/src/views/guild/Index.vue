@@ -357,6 +357,7 @@ function quitGuildCost() {
   loading.value = true;
   GUILD_MEMBER_QUIT_COST({
     uid: props.uid,
+    ticket: props.ticket,
   })
     .then(() => {
       loading.value = false;
@@ -580,7 +581,7 @@ getMyGuildDetail(); //获取用户公会主页数据
           <van-button v-if="infos?.memberRole == 1" class="ctrl danger" @click="onCtrl('dissolve')">{{
             $t("guild.more.dissolve") }}</van-button>
           <van-button v-if="infos?.memberRole == 3" class="ctrl danger" @click="onCtrl('quit')">{{ $t("guild.more.quit")
-            }}</van-button>
+          }}</van-button>
         </div>
         <van-button class="cancel" @click="onCtrl('cancel')">{{
           $t("guild.more.cancel")
@@ -668,7 +669,8 @@ getMyGuildDetail(); //获取用户公会主页数据
             </div>
             <van-button class="btn" @click="onSendInvite"
               :disabled="pops.invite.target.inviteStatus == 1 ? true : false"
-              :class="pops.invite.target.inviteStatus == 0 ? 'act' : 'def'">{{ pops.invite.target.inviteStatus == 0 ? $t("guild.more.invite"):$t("guild.more.invite") }}</van-button>
+              :class="pops.invite.target.inviteStatus == 0 ? 'act' : 'def'">{{ pops.invite.target.inviteStatus == 0 ?
+                $t("guild.more.invite") : $t("guild.more.invite") }}</van-button>
           </div>
         </div>
       </template>
@@ -709,14 +711,8 @@ getMyGuildDetail(); //获取用户公会主页数据
     <Loading :show="loading" color="#fff" bg-color="transparent" />
 
     <!-- 提现弹窗 -->
-    <WithdrawPopup
-      v-model:show="showWithdrawPopup"
-      :bg-image="'https://file.hamsterdw.com/User/withdraw_bg.png'"
-      :uid="props.uid"
-      :ticket="props.ticket"
-      :source="props.source"
-      :device-id="props.deviceId"
-    />
+    <WithdrawPopup v-model:show="showWithdrawPopup" :bg-image="'https://file.hamsterdw.com/User/withdraw_bg.png'"
+      :uid="props.uid" :ticket="props.ticket" :source="props.source" :device-id="props.deviceId" />
   </div>
 </template>
 
