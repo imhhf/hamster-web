@@ -27,7 +27,7 @@
                     </template>
                 </div>
                 <div class="li li1">
-                    <template v-if="!topRank?.[1]">
+                    <template v-if="topRank?.[1]">
                         <div class="img" @click="toUser(topRank?.[1]?.uid)">
                             <img v-if="topRank?.[1]?.avatar" :src="topRank?.[1]?.avatar" alt="">
                             <!-- <img v-else class="top-img" src="../../assets/img/weekActivity/top2.png" alt=""> -->
@@ -45,7 +45,7 @@
                     </template>
                 </div>
                 <div class="li li2">
-                    <template v-if="!topRank?.[2]">
+                    <template v-if="topRank?.[2]">
                         <div class="img" @click="toUser(topRank?.[2]?.uid)">
                             <img v-if="topRank?.[2]?.avatar" :src="topRank?.[2]?.avatar" alt="">
                         </div>
