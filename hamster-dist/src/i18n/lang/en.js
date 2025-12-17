@@ -527,6 +527,12 @@ const EN = {
     time: 'Data time',
     bdcen: 'BD Center',
     Agencyd: 'Agency Data',
+    free: 'Free gift package',
+    gift: 'Gift package',
+    choose: 'Choose gift package',
+    pla: 'Please enter the User ID',
+    Package: 'Package LV.{0}',
+    user: 'User ID'
   },
 };
 

@@ -146,3 +146,21 @@ export function GetBdData(params) {
     params,
   });
 }
+
+// 获取礼包
+export function GetGiftPack(params) {
+  return service({
+    method: "get",
+    url: `${prefix}getGiftPack`,
+    params,
+  });
+}
+
+// 赠送礼包
+export function Send(params) {
+  return service({
+    method: "post",
+    url: `${prefix}giftPack/send`,
+    params,
+  });
+}
