@@ -373,7 +373,7 @@ const EN = {
     max: 'Max',
     min: 'Min',
     attention:
-      "The coins will be transferred to the herovoice's account, you can not cancel it after the transaction was done, please sure you transfer to the correct account.",
+      "The coins will be transferred to the Hamster Live's account, you can not cancel it after the transaction was done, please sure you transfer to the correct account.",
     transferring: 'Transferring...',
     transfer: 'Transfer',
     searchUserIdPlaceholder: 'Search user ID',
