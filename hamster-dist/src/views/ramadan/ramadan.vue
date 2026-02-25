@@ -9,7 +9,7 @@
             <div class="list">
                 <div class="giftBox" v-for="(item, index) in 3" :key="index">
                     <img :src="ramadanGiftUrl('rew' + (index + 1))" alt="">
-                    <p>{{ index === 0 ? 1000 : index === 1 ? 9999 : 3999 }}</p>
+                    <p>{{ index === 0 ? 7000 : index === 1 ? 69999 :  27999}}</p>
                 </div>
             </div>
         </div>
@@ -31,7 +31,6 @@
                 <span class="time seconds">{{
                     timeData.seconds > 9 ? timeData.seconds : "0" + timeData.seconds
                 }}</span>
-                <!-- <span class="colon">s</span> -->
             </template>
         </van-count-down>
 
