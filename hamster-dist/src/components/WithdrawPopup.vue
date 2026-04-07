@@ -154,7 +154,7 @@ import arrowInvite from "@/assets/agency/arrow_invite.png";
 import WithdrawMethods from "./WithdrawMethods.vue";
 import AgentSelectionPopup from "./AgentSelectionPopup.vue";
 import { useI18n } from "vue-i18n";
-
+import { showToast } from "vant";
 import { WITHDRAW_INFO, WITHDRAW_LAUNCH } from "@/api/withdraw";
 
 const props = defineProps({
@@ -408,9 +408,11 @@ const handleWithdraw = async () => {
 
       // 关闭弹窗
       emit("update:show", false);
+      if (result.code !== 200) {
+        showToast(result.message);
+      }
     } catch (error) {
-      Snackbar.error(error);
-
+      showToast(error.message);
       console.error("提现失败:", error);
     } finally {
       isWithdrawing.value = false;

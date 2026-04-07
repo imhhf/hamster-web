@@ -163,7 +163,7 @@ const AR = {
     topRoom: "أعلى 10 غرف",
     tips: {
       nodata: "لا توجد بيانات",
-      enterName: "من فضلك أدخل اسم الوكيل",
+      enterName: "يرجى إدخال اسم الوكالة",
       enterId: "الرجاء إدخال رقم المستخدم",
       dissolveAgency: "مرة واحدة في حل و لا يمكن استردادها ، هو حل تأكيد ؟",
       quitAgency:
@@ -180,7 +180,7 @@ const AR = {
       joinTime: "حان الوقت للانضمام إلى وكيل",
       lastLoginTime: "آخر وقت تسجيل الدخول",
       cover: "وكيل التأمين",
-      name: "اسم المنظمة",
+      name: "اسم الوكالة",
       todayIncome: "دخل اليوم",
       yesterdayIncome: "دخل الأمس",
       thisMonthIncome: "دخل هذا الأسبوع",
