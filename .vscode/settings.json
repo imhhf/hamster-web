@@ -1,0 +1,8 @@
+{
+    "i18n-ally.localesPaths": [
+        "hamster-dist/src/i18n",
+        "hamster-dist - 副本/src/i18n",
+        "hamster-dist/src/i18n/lang",
+        "hamster-dist - 副本/src/i18n/lang"
+    ]
+}

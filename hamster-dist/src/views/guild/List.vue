@@ -1,34 +1,85 @@
+<!--
+  公会列表页 List.vue
+  路径：/guild/list
+
+  功能说明：
+  1. 展示推荐公会列表
+  2. 支持按公会ID搜索公会
+  3. 点击公会进入公会详情页
+
+  页面参数：
+  - uid: 当前用户ID
+  - ticket: 登录凭证
+  - deviceId: 设备ID
+  - source: 来源标识
+-->
+
 <script setup>
+/**
+ * ==================== 依赖导入 ====================
+ */
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
+
+// 工具函数：获取语言设置
 import { getLang } from "@/utils";
+
+// 客户端能力：AppClose关闭页面
 import { AppClose } from "@/utils/client";
+
+// Vant 提示组件
 import { showToast } from "vant";
+
+// API 接口
 import {
-  GUILD_RECOMMEND, //公会推荐
-  GUILD_SEARCH, //公会搜索
+  GUILD_RECOMMEND,    // 获取推荐公会列表
+  GUILD_SEARCH,       // 搜索公会
 } from "@/api/guild";
+
+// 无数据占位图
 import nodata from "@/assets/img/guild/nodata.png";
 
-// 接收参数
+/**
+ * ==================== 接收路由参数 ====================
+ */
 const props = defineProps(["uid", "ticket", "deviceId", "source"]);
+
+/**
+ * ==================== 路由实例 ====================
+ */
 const router = useRouter();
-const lang = getLang();
-let loading = ref(false); //是否加载中
-let searchKey = ref(""); //搜索关键词
-let page = ref(1); //当前页
-let size = ref(10); //每页显示数量
+
+/**
+ * ==================== 基础数据 ====================
+ */
+const lang = getLang();        // 当前语言
+let loading = ref(false);     // 页面loading状态
+let searchKey = ref("");      // 搜索关键词
+let page = ref(1);            // 当前页码（用于分页）
+let size = ref(10);           // 每页显示数量
+
+/**
+ * ==================== 公会列表数据 ====================
+ */
 let agencies = reactive([
+  // 数据结构示例：
   // {
-  //   guildId: null,//公会ID
-  //   guildNo: null,//公会号
-  //   guildName: "",//公会名称
-  //   coverPicUrl: "",//公会封面
-  //   memberCount: 0,//公会成员数量
+  //   guildId: 1,              // 公会ID
+  //   guildNo: 123456,        // 公会号
+  //   guildName: "公会名称",   // 公会名称
+  //   coverPicUrl: "url",     // 公会封面图片
+  //   memberCount: 100,        // 成员数量
   // }
 ]);
 
-// 返回
+/**
+ * ==================== 页面方法 ====================
+ */
+
+/**
+ * 返回上一页
+ * 根据来源决定是路由返回还是关闭APP
+ */
 function goBack() {
   if (props.source === "h5") {
     router.go(-1);
@@ -37,7 +88,9 @@ function goBack() {
   }
 }
 
-// 创建公会
+/**
+ * 跳转创建公会页面
+ */
 function onCreate() {
   router.push({
     path: "/guild/create",
@@ -51,7 +104,10 @@ function onCreate() {
   });
 }
 
-// 进入公会详情
+/**
+ * 跳转公会详情页
+ * @param {Object} item - 公会数据项
+ */
 function toDetail(item) {
   console.log(item);
   router.push({
@@ -62,12 +118,15 @@ function toDetail(item) {
       uid: props.uid,
       ticket: props.ticket,
       deviceId: props.deviceId,
-      guildId: item.guildId,
+      guildId: item.guildId,  // 传递公会ID
     },
   });
 }
 
-// 搜索
+/**
+ * 搜索公会
+ * 根据输入的公会ID搜索
+ */
 function onSearch() {
   if (searchKey.value === "") {
     showToast("Please enter the search keyword");
@@ -88,9 +147,11 @@ function onSearch() {
         let arr = agencies;
         const { list, whetherLastPage } = data;
 
+        // 判断是否最后一页
         if (whetherLastPage && list && list.length > 0) {
           agencies = list;
         } else if (list && list.length > 0) {
+          // 合并数据
           agencies = arr.concat(list);
           page.value += 1;
         } else {
@@ -104,14 +165,20 @@ function onSearch() {
   }
 }
 
-// 重置
+/**
+ * 重置搜索
+ * 清空搜索词，重新加载推荐列表
+ */
 function onReset() {
   searchKey.value = "";
   page.value = 1;
   getGuildRecommend();
 }
 
-// 获取推荐公会
+/**
+ * 获取推荐公会列表
+ * 页面初始化时加载
+ */
 function getGuildRecommend() {
   loading.value = true;
   GUILD_RECOMMEND({
@@ -128,13 +195,24 @@ function getGuildRecommend() {
     });
 }
 
-getGuildRecommend(); //获取推荐公会数据
+/**
+ * ==================== 页面初始化 ====================
+ */
+getGuildRecommend();
 </script>
 
 <template>
   <div class="list">
-    <nav-bars :is-left="true" :left-slot="true" :title-slot="true" :is-right="true" :right-slot="true"
-      bg-color="#efd29c">
+    <!-- 导航栏 -->
+    <nav-bars
+      :is-left="true"
+      :left-slot="true"
+      :title-slot="true"
+      :is-right="true"
+      :right-slot="true"
+      bg-color="#efd29c"
+    >
+      <!-- 左侧返回按钮 -->
       <template #left_slot>
         <svg @click="goBack" t="1735394484907" class="back" viewBox="0 0 1024 1024" version="1.1"
           xmlns="http://www.w3.org/2000/svg" p-id="1716" width="200" height="200">
@@ -146,26 +224,46 @@ getGuildRecommend(); //获取推荐公会数据
             fill="#FFFFFF" p-id="1718"></path>
         </svg>
       </template>
+
+      <!-- 中间标题 -->
       <template #title_slot>
         <span>{{ $t("guild.title") }}</span>
       </template>
+
+      <!-- 右侧创建按钮（已注释） -->
       <template #right_slot>
         <!-- <div class="create" @click="onCreate">{{ $t("guild.btn.create") }}</div> -->
       </template>
     </nav-bars>
 
-    <van-search class="search" v-model="searchKey" show-action maxlength="8" clear-trigger="always" action-text="Search"
-       placeholder="Enter the Agency ID to search" @clear="onReset">
+    <!-- 搜索框 -->
+    <van-search
+      class="search"
+      v-model="searchKey"
+      show-action
+      maxlength="8"
+      clear-trigger="always"
+      action-text="Search"
+      placeholder="Enter the Agency ID to search"
+      @clear="onReset"
+    >
       <template #action>
         <div @click="onSearch">{{ $t("guild.btn.search") }}</div>
-      </template></van-search>
+      </template>
+    </van-search>
 
+    <!-- 公会列表 -->
     <ul class="agencies">
+      <!-- 有数据时显示列表 -->
       <template v-if="agencies?.length > 0">
         <li class="agency" v-for="(item, idx) in agencies" @click="toDetail(item)" :key="idx">
+          <!-- 公会封面 -->
           <van-image class="avatar" :src="item.coverPicUrl" fit="cover" />
+          <!-- 公会信息 -->
           <div class="info">
+            <!-- 公会名称 -->
             <div class="nick clamp-1">{{ item.guildName }}</div>
+            <!-- 基础信息：ID和成员数 -->
             <div class="base">
               <span class="id">
                 <span>ID:</span>
@@ -176,6 +274,8 @@ getGuildRecommend(); //获取推荐公会数据
           </div>
         </li>
       </template>
+
+      <!-- 无数据时显示空状态 -->
       <template v-else>
         <li class="nodata">
           <van-image class="icon" :src="nodata" fit="cover" />
@@ -184,30 +284,37 @@ getGuildRecommend(); //获取推荐公会数据
       </template>
     </ul>
 
+    <!-- 全局Loading -->
     <Loading :show="loading" color="#fff" bg-color="transparent" />
   </div>
 </template>
 
+<!-- SCSS 样式 -->
 <style lang="scss" scoped>
-:deep(.van-nav-bar){
+/* 覆盖导航栏样式 */
+:deep(.van-nav-bar) {
   background: linear-gradient(180deg, RGBA(182, 52, 255, 1) 0%, RGBA(90, 0, 255, 1) 100%) !important;
 }
-:deep(.van-nav-bar__title){
-  span{
-      color: #FFFFFF !important;
+:deep(.van-nav-bar__title) {
+  span {
+    color: #FFFFFF !important;
   }
 }
+
+/* 页面容器 */
 .list {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
 
+  /* 搜索框 */
   .search {
     padding: 15px 10px;
     width: 100%;
   }
 
+  /* 公会列表 */
   .agencies {
     width: 100%;
     flex: 1;
@@ -216,12 +323,14 @@ getGuildRecommend(); //获取推荐公会数据
     padding: 0 10px;
     position: relative;
 
+    /* 单个公会项 */
     .agency {
       width: 100%;
       height: 57px;
       display: flex;
       margin: 0 auto 12px;
 
+      /* 公会封面 */
       .avatar {
         width: 50px;
         height: 50px;
@@ -229,6 +338,7 @@ getGuildRecommend(); //获取推荐公会数据
         overflow: hidden;
       }
 
+      /* 公会信息 */
       .info {
         flex: 1;
         overflow: hidden;
@@ -256,6 +366,7 @@ getGuildRecommend(); //获取推荐公会数据
             }
           }
 
+          /* 成员数 */
           .memb {
             position: relative;
 
@@ -273,6 +384,7 @@ getGuildRecommend(); //获取推荐公会数据
       }
     }
 
+    /* 无数据状态 */
     .nodata {
       width: 100%;
       display: flex;
@@ -305,13 +417,16 @@ getGuildRecommend(); //获取推荐公会数据
 }
 </style>
 
+<!-- 全局样式 -->
 <style lang="scss">
+/* 页面背景 */
 .views_wrap,
 .list {
   background: #ffffff;
 }
 
 .list {
+  /* 导航栏标题颜色 */
   .van-nav-bar {
     .van-nav-bar__title {
       color: #be9021;
@@ -330,6 +445,7 @@ getGuildRecommend(); //获取推荐公会数据
   }
 }
 
+/* ==================== RTL 适配（阿拉伯语） ==================== */
 .ara {
   .search {
     .van-field__control {
@@ -370,6 +486,7 @@ getGuildRecommend(); //获取推荐公会数据
   }
 }
 
+/* 英语（LTR）布局 */
 .en {
   .agencies {
     .agency {

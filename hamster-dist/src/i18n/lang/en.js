@@ -144,6 +144,7 @@ const EN = {
     agencyStar: "Star of the Agency",
     founder: {
       nick: "Founder",
+      
       uid: "Founder ID",
     },
     btn: {
@@ -156,7 +157,9 @@ const EN = {
       confirm: "Confirm",
       remove: "Remove",
     },
-    monthlyData: "Monthly Data",
+    monthlyData: "Weekly Data",
+    weekData: "Weekly Data",
+
     myCard: "My Agency Card",
     topRoom: "Top 10 Room",
     tips: {
@@ -182,12 +185,12 @@ const EN = {
       name: "Agency Name",
       todayIncome: "Today’s income",
       yesterdayIncome: "Yesterday’s income",
-      thisMonthIncome: "This monthly income",
-      thisMonthHours: "This monthly hours",
-      thisMonthDays: "This monthly days",
-      lastMonthIncome: "Last monthly income",
-      lastMonthHours: "Last monthly hours",
-      lastMonthDays: "Last monthly days",
+      thisMonthIncome: "This weekly  income",
+      thisMonthHours: "This weekly  hours",
+      thisMonthDays: "This weekly  days",
+      lastMonthIncome: "Last weekly  income",
+      lastMonthHours: "Last weekly  hours",
+      lastMonthDays: "Last weekly  days",
     },
     unit: {
       date: "Date",
@@ -203,12 +206,14 @@ const EN = {
       dissolve: "Dissolve",
       cancel: "Cancel",
       quit: "Quit",
+      createAgency: "Create the Agency",
+      message: "Message Center",
+      agentId: "Agency agent ID",
     },
     message: "Message",
     dissolveAgency: "Dissolve Agency",
     quitAgency: "Quit Agency",
   },
-
   // Other
   other: {
     finishedText: "No more content available",

@@ -11,9 +11,9 @@ import clock from "@/assets/img/guild/clock.png";
 import moment from "moment";
 import { Locale } from "vant";
 import enUS from "vant/es/locale/lang/en-US";
-import arSA from '@/i18n/ar-SA';
+import arSA from "@/i18n/ar-SA";
 import nodata from "@/assets/img/guild/nodata.png";
-import i18n from '@/i18n/index.js';
+import i18n from "@/i18n/index.js";
 
 const { t } = i18n.global;
 // 接收参数
@@ -24,7 +24,7 @@ const props = defineProps([
   "memberRole",
   "startDate",
   "endDate",
-  "deviceId"
+  "deviceId",
 ]);
 const router = useRouter();
 const title = document.title;
@@ -63,14 +63,33 @@ let member = ref({
   lastMonthValidDays: 0, //上月有效天数
   lastMonthMicBroadcastDuration: 0, //上月开播时长
 });
+
+// 获取本周一的日期
+function getCurrentWeekStart() {
+  const today = new Date();
+  const dayOfWeek = today.getDay(); // 0周日 1周一 ... 6周六
+  const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // 周日时往前推6天，否则推到周一
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - diffToMonday);
+  return moment(monday).format("YYYY-MM-DD");
+}
+
+// 获取本周日的日期
+function getCurrentWeekEnd() {
+  const today = new Date();
+  const dayOfWeek = today.getDay(); // 0周日 1周一 ... 6周六
+  const diffToSunday = dayOfWeek === 0 ? 0 : 7 - dayOfWeek; // 周日时差0天，否则推到周日
+  const sunday = new Date(today);
+  sunday.setDate(today.getDate() + diffToSunday);
+  return moment(sunday).format("YYYY-MM-DD");
+}
+
 let calendar = reactive({
   show: false,
   minDate: new Date(2024, 0, 1),
   maxDate: new Date(),
-  date1: props.startDate
-    ? props.startDate
-    : moment().subtract(1, "day").format("YYYY-MM-DD"),
-  date2: props.endDate ? props.endDate : moment().format("YYYY-MM-DD"),
+  date1: props.startDate ? props.startDate : getCurrentWeekStart(), // 无参数时显示本周一
+  date2: props.endDate ? props.endDate : getCurrentWeekEnd(), // 无参数时显示本周日
 });
 
 // 返回
@@ -171,7 +190,7 @@ function kickOutMember() {
     deviceId: props.deviceId,
   })
     .then(() => {
-      showToast(t('sysadmin.succ'));
+      showToast(t("sysadmin.succ"));
       setTimeout(() => {
         refreshGuildHistoryData(); //刷新公会成员历史数据
       }, 1000);
@@ -186,17 +205,37 @@ getGuildHistoryData(); //获取公会全部成员历史数据
 
 <template>
   <div class="data">
-    <nav-bars :is-left="true" :left-slot="true" :title="title" :is-right="true" :right-slot="true" title-color="#be9021"
-      bg-color="#efd29c">
+    <nav-bars
+      :is-left="true"
+      :left-slot="true"
+      :title="title"
+      :is-right="true"
+      :right-slot="true"
+      title-color="#be9021"
+      bg-color="#efd29c"
+    >
       <template #left_slot>
-        <svg @click="goBack" t="1735394484907" class="back" viewBox="0 0 1024 1024" version="1.1"
-          xmlns="http://www.w3.org/2000/svg" p-id="1716" width="200" height="200">
+        <svg
+          @click="goBack"
+          t="1735394484907"
+          class="back"
+          viewBox="0 0 1024 1024"
+          version="1.1"
+          xmlns="http://www.w3.org/2000/svg"
+          p-id="1716"
+          width="200"
+          height="200"
+        >
           <path
             d="M705.43 800.05000001l-322.99000001-322.99000001c-21.87-21.87-57.33-21.87-79.2 0-21.87 21.87-21.87 57.33 0 79.2l323.00000001 322.99c21.87 21.87 57.33 21.87 79.2 0 21.86-21.87 21.86-57.33-0.01-79.19999999z"
-            fill="#FFFFFF" p-id="1717"></path>
+            fill="#FFFFFF"
+            p-id="1717"
+          ></path>
           <path
             d="M294.25 468.05L617.24 145.07c21.87-21.87 57.33-21.87 79.2 0 21.87 21.87 21.87 57.33 0 79.2l-322.99 322.99c-21.87 21.87-57.33 21.87-79.2 0-21.87-21.88-21.87-57.34 0-79.21z"
-            fill="#FFFFFF" p-id="1718"></path>
+            fill="#FFFFFF"
+            p-id="1718"
+          ></path>
         </svg>
       </template>
     </nav-bars>
@@ -215,8 +254,13 @@ getGuildHistoryData(); //获取公会全部成员历史数据
           <div class="nick clamp-1">{{ member.nick }}</div>
           <!-- memberRole: 3, //成员权限 1会长2管理员3普通成员 -->
           <template v-if="props.uid != props.memberUid">
-            <van-button v-if="props.memberRole == 1 || props.memberRole == 2" type="default" class="remove"
-              @click="kickOutMember">{{ $t("guild.btn.remove") }}</van-button>
+            <van-button
+              v-if="props.memberRole == 1 || props.memberRole == 2"
+              type="default"
+              class="remove"
+              @click="kickOutMember"
+              >{{ $t("guild.btn.remove") }}</van-button
+            >
           </template>
         </div>
 
@@ -274,7 +318,7 @@ getGuildHistoryData(); //获取公会全部成员历史数据
             </li>
             <li class="month">
               <div class="val clamp-1">
-                {{ member.lastMonthMicBroadcastDuration || "0" }}
+                {{ minuteToHour(member.lastMonthMicBroadcastDuration) }}
               </div>
               <div class="lab clamp-1">
                 {{ $t("guild.label.lastMonthHours") }}
@@ -298,11 +342,22 @@ getGuildHistoryData(); //获取公会全部成员历史数据
             <span class="td">{{ $t("guild.unit.hours") }}</span>
             <span class="td">{{ $t("guild.unit.income") }}</span>
           </div>
-          <van-pull-refresh v-model="refreshing" class="refresh" @refresh="refreshGuildHistoryData"
-            :pulling-text="$t('other.pullingText')" :loosing-text="$t('other.loosingText')"
-            :loading-text="$t('other.loadingText')">
-            <van-list class="list" v-model:loading="loading" :finished="finished" :immediate-check="false"
-              :finished-text="list.length == 0 ? '' : $t('other.finishedText')" :loading-text="' '">
+          <van-pull-refresh
+            v-model="refreshing"
+            class="refresh"
+            @refresh="refreshGuildHistoryData"
+            :pulling-text="$t('other.pullingText')"
+            :loosing-text="$t('other.loosingText')"
+            :loading-text="$t('other.loadingText')"
+          >
+            <van-list
+              class="list"
+              v-model:loading="loading"
+              :finished="finished"
+              :immediate-check="false"
+              :finished-text="list.length == 0 ? '' : $t('other.finishedText')"
+              :loading-text="' '"
+            >
               <template v-if="list.length == 0">
                 <div class="empt">
                   <van-image fit="cover" class="icon" :src="nodata" />
@@ -312,9 +367,11 @@ getGuildHistoryData(); //获取公会全部成员历史数据
               <template v-else>
                 <div class="tr" v-for="(item, idx) in list" :key="idx">
                   <span class="td">{{ item.dateTimeStr }}</span>
-                  <span class="td">{{ getDays(item.statisticsTime) }}</span>
-                  <span class="td">{{ minuteToHour(item.micBroadcastDuration) }}</span>
-                  <span class="td">{{ item.charmValue || '0' }}</span>
+                  <span class="td">{{ item.whetherValidDays ? 1 : 0 }}</span>
+                  <span class="td">{{
+                    minuteToHour(item.micBroadcastDuration)
+                  }}</span>
+                  <span class="td">{{ item.charmValue || "0" }}</span>
                 </div>
               </template>
             </van-list>
@@ -323,18 +380,27 @@ getGuildHistoryData(); //获取公会全部成员历史数据
       </div>
     </div>
 
-    <van-calendar v-model:show="calendar.show" :min-date="calendar.minDate" :max-date="calendar.maxDate" type="range"
-      @confirm="onCalendar" />
+    <van-calendar
+      v-model:show="calendar.show"
+      :min-date="calendar.minDate"
+      :max-date="calendar.maxDate"
+      type="range"
+      @confirm="onCalendar"
+    />
   </div>
 </template>
 
 <style lang="scss" scoped>
-:deep(.van-nav-bar){
-  background: linear-gradient(180deg, RGBA(182, 52, 255, 1) 0%, RGBA(90, 0, 255, 1) 100%) !important;
+:deep(.van-nav-bar) {
+  background: linear-gradient(
+    180deg,
+    RGBA(182, 52, 255, 1) 0%,
+    RGBA(90, 0, 255, 1) 100%
+  ) !important;
 }
-:deep(.van-nav-bar__title){
-  span{
-      color: #FFFFFF !important;
+:deep(.van-nav-bar__title) {
+  span {
+    color: #ffffff !important;
   }
 }
 .data {
@@ -414,12 +480,12 @@ getGuildHistoryData(); //获取公会全部成员历史数据
 
         .remove {
           height: auto;
-          background: linear-gradient(180deg, #AC41F6 0%, #520BF5 100%);
+          background: linear-gradient(180deg, #ac41f6 0%, #520bf5 100%);
           padding: 6px 12px;
           font-family: Helvetica, Helvetica;
           font-weight: bold;
           font-size: 12px;
-          color: #FFFFFF;
+          color: #ffffff;
           font-style: normal;
           border-radius: 22px;
           border: none;
@@ -435,7 +501,10 @@ getGuildHistoryData(); //获取公会全部成员历史数据
           border-radius: 6px;
           margin: 0px auto 20px;
           padding: 20px 10px;
-          background: linear-gradient(rgba(179, 122, 247, 0.37), rgba(179, 122, 247, 0.14));
+          background: linear-gradient(
+            rgba(179, 122, 247, 0.37),
+            rgba(179, 122, 247, 0.14)
+          );
           display: flex;
           flex-wrap: wrap;
           justify-content: center;
@@ -520,7 +589,7 @@ getGuildHistoryData(); //获取公会全部成员历史数据
           margin: 20px auto 10px;
 
           .month {
-            background: linear-gradient(#FAE0BE, #FCEDDC);
+            background: linear-gradient(#fae0be, #fceddc);
           }
         }
 
@@ -528,7 +597,7 @@ getGuildHistoryData(); //获取公会全部成员历史数据
           margin: 10px auto 20px;
 
           .month {
-            background: linear-gradient(#F4C1BF, #FBE9E3);
+            background: linear-gradient(#f4c1bf, #fbe9e3);
           }
         }
       }

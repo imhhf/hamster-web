@@ -1,79 +1,168 @@
+<!--
+  公会首页 Index.vue
+  路径：/guild/index
+
+  功能说明：
+  1. 显示用户当前加入的公会信息（封面、名称、ID、成员数）
+  2. 展示公会数据统计（总收入、总时长、有效天数）
+  3. 显示公会名片入口
+  4. 展示公会TOP10房间列表
+  5. 提供操作菜单（订单、提现、消息、邀请、解散、退出）
+
+  页面参数：
+  - uid: 当前用户ID
+  - ticket: 登录凭证
+  - source: 来源标识（h5/App）
+  - deviceId: 设备ID
+-->
+
 <script setup>
-import { reactive, ref } from "vue";
+/**
+ * ==================== 依赖导入 ====================
+ */
+import { computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
+
+// 工具函数：获取语言设置、分钟转小时格式
 import { getLang, minuteToHour } from "@/utils";
+
+// 客户端能力：AppClose关闭页面、OpenRoom打开房间
 import { AppClose, OpenRoom } from "@/utils/client";
+
+// Vant 提示组件
 import { showToast } from "vant";
+
+// API 接口
 import {
-  GUILD_MY_DETAIL, //用户公会主页
-  GUILD_MEMBER_APPLY_LIST, //公会成员申请加入列表(消息列表)
-  GUILD_MEMBER_APPLY_AUDIT, //公会成员申请加入审核
-  GUILD_DISSOLVE, //公会解散
-  GUILD_MEMBER_QUIT, //公会成员退出
-  GUILD_MEMBER_QUIT_COST, //公会成员退出费用
-  GUILD_INVITE_SEARCH, //邀请搜索用户
-  GUILD_JOIN_INVITE, //加入公会邀请
+  GUILD_MY_DETAIL,              // 获取用户公会主页数据
+  GUILD_MEMBER_APPLY_LIST,      // 获取申请加入列表（消息列表）
+  GUILD_MEMBER_APPLY_AUDIT,     // 审核申请（同意/拒绝）
+  GUILD_DISSOLVE,               // 解散公会
+  GUILD_MEMBER_QUIT,             // 退出公会
+  GUILD_MEMBER_QUIT_COST,       // 获取退出费用
+  GUILD_INVITE_SEARCH,           // 搜索用户（用于邀请）
+  GUILD_JOIN_INVITE,            // 发送邀请
+  GUILD_CREATE_SUB_AGENCY,      // 创建子公会
 } from "@/api/guild";
+
+import { SEARCH_USER } from "@/api/user";  // 根据 erbanNo 搜索用户
+
+// 日期处理库
 import moment from "moment";
+
+// 国际化实例
 import i18n from "@/i18n";
-import link from "@/assets/img/guild/link.png";
-import date from "@/assets/img/guild/date.png";
-import card from "@/assets/img/guild/card.png";
-import tops from "@/assets/img/guild/tops.png";
-import moire from "@/assets/img/guild/moire.png";
-import fans from "@/assets/img/guild/fans.png";
-import nodata from "@/assets/img/guild/nodata.png";
+
+// 图片资源
+import link from "@/assets/img/guild/link.png";       // 箭头图标
+import date from "@/assets/img/guild/date.png";       // 日期图标
+import card from "@/assets/img/guild/card.png";        // 名片图标
+import tops from "@/assets/img/guild/tops.png";       // TOP图标
+import moire from "@/assets/img/guild/moire.png";    // 热度图标
+import fans from "@/assets/img/guild/fans.png";       // 成员数图标
+import nodata from "@/assets/img/guild/nodata.png";  // 无数据占位图
+
+// 提现弹窗组件
 import WithdrawPopup from "@/components/WithdrawPopup.vue";
 
-// 接收参数
+/**
+ * ==================== 接收路由参数 ====================
+ * 这些参数从 URL query 中自动传入
+ * 例如：/guild/index?uid=123&ticket=abc&source=h5&deviceId=xxx
+ */
 const props = defineProps(["uid", "ticket", "source", "deviceId"]);
+
+/**
+ * ==================== 路由实例 ====================
+ * 用于页面跳转和返回
+ */
 const router = useRouter();
-const lang = getLang();
-let loading = ref(false); //是否加载中
-let showWithdrawPopup = ref(false); //提现弹窗显示状态
+
+/**
+ * ==================== 基础数据 ====================
+ */
+const lang = getLang();                    // 当前语言（en/ara）
+let loading = ref(false);                  // 页面loading状态
+let showWithdrawPopup = ref(false);        // 提现弹窗显示状态
+// 计算属性：创建按钮是否可用（有搜索结果且机构名称不为空）
+let canCreate = computed(() => {
+  return pops.createAgency.searchResult && pops.createAgency.agencyName.trim();
+});
+
+/**
+ * ==================== 公会信息数据 ====================
+ * infos 对象存储公会主页的所有数据
+ */
 let infos = reactive({
-  guildId: null, //公会ID
-  guildName: "", //公会名称
-  coverPicUrl: "", //公会封面
-  guildNo: null, //公会号
-  memberCount: 0, //成员数量"
-  memberRole: 3, //成员权限 1会长2管理员3普通成员
-  // 我的公会卡片
+  guildId: null,        // 公会ID
+  guildName: "",        // 公会名称
+  coverPicUrl: "",      // 公会封面图片URL
+  guildNo: null,        // 公会号（展示用ID）
+  memberCount: 0,      // 成员数量
+  memberRole: 3,       // 当前用户在公会的角色：1=会长 2=管理员 3=普通成员
+
+  // 我的公会名片信息
   memberCard: {
-    memberNick: "", //成员昵称
-    memberAvatar: "", //成员头像
-    memberExperLevelIcon: "", //成员财富等级
-    memberCharmLevelIcon: "", //成员魅力等级
-    vipIcon: "", //VIP图标
+    memberNick: "",                // 成员昵称
+    memberAvatar: "",               // 成员头像
+    memberExperLevelIcon: "",       // 财富等级图标URL
+    memberCharmLevelIcon: "",       // 魅力等级图标URL
+    memberVipIcon: "",             // VIP图标URL
   },
-  // 公会数据
+
+  // 公会数据统计
   guildData: {
-    charmValue: 0, //收礼价值
-    micBroadcastDuration: 0, //开播时长(分钟)
-    validDays: 0, //有效天数
+    charmValue: 0,               // 收礼价值（总收入）
+    micBroadcastDuration: 0,     // 开播总时长（分钟）
+    validDays: 0,                // 有效天数
   },
-  // 房间列表
+
+  // 公会房间列表
   roomList: [
+    // 数据结构示例：
     // {
-    //   roomId: "",//房间id
-    //   roomNo: "",//房间号
-    //   avatar: "",//房间封面
-    //   title: "",//房间名称
-    //   heatScore: 0,//房间热度值
+    //   roomId: "xxx",           // 房间ID
+    //   roomNo: "12345",         // 房间号
+    //   avatar: "url",           // 房间封面
+    //   title: "房间名称",       // 房间标题
+    //   heatScore: 1000,         // 热度值
     // }
   ],
 });
+
+/**
+ * ==================== 弹窗数据状态 ====================
+ * pops 对象管理各种弹窗的状态和数据
+ */
 let pops = reactive({
-  show: false, //是否弹窗
-  type: -1, //类型 1-更多操作，2-消息，3-邀请，4-解散，5-退出
-  position: "bottom", //弹窗位置
-  // 消息
+  show: false,        // 弹窗是否显示
+  type: -1,           // 弹窗类型：
+                     // -1 = 无弹窗
+                     // 1 = 更多操作菜单
+                     // 2 = 消息列表（申请审核）
+                     // 3 = 邀请成员
+                     // 4 = 解散公会确认
+                     // 5 = 退出公会确认
+                     // 6 = 创建公会弹窗
+  position: "bottom", // 弹窗位置：bottom=底部弹出 center=居中显示
+
+  // 创建公会弹窗
+  createAgency: {
+    show: false,      // 弹窗显示状态
+    agentId: "",       // Agency agent ID
+    agencyName: "",   // Agency name
+    searching: false, // 搜索loading状态
+    createLoading: false, // 创建loading状态
+    searchResult: null,  // 搜索结果
+  },
+
+  // 消息列表数据（申请加入审核）
   mess: {
-    page: 1,
-    size: 10,
-    loading: false,
-    finished: false,
-    refreshing: false,
+    page: 1,           // 当前页码
+    size: 10,          // 每页条数
+    loading: false,    // 是否加载中
+    finished: false,   // 是否加载完成（无更多数据）
+    refreshing: false, // 是否下拉刷新中
     list: [
       // {
       //   applyId: null, //申请id
@@ -99,31 +188,45 @@ let pops = reactive({
       // },
     ],
   },
-  // 邀请
+
+  // 邀请成员数据
   invite: {
-    searchKey: "", //搜索关键字 8674012
-    target: null, //目标用户信息
-    // target: {
-    //   avatar: "", //用户头像
-    //   erbanNo: null,
-    //   inviteStatus: 0, //邀请状态 0-可邀请 1-巳邀请
-    //   nick: "", //用户昵称
-    //   uid: null, //用户id
-    // },
+    searchKey: "",    // 搜索关键词（用户ID/昵称）
+    target: null,     // 搜索到的目标用户信息
+                     // {
+                     //   avatar: "url",         // 用户头像
+                     //   erbanNo: 123456,      // 用户ID
+                     //   inviteStatus: 0,       // 邀请状态：0=可邀请 1=已邀请
+                     //   nick: "昵称",         // 用户昵称
+                     //   uid: 789              // 用户ID
+                     // }
   },
 });
 
-// 返回
+/**
+ * ==================== 页面方法 ====================
+ */
+
+/**
+ * 返回上一页
+ * 根据来源决定是路由返回还是关闭APP
+ */
 function goBack() {
   if (props.source === "h5") {
+    // H5环境：��用路由返回上一页
     router.go(-1);
   } else {
+    // App环境：调用原生方法关闭页面
     AppClose();
   }
 }
 
-// 打开弹窗
+/**
+ * 打开弹窗
+ * @param {number} type - 弹窗类型
+ */
 function openPops(type) {
+  // 类型1和2是从底部弹出，其他居中显示
   if (type == 1 || type == 2) {
     pops.position = "bottom";
   } else {
@@ -133,54 +236,71 @@ function openPops(type) {
   pops.show = true;
 }
 
-// 关闭弹窗
+/**
+ * 关闭弹窗
+ * 重置所有弹窗相关状态
+ */
 function closePops() {
   pops.type = -1;
   pops.show = false;
+
+  // 重置消息列表状态
   pops.mess.page = 1;
   pops.mess.loading = false;
   pops.mess.finished = false;
   pops.mess.refreshing = false;
   pops.mess.list = [];
+
+  // 重置邀请搜索状态
   pops.invite.searchKey = "";
   pops.invite.target = null;
 }
 
-// 显示更多
+/**
+ * 显示更多操作菜单
+ */
 function showMore() {
   openPops(1);
 }
 
-// 更多操作
+/**
+ * 操作菜单点击处理
+ * @param {string} key - 操作标识
+ */
 function onCtrl(key) {
   switch (key) {
-    case "information": //消息
+    case "information":  // 查看消息/申请列表
       getMemberApplyList(() => {
         openPops(2);
       });
       break;
 
-    case "invite": //邀请成员
+    case "invite":      // 邀请成员
       openPops(3);
       break;
 
-    case "order": //订单
+    case "order":       // 查看订单
       toOrder();
       break;
 
-    case "withdraw": //提现
+    case "withdraw":   // 提现
       toWithdraw();
       break;
 
-    case "dissolve": //解散公会
+    case "dissolve":   // 解散公会（仅会长可见）
       openPops(4);
       break;
 
-    case "quit": //退出公会
+    case "quit":       // 退出公会（仅普通成员可见）
       openPops(5);
       break;
 
-    case "cancel": //取消
+    case "createAgency": // 创建公会（仅会长可见）
+      closePops();
+      pops.createAgency.show = true;
+      break;
+
+    case "cancel":     // 取消
       closePops();
       break;
 
@@ -189,7 +309,11 @@ function onCtrl(key) {
   }
 }
 
-// 前往数据页
+/**
+ * 跳转到数据页面
+ * 会长/管理员：进入月度数据页面（查看所有成员数据）
+ * 普通成员：进入个人数据页面（只看自己的数据）
+ */
 function toData() {
   const role = infos?.memberRole;
 
@@ -206,23 +330,26 @@ function toData() {
       },
     });
   } else {
+    // 普通成员只看自己的数据
     router.push({
       path: "/guild/data/member",
       query: {
         lang: lang,
         uid: props.uid,
         ticket: props.ticket,
-        memberUid: props.uid,
+        memberUid: props.uid,     // 成员ID=当前用户ID
         memberRole: role,
         deviceId: props.deviceId,
-        startDate: moment().subtract(1, "day").format("YYYY-MM-DD"),
-        endDate: moment().format("YYYY-MM-DD"),
+        // startDate: moment().subtract(1, "day").format("YYYY-MM-DD"),  // 默认昨天
+        // endDate: moment().format("YYYY-MM-DD"),                       // 默认今天
       },
     });
   }
 }
 
-// 前往名片页
+/**
+ * 跳转到公会名片页面
+ */
 function toCard() {
   router.push({
     path: "/guild/card",
@@ -234,8 +361,11 @@ function toCard() {
   });
 }
 
-// 前往订单页
+/**
+ * 跳转到订单页面
+ */
 function toOrder() {
+  closePops();  // 先关闭操作菜单
   router.push({
     path: "/guild/order",
     query: {
@@ -247,12 +377,18 @@ function toOrder() {
   });
 }
 
-// 前往提现页
+/**
+ * 打开提现弹窗
+ */
 function toWithdraw() {
+  closePops();  // 先关闭操作菜单
   showWithdrawPopup.value = true;
 }
 
-// 获取用户公会主页
+/**
+ * 获取用户公会主页数据
+ * 调用接口获取公会的所有信息
+ */
 function getMyGuildDetail() {
   loading.value = true;
   GUILD_MY_DETAIL({
@@ -261,7 +397,7 @@ function getMyGuildDetail() {
   })
     .then((data) => {
       loading.value = false;
-      infos = data;
+      infos = data;  // 更新公会信息
     })
     .catch((err) => {
       loading.value = false;
@@ -269,7 +405,9 @@ function getMyGuildDetail() {
     });
 }
 
-// 刷新消息列表
+/**
+ * 下拉刷新消息列表
+ */
 function onMsgsRefresh() {
   pops.mess.page = 1;
   pops.mess.finished = false;
@@ -279,7 +417,10 @@ function onMsgsRefresh() {
   getMemberApplyList();
 }
 
-// 获取公会成员申请加入列表(消息列表)
+/**
+ * 获取公会成员申请加入列表
+ * @param {Function} cb - 回调函数（获取数据后执行，如打开弹窗）
+ */
 function getMemberApplyList(cb) {
   GUILD_MEMBER_APPLY_LIST({
     uid: props.uid,
@@ -290,22 +431,27 @@ function getMemberApplyList(cb) {
     .then((data) => {
       const { list, whetherLastPage } = data;
 
+      // 刷新时清空列表
       if (pops.mess.refreshing) {
         pops.mess.list = [];
         pops.mess.refreshing = false;
       }
 
       let msgArr = pops.mess.list;
+
+      // 合并新数据
       if (list && list.length > 0) {
         pops.mess.list = msgArr.concat(list);
       }
 
+      // 判断是否还有下一页
       if (!whetherLastPage) {
         pops.mess.page += 1;
       } else {
         pops.mess.finished = true;
       }
 
+      // 执行回调
       cb && cb();
     })
     .catch((err) => {
@@ -315,18 +461,22 @@ function getMemberApplyList(cb) {
     });
 }
 
-// 成员申请加入审核处理
+/**
+ * 处理成员申请审核
+ * @param {number} applyId - 申请记录ID
+ * @param {number} auditStatus - 审核状态：1=同意 2=拒绝
+ */
 function handleApplyAudit(applyId, auditStatus) {
   loading.value = true;
   GUILD_MEMBER_APPLY_AUDIT({
     uid: props.uid,
     ticket: props.ticket,
-    applyId: applyId, //审核id
-    auditStatus: auditStatus, //审核状态 1同意 2拒绝
+    applyId: applyId,
+    auditStatus: auditStatus,
   })
     .then(() => {
       loading.value = false;
-      closePops();
+      closePops();  // 关闭弹窗
     })
     .catch((err) => {
       loading.value = false;
@@ -334,17 +484,20 @@ function handleApplyAudit(applyId, auditStatus) {
     });
 }
 
-// 解散公会
+/**
+ * 解散公会
+ * 仅会长可执行，执行后返回上一页
+ */
 function dissolveGuild() {
   loading.value = true;
   GUILD_DISSOLVE({
     uid: props.uid,
     ticket: props.ticket,
-    deviceId: props.deviceId, //用户设备号
+    deviceId: props.deviceId,
   })
     .then(() => {
       loading.value = false;
-      goBack();
+      goBack();  // 返回上一页
     })
     .catch((err) => {
       loading.value = false;
@@ -352,16 +505,18 @@ function dissolveGuild() {
     });
 }
 
-// 退会扣费
+/**
+ * 获取退出公会费用
+ * 先获取费用，确认后再执行退出
+ */
 function quitGuildCost() {
   loading.value = true;
   GUILD_MEMBER_QUIT_COST({
     uid: props.uid,
-    ticket: props.ticket,
   })
     .then(() => {
       loading.value = false;
-      quitGuild();
+      quitGuild();  // 获取费用成功后执行退出
     })
     .catch((err) => {
       loading.value = false;
@@ -369,7 +524,71 @@ function quitGuildCost() {
     });
 }
 
-// 退出公会
+/**
+ * 关闭创建公会弹窗
+ */
+function closeCreateAgency() {
+  pops.createAgency.show = false;
+  pops.createAgency.agentId = "";
+  pops.createAgency.agencyName = "";
+  pops.createAgency.searchResult = null;
+}
+
+/**
+ * 搜索 Agency agent
+ */
+function onSearchAgent() {
+  if (!pops.createAgency.agentId.trim()) return;
+  pops.createAgency.searching = true;
+  pops.createAgency.searchResult = null;
+  GUILD_INVITE_SEARCH({
+        uid: props.uid,
+    ticket: props.ticket,
+    searchKey: pops.createAgency.agentId.trim(),
+    // uid: props.uid,
+    // erbanNo: pops.createAgency.agentId.trim(),
+    // searchType: 1,
+  })
+    .then((data) => {
+      pops.createAgency.searching = false;
+      if (data) {
+        pops.createAgency.searchResult = data;
+      }
+    })
+    .catch((err) => {
+      pops.createAgency.searching = false;
+      showToast(err.message);
+    });
+}
+
+/**
+ * 创建 Agency
+ */
+function onCreateAgency() {
+  if (!canCreate.value) return;
+  pops.createAgency.createLoading = true;
+  GUILD_CREATE_SUB_AGENCY({
+    uid: props.uid,
+    ticket: props.ticket,
+    targetUid: pops.createAgency.searchResult.uid,
+    guildName: pops.createAgency.agencyName.trim(),
+  })
+    .then(() => {
+      pops.createAgency.createLoading = false;
+      closeCreateAgency();
+      showToast("Agency created successfully");
+      getMyGuildDetail();  // 刷新公会详情
+    })
+    .catch((err) => {
+      pops.createAgency.createLoading = false;
+      showToast(err.message);
+    });
+}
+
+/**
+ * 退出公会
+ * 普通成员执行，执行后返回上一页
+ */
 function quitGuild() {
   loading.value = true;
   GUILD_MEMBER_QUIT({
@@ -386,7 +605,10 @@ function quitGuild() {
     });
 }
 
-// 搜索邀请成员
+/**
+ * 搜索要邀请的用户
+ * 根据输入的用户ID搜索用户信息
+ */
 function onInviteSearch() {
   const searchKey = pops.invite.searchKey;
 
@@ -402,9 +624,9 @@ function onInviteSearch() {
   })
     .then((data) => {
       if (data) {
-        pops.invite.target = data;
+        pops.invite.target = data;  // 保存搜索到的用户
       } else {
-        pops.invite.target = null;
+        pops.invite.target = null;   // 未找到用户
       }
     })
     .catch((err) => {
@@ -412,18 +634,21 @@ function onInviteSearch() {
     });
 }
 
-// 加入公会邀请
+/**
+ * 发送公会邀请
+ * 向目标用户发送加入公会的邀请
+ */
 function onSendInvite() {
   loading.value = true;
   GUILD_JOIN_INVITE({
     uid: props.uid,
     ticket: props.ticket,
-    inviteUid: pops.invite.target.uid,
+    inviteUid: pops.invite.target.uid,  // 被邀请用户ID
   })
     .then(() => {
       loading.value = false;
       closePops();
-      getMyGuildDetail(); //刷新用户公会主页数据
+      getMyGuildDetail();  // 刷新公会数据
     })
     .catch((err) => {
       loading.value = false;
@@ -431,19 +656,35 @@ function onSendInvite() {
     });
 }
 
-// 跳转到房间
+/**
+ * 打开直播间
+ * @param {string} roomId - 房间ID
+ */
 function toRoom(roomId) {
   OpenRoom(roomId);
 }
 
-getMyGuildDetail(); //获取用户公会主页数据
+/**
+ * ==================== 页面初始化 ====================
+ * 组件创建时自动获取公会数据
+ */
+getMyGuildDetail();
 </script>
 
 <template>
   <div class="guild">
+    <!-- ==================== 公会封面区域 ==================== -->
     <div class="poster">
-      <nav-bars :is-left="true" :left-slot="true" :title-slot="true" :is-right="true" :right-slot="true"
-        bg-color="transparent">
+      <!-- 导航栏：透明背景，显示返回和更多按钮 -->
+      <nav-bars
+        :is-left="true"
+        :left-slot="true"
+        :title-slot="true"
+        :is-right="true"
+        :right-slot="true"
+        bg-color="transparent"
+      >
+        <!-- 左侧返回按钮 -->
         <template #left_slot>
           <svg @click="goBack" t="1735394484907" class="back" viewBox="0 0 1024 1024" version="1.1"
             xmlns="http://www.w3.org/2000/svg" p-id="1716" width="200" height="200">
@@ -455,9 +696,13 @@ getMyGuildDetail(); //获取用户公会主页数据
               fill="#ffffff" p-id="1718"></path>
           </svg>
         </template>
+
+        <!-- 中间标题 -->
         <template #title_slot>
           <span>{{ $t("guild.title") }}</span>
         </template>
+
+        <!-- 右侧更多按钮 -->
         <template #right_slot>
           <svg @click="showMore" t="1735395375729" class="icon" viewBox="0 0 1024 1024" version="1.1"
             xmlns="http://www.w3.org/2000/svg" p-id="1892" width="200" height="200">
@@ -471,11 +716,15 @@ getMyGuildDetail(); //获取用户公会主页数据
         </template>
       </nav-bars>
 
+      <!-- 公会信息卡片 -->
       <div class="mine">
+        <!-- 公会头像 -->
         <div class="avatar_box">
           <van-image fit="cover" class="avatar" :src="infos?.coverPicUrl" />
         </div>
+        <!-- 公会名称 -->
         <div class="nick">{{ infos?.guildName || "-" }}</div>
+        <!-- 公会基础信息：ID和成员数 -->
         <ul class="base">
           <li class="id">
             <span>ID:</span>
@@ -489,20 +738,24 @@ getMyGuildDetail(); //获取用户公会主页数据
       </div>
     </div>
 
+    <!-- ==================== 内容区域 ==================== -->
     <div class="container">
+      <!-- 数据统计卡片 -->
       <div class="data blos">
+        <!-- 标题栏（可点击跳转数据页） -->
         <div class="labs" @click="toData">
           <van-image fit="cover" class="icon" :src="date" />
           <span class="text">{{ $t("guild.monthlyData") }}</span>
           <van-image fit="cover" class="link" :src="link" />
         </div>
-
+        <!-- 统计数据：总收入、总时长、有效天数 -->
         <ul class="list">
           <li class="item">
             <div class="val">{{ infos?.guildData.charmValue }}</div>
             <div class="lab">{{ $t("guild.label.totalIncome") }}</div>
           </li>
           <li class="item">
+            <!-- minuteToHour 将分钟转为 "XhYm" 格式 -->
             <div class="val">{{ minuteToHour(infos?.guildData.micBroadcastDuration) }}</div>
             <div class="lab">{{ $t("guild.label.hours") }}</div>
           </li>
@@ -513,16 +766,20 @@ getMyGuildDetail(); //获取用户公会主页数据
         </ul>
       </div>
 
+      <!-- 我的公会名片卡片 -->
       <div class="card blos">
         <div class="labs">
           <van-image fit="cover" class="icon" :src="card" />
           <span class="text">{{ $t("guild.myCard") }}</span>
         </div>
-
+        <!-- 点击进入名片页 -->
         <div class="info" @click="toCard">
+          <!-- 成员头像 -->
           <van-image fit="cover" class="avatar" round :src="infos?.memberCard.memberAvatar" />
+          <!-- 成员信息 -->
           <div class="base">
             <div class="nick clamp-1">{{ infos?.memberCard.memberNick }}</div>
+            <!-- 等级图标 -->
             <div class="lv">
               <van-image v-if="infos?.memberCard.memberVipIcon" fit="cover" class="icon"
                 :src="infos?.memberCard.memberVipIcon" />
@@ -536,6 +793,7 @@ getMyGuildDetail(); //获取用户公会主页数据
         </div>
       </div>
 
+      <!-- 公会TOP10房间列表 -->
       <div class="tops blos">
         <div class="labs">
           <van-image fit="cover" class="icon" :src="tops" />
@@ -543,13 +801,16 @@ getMyGuildDetail(); //获取用户公会主页数据
         </div>
 
         <ul class="list">
+          <!-- 有数据时显示列表 -->
           <template v-if="infos?.roomList && infos?.roomList.length > 0">
             <li class="item" v-for="(item, idx) in infos?.roomList" :key="idx" @click.stop="toRoom(item.roomId)">
+              <!-- 房间封面 -->
               <van-image fit="cover" class="avatar" :src="item.avatar" />
+              <!-- 房间信息 -->
               <div class="info">
                 <div class="base">
                   <div class="nick clamp-1">{{ item.title }}</div>
-                  <div class="id clamp-1">{{ "ID:" + item.roomNo }}</div>
+                  <div class="id">{{ "ID:" + item.roomNo }}</div>
                 </div>
                 <div class="vals">
                   <van-image fit="cover" class="icon" :src="moire" />
@@ -558,6 +819,7 @@ getMyGuildDetail(); //获取用户公会主页数据
               </div>
             </li>
           </template>
+          <!-- 无数据时显示空状态 -->
           <template v-else>
             <li class="empt">{{ $t("guild.tips.nodata") }}</li>
           </template>
@@ -565,34 +827,42 @@ getMyGuildDetail(); //获取用户公会主页数据
       </div>
     </div>
 
-    <!-- 弹窗 -->
-    <van-popup :class="'pops' + pops.type" v-model:show="pops.show" :position="pops.position" @close="closePops">
-      <!-- 更多操作按钮 -->
+    <!-- ==================== 弹窗区域 ==================== -->
+    <van-popup
+      :class="'pops' + pops.type"
+      v-model:show="pops.show"
+      :position="pops.position"
+      @close="closePops"
+    >
+      <!-- 更多操作按钮列表 -->
       <template v-if="pops.type == 1">
         <div class="ctrls">
-          <van-button class="ctrl" @click="onCtrl('order')">{{
-            $t("guild.more.order") }}</van-button>
-          <van-button class="ctrl" @click="onCtrl('withdraw')">{{
-            $t("guild.more.withdraw") }}</van-button>
+          <!-- 仅会长可见 -->
+          <van-button v-if="infos?.memberRole == 1" class="ctrl" @click="onCtrl('createAgency')">{{ $t("guild.more.createAgency") }}</van-button>
+          <van-button class="ctrl" @click="onCtrl('order')">{{ $t("guild.more.order") }}</van-button>
+          <van-button class="ctrl" @click="onCtrl('withdraw')">{{ $t("guild.more.withdraw") }}</van-button>
+          <!-- 管理员及以上可见 -->
           <van-button v-if="infos?.memberRole == 1 || infos?.memberRole == 2" class="ctrl"
             @click="onCtrl('information')">{{ $t("guild.more.information") }}</van-button>
+          <!-- 管理员及以上可见 -->
           <van-button v-if="infos?.memberRole == 1 || infos?.memberRole == 2" class="ctrl" @click="onCtrl('invite')">{{
             $t("guild.more.invite") }}</van-button>
+          <!-- 仅会长可见 -->
           <van-button v-if="infos?.memberRole == 1" class="ctrl danger" @click="onCtrl('dissolve')">{{
             $t("guild.more.dissolve") }}</van-button>
+          <!-- 仅普通成员可见 -->
           <van-button v-if="infos?.memberRole == 3" class="ctrl danger" @click="onCtrl('quit')">{{ $t("guild.more.quit")
-          }}</van-button>
+            }}</van-button>
         </div>
-        <van-button class="cancel" @click="onCtrl('cancel')">{{
-          $t("guild.more.cancel")
-        }}</van-button>
+        <van-button class="cancel" @click="onCtrl('cancel')">{{ $t("guild.more.cancel") }}</van-button>
       </template>
 
-      <!-- 消息 -->
+      <!-- 消息列表（申请审核） -->
       <template v-if="pops.type == 2">
         <div class="mess">
           <div class="header">
             <div class="title">{{ $t("guild.message") }}</div>
+            <!-- 关闭按钮 -->
             <svg @click="closePops" t="1735629979902" class="icon" viewBox="0 0 1024 1024" version="1.1"
               xmlns="http://www.w3.org/2000/svg" p-id="1034" width="200" height="200">
               <path
@@ -603,24 +873,30 @@ getMyGuildDetail(); //获取用户公会主页数据
                 fill="#938B81" p-id="1036"></path>
             </svg>
           </div>
+          <!-- 申请列表 -->
           <div class="msgs">
             <template v-if="pops.mess.list && pops.mess.list.length > 0">
               <van-pull-refresh v-model="pops.mess.refreshing" class="msgs_refresh" @refresh="onMsgsRefresh"
-                :pulling-text="$t('other.pullingText')" :loosing-text="$t('other.loosingText')"
+                :pulling-text="$t('other.pullingText')"
+                :loosing-text="$t('other.loosingText')"
                 :loading-text="$t('other.loadingText')">
-                <van-list class="msgs_list" v-model:loading="pops.mess.loading" :finished="pops.mess.finished"
-                  :immediate-check="false" :finished-text="pops.mess.list.length == 0 ? '' : $t('other.finishedText')
-                    " :loading-text="' '">
+                <van-list class="msgs_list" v-model:loading="pops.mess.loading"
+                  :finished="pops.mess.finished"
+                  :immediate-check="false"
+                  :finished-text="pops.mess.list.length == 0 ? '' : $t('other.finishedText')"
+                  :loading-text="' '">
+                  <!-- 申请项 -->
                   <div class="msgs_item" v-for="(item, idx) in pops.mess.list" :key="idx">
                     <div class="info">
+                      <!-- 用户头像 -->
                       <van-image class="avatar" fit="cover" round :src="item.avatar" />
                       <div class="base">
+                        <!-- 用户昵称和申请时间 -->
                         <div class="desc al-center">
                           <span class="nick clamp-1">{{ item.nick }}</span>
-                          <span class="date">{{
-                            moment(item.createTime).format("YYYY-MM-DD")
-                          }}</span>
+                          <span class="date">{{ moment(item.createTime).format("YYYY-MM-DD") }}</span>
                         </div>
+                        <!-- 等级图标 -->
                         <div class="icons">
                           <van-image v-if="item.vipIcon" fit="cover" class="icon" :src="item.vipIcon" />
                           <van-image v-if="item.experLevelIcon" fit="cover" class="icon" :src="item.experLevelIcon" />
@@ -628,6 +904,7 @@ getMyGuildDetail(); //获取用户公会主页数据
                         </div>
                       </div>
                     </div>
+                    <!-- 审核按钮 -->
                     <div class="btns">
                       <van-button class="btn reject" @click="handleApplyAudit(item.applyId, 2)">{{
                         $t("guild.btn.reject") }}</van-button>
@@ -638,6 +915,7 @@ getMyGuildDetail(); //获取用户公会主页数据
                 </van-list>
               </van-pull-refresh>
             </template>
+            <!-- 无申请时显示空状态 -->
             <template v-else>
               <div class="empt">
                 <van-image fit="cover" class="icon" :src="nodata" />
@@ -648,16 +926,19 @@ getMyGuildDetail(); //获取用户公会主页数据
         </div>
       </template>
 
-      <!-- 邀请 -->
+      <!-- 邀请成员 -->
       <template v-if="pops.type == 3">
         <div class="invi">
           <van-button class="close" @click="closePops"></van-button>
           <h1 class="title">{{ $t("guild.more.invite") }}</h1>
+          <!-- 搜索框 -->
           <van-search class="search" v-model="pops.invite.searchKey" show-action :clearable="false" maxlength="8"
             clear-trigger="always" action-text="Search" :placeholder="$t('guild.tips.searchUid')">
             <template #action>
               <div @click="onInviteSearch">{{ $t("guild.btn.search") }}</div>
-            </template></van-search>
+            </template>
+          </van-search>
+          <!-- 搜索结果 -->
           <div v-if="pops.invite.target" class="target">
             <van-image fit="cover" class="avatar" round :src="pops.invite.target.avatar" />
             <div class="info">
@@ -667,60 +948,152 @@ getMyGuildDetail(); //获取用户公会主页数据
                 <span>{{ pops.invite.target.erbanNo }}</span>
               </div>
             </div>
+            <!-- 邀请按钮 -->
             <van-button class="btn" @click="onSendInvite"
               :disabled="pops.invite.target.inviteStatus == 1 ? true : false"
-              :class="pops.invite.target.inviteStatus == 0 ? 'act' : 'def'">{{ pops.invite.target.inviteStatus == 0 ?
-                $t("guild.more.invite") : $t("guild.more.invite") }}</van-button>
+              :class="pops.invite.target.inviteStatus == 0 ? 'act' : 'def'">
+              {{ $t("guild.more.invite") }}
+            </van-button>
           </div>
         </div>
       </template>
 
-      <!-- 解散 -->
+      <!-- 解散公会确认 -->
       <template v-if="pops.type == 4">
         <div class="diss">
           <h1 class="title">{{ $t("guild.dissolveAgency") }}</h1>
           <p class="remind">{{ $t("guild.tips.dissolveAgency") }}</p>
           <div class="btns">
-            <van-button class="btn cancel" @click="closePops">{{
-              $t("guild.btn.cancel")
-            }}</van-button>
-            <van-button class="btn confirm" @click="dissolveGuild">{{
-              $t("guild.btn.confirm")
-            }}</van-button>
+            <van-button class="btn cancel" @click="closePops">{{ $t("guild.btn.cancel") }}</van-button>
+            <van-button class="btn confirm" @click="dissolveGuild">{{ $t("guild.btn.confirm") }}</van-button>
           </div>
         </div>
       </template>
 
-      <!-- 退出 -->
+      <!-- 退出公会确认 -->
       <template v-if="pops.type == 5">
         <div class="quit">
           <h1 class="title">{{ $t("guild.quitAgency") }}</h1>
           <p class="remind">{{ $t("guild.tips.quitAgency") }}</p>
           <div class="btns">
-            <van-button class="btn cancel" @click="closePops">{{
-              $t("guild.btn.cancel")
-            }}</van-button>
-            <van-button class="btn confirm" @click="quitGuildCost">{{
-              $t("guild.btn.confirm")
-            }}</van-button>
+            <van-button class="btn cancel" @click="closePops">{{ $t("guild.btn.cancel") }}</van-button>
+            <van-button class="btn confirm" @click="quitGuildCost">{{ $t("guild.btn.confirm") }}</van-button>
           </div>
         </div>
       </template>
     </van-popup>
 
+    <!-- ==================== 创建公会弹窗 ==================== -->
+    <van-overlay :show="pops.createAgency.show" @click="closeCreateAgency" />
+    <div v-if="pops.createAgency.show" class="create-agency-modal">
+      <!-- 标题栏 -->
+      <div class="modal-header">
+        <span class="modal-title">{{ $t("guild.more.createAgency") }}</span>
+        <svg @click="closeCreateAgency" class="modal-close" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5001" width="20" height="20">
+          <path d="M512 438.4l313.6-313.6c9.6-9.6 9.6-25.6 0-35.2s-25.6-9.6-35.2 0L512 403.2 198.4 89.6c-9.6-9.6-25.6-9.6-35.2 0s-9.6 25.6 0 35.2L438.4 438.4 124.8 752c-9.6 9.6-9.6 25.6 0 35.2s25.6 9.6 35.2 0L512 473.6l313.6 313.6c9.6 9.6 25.6 9.6 35.2 0s9.6-25.6 0-35.2L512 438.4z" fill="#666666" p-id="5002"></path>
+        </svg>
+      </div>
+
+      <!-- 表单内容 -->
+      <div class="modal-body">
+        <!-- Agency agent ID -->
+        <div class="form-group">
+          <div class="form-label">{{ $t("guild.more.agentId") || "Agency agent ID" }}</div>
+
+          <!-- 用户信息卡片（搜索结果） -->
+          <div v-if="pops.createAgency.searchResult" class="user-info-card">
+            <div class="user-card-left">
+              <van-image
+                round
+                fit="cover"
+                class="user-avatar"
+                :src="pops.createAgency.searchResult.avatar || ''"
+              />
+              <div class="user-info">
+                <div class="user-name">{{ pops.createAgency.searchResult.nick }}</div>
+                <div class="user-id">ID: {{ pops.createAgency.searchResult.erbanNo || pops.createAgency.searchResult.uid }}</div>
+              </div>
+            </div>
+            <svg @click="pops.createAgency.searchResult = null" class="delete-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6001" width="22" height="22">
+              <path d="M512 438.4l313.6-313.6c9.6-9.6 9.6-25.6 0-35.2s-25.6-9.6-35.2 0L512 403.2 198.4 89.6c-9.6-9.6-25.6-9.6-35.2 0s-9.6 25.6 0 35.2L438.4 438.4 124.8 752c-9.6 9.6-9.6 25.6 0 35.2s25.6 9.6 35.2 0L512 473.6l313.6 313.6c9.6 9.6 25.6 9.6 35.2 0s9.6-25.6 0-35.2L512 438.4z" fill="#999999" p-id="6002"></path>
+            </svg>
+          </div>
+
+          <!-- 搜索框 -->
+          <div class="search-box" v-if="!pops.createAgency.searchResult">
+            <div class="search-input-wrap">
+              <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#999" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
+              </svg>
+              <input
+                v-model="pops.createAgency.agentId"
+                type="text"
+                class="search-input"
+                :placeholder="$t('guild.tips.searchUid')"
+              />
+            </div>
+            <button
+              class="search-btn"
+              :disabled="pops.createAgency.searching || !pops.createAgency.agentId.trim()"
+              @click="onSearchAgent"
+            >
+              {{ pops.createAgency.searching ? "..." : ($t("guild.btn.search") || "Search") }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Agency name -->
+        <div class="form-group">
+          <div class="form-label">{{ $t("guild.label.name") }}</div>
+          <div class="input-wrap">
+            <input
+              v-model="pops.createAgency.agencyName"
+              type="text"
+              class="form-input"
+              :maxlength="15"
+              :placeholder="$t('guild.tips.enterName')"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部创建按钮 -->
+      <div class="modal-footer">
+        <button
+          class="create-btn"
+          :class="{ 'create-btn--active': canCreate }"
+          :disabled="!canCreate || pops.createAgency.createLoading"
+          @click="onCreateAgency"
+        >
+          {{ pops.createAgency.createLoading ? "..." : ($t("guild.btn.create") || "Create") }}
+        </button>
+      </div>
+    </div>
+
+    <!-- 全局Loading -->
     <Loading :show="loading" color="#fff" bg-color="transparent" />
 
     <!-- 提现弹窗 -->
-    <WithdrawPopup v-model:show="showWithdrawPopup" :bg-image="'https://file.hamsterdw.com/User/withdraw_bg.png'"
-      :uid="props.uid" :ticket="props.ticket" :source="props.source" :device-id="props.deviceId" />
+    <WithdrawPopup
+      v-model:show="showWithdrawPopup"
+      :bg-image="'https://file.hamsterdw.com/User/withdraw_bg.png'"
+      :uid="props.uid"
+      :ticket="props.ticket"
+      :source="props.source"
+      :device-id="props.deviceId"
+    />
   </div>
 </template>
 
+<!-- SCSS 样式 -->
 <style lang="scss" scoped>
+/* ==================== 页面容器 ==================== */
 .guild {
   width: 100%;
   background: #f1f1f1;
 
+  /* ==================== 封面区域 ==================== */
   .poster {
     width: 100%;
     height: 331px;
@@ -729,6 +1102,7 @@ getMyGuildDetail(); //获取用户公会主页数据
     background-size: cover;
     position: relative;
 
+    /* 导航栏 */
     .navs {
       width: 100%;
       padding: 44px 10px 0;
@@ -756,6 +1130,7 @@ getMyGuildDetail(); //获取用户公会主页数据
       }
     }
 
+    /* 公会信息卡片 */
     .mine {
       display: flex;
       flex-direction: column;
@@ -764,6 +1139,7 @@ getMyGuildDetail(); //获取用户公会主页数据
       margin: 20px auto 0;
       position: relative;
 
+      /* 头像容器 */
       .avatar_box {
         width: 87px;
         height: 87px;
@@ -772,6 +1148,7 @@ getMyGuildDetail(); //获取用户公会主页数据
         justify-content: center;
         position: relative;
 
+        /* 头像装饰框 */
         &:before {
           content: "";
           width: 100%;
@@ -792,6 +1169,7 @@ getMyGuildDetail(); //获取用户公会主页数据
         }
       }
 
+      /* 公会名称 */
       .nick {
         margin: 6px auto 10px;
         font-family: PingFangSC, PingFang SC;
@@ -802,6 +1180,7 @@ getMyGuildDetail(); //获取用户公会主页数据
         font-style: normal;
       }
 
+      /* 基础信息 */
       .base {
         display: flex;
         font-family: PingFangSC, PingFang SC;
@@ -837,6 +1216,7 @@ getMyGuildDetail(); //获取用户公会主页数据
     }
   }
 
+  /* ==================== 内容区域 ==================== */
   .container {
     width: 100%;
     min-height: 50px;
@@ -846,6 +1226,7 @@ getMyGuildDetail(); //获取用户公会主页数据
     margin-top: -50px;
     position: relative;
 
+    /* 卡片通用样式 */
     .blos {
       width: 100%;
       background: #ffffff;
@@ -880,6 +1261,7 @@ getMyGuildDetail(); //获取用户公会主页数据
       }
     }
 
+    /* 数据统计卡片 */
     .data {
       .list {
         width: 100%;
@@ -928,6 +1310,7 @@ getMyGuildDetail(); //获取用户公会主页数据
       }
     }
 
+    /* 名片卡片 */
     .card {
       .info {
         width: 100%;
@@ -974,6 +1357,7 @@ getMyGuildDetail(); //获取用户公会主页数据
       }
     }
 
+    /* TOP10房间列表 */
     .tops {
       .list {
         width: 100%;
@@ -1067,16 +1451,20 @@ getMyGuildDetail(); //获取用户公会主页数据
 }
 </style>
 
+<!-- 全局样式 -->
 <style lang="scss">
+/* 页面背景 */
 .views_wrap {
   background: #f1f1f1;
 }
 
 .guild {
+  /* 遮罩层 */
   .van-overlay {
     background: rgba(0, 0, 0, 0.4);
   }
 
+  /* ==================== 更多操作弹窗 ==================== */
   .pops1 {
     width: 100%;
     background: transparent;
@@ -1121,6 +1509,7 @@ getMyGuildDetail(); //获取用户公会主页数据
     }
   }
 
+  /* ==================== 消息列表弹窗 ==================== */
   .pops2 {
     width: 100%;
     background: transparent;
@@ -1285,6 +1674,7 @@ getMyGuildDetail(); //获取用户公会主页数据
     }
   }
 
+  /* ==================== 邀请弹窗 ==================== */
   .pops3 {
     width: 300px;
     background: transparent;
@@ -1380,7 +1770,6 @@ getMyGuildDetail(); //获取用户公会主页数据
             font-weight: bold;
             font-size: 12px;
             color: #000000;
-            // text-align: left;
             font-style: normal;
             margin-bottom: 6px;
           }
@@ -1389,7 +1778,6 @@ getMyGuildDetail(); //获取用户公会主页数据
             font-family: Helvetica;
             font-size: 12px;
             color: #606060;
-            // text-align: left;
             font-style: normal;
 
             span {
@@ -1422,6 +1810,7 @@ getMyGuildDetail(); //获取用户公会主页数据
     }
   }
 
+  /* ==================== 解散/退出确认弹窗 ==================== */
   .pops4,
   .pops5 {
     background: transparent;
@@ -1490,10 +1879,10 @@ getMyGuildDetail(); //获取用户公会主页数据
   }
 }
 
+/* ==================== RTL 适配（阿拉伯语） ==================== */
 .ara {
   .container {
     .blos {
-
       .labs,
       .info {
         .link {
@@ -1570,6 +1959,7 @@ getMyGuildDetail(); //获取用户公会主页数据
   }
 }
 
+/* 英语（LTR）布局 */
 .en {
   .container {
     .tops {
@@ -1627,6 +2017,249 @@ getMyGuildDetail(); //获取用户公会主页数据
         right: 15px;
       }
     }
+  }
+}
+
+/* ==================== 创建公会弹窗 ==================== */
+.create-agency-modal {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 16px 16px 0 0;
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+  display: flex;
+  flex-direction: column;
+  z-index: 10000;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 18px 16px 14px;
+  flex-shrink: 0;
+
+  .modal-title {
+    font-family: Helvetica;
+    font-weight: bold;
+    font-size: 16px;
+    color: #000000;
+    font-style: normal;
+  }
+
+  .modal-close {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    padding: 4px;
+  }
+}
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 20px 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  font-family: Helvetica;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333333;
+  font-style: normal;
+  margin-bottom: 8px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-info-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f9f9f9;
+  border: 1px solid #eeeeee;
+  border-radius: 12px;
+  padding: 12px 16px;
+
+  .user-card-left {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    overflow: hidden;
+
+    .user-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-right: 12px;
+    }
+
+    .user-info {
+      flex: 1;
+      overflow: hidden;
+
+      .user-name {
+        font-family: Helvetica;
+        font-weight: bold;
+        font-size: 14px;
+        color: #333333;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-bottom: 4px;
+      }
+
+      .user-id {
+        font-family: Helvetica;
+        font-size: 12px;
+        color: #999999;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  .delete-icon {
+    flex-shrink: 0;
+    margin-left: 12px;
+    cursor: pointer;
+    padding: 4px;
+    transition: opacity 0.2s;
+
+    &:active {
+      opacity: 0.6;
+    }
+  }
+}
+
+.search-input-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: #f5f5f5;
+  border-radius: 12px;
+  padding: 0 12px;
+  height: 46px;
+
+  .search-icon {
+    flex-shrink: 0;
+    margin-right: 8px;
+  }
+
+  .search-input {
+    flex: 1;
+    height: 100%;
+    border: none;
+    background: transparent;
+    font-family: Helvetica;
+    font-size: 14px;
+    color: #333333;
+    outline: none;
+
+    &::placeholder {
+      color: #999999;
+    }
+  }
+}
+
+.search-btn {
+  width: 79px;
+  height: 29px;
+  // padding: 0 20px;
+  //background: #ac41f6;
+  background: linear-gradient(180deg, #AC41F6, #520BF5);
+  color: #ffffff;
+  border: none;
+  border-radius: 30px;
+  font-family: Helvetica;
+  font-size: 14px;
+  font-weight: bold;
+  font-style: normal;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.2s, opacity 0.2s;
+
+  &:disabled {
+    background: #d8b4f8;
+    cursor: not-allowed;
+  }
+
+  &:active:not(:disabled) {
+    background: #9333ea;
+  }
+}
+
+.input-wrap {
+  background: #f5f5f5;
+  border-radius: 12px;
+  padding: 0 12px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+
+  .form-input {
+    flex: 1;
+    height: 100%;
+    border: none;
+    background: transparent;
+    font-family: Helvetica;
+    font-size: 14px;
+    color: #333333;
+    outline: none;
+
+    &::placeholder {
+      color: #999999;
+    }
+  }
+}
+
+.modal-footer {
+  padding: 0 20px 20px;
+  flex-shrink: 0;
+}
+
+.create-btn {
+  width: 100%;
+  height: 46px;
+  border: none;
+  border-radius: 23px;
+  font-family: Helvetica;
+  font-size: 16px;
+  font-weight: bold;
+  font-style: normal;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  background: #e5e5e5;
+  color: #b5b5b2;
+
+  &--active {
+    background: linear-gradient(90deg, #ac41f6, #520bf5);
+    color: #ffffff;
+    cursor: pointer;
+
+    &:active {
+      opacity: 0.9;
+    }
+  }
+
+  &:disabled:not(.create-btn--active) {
+    cursor: not-allowed;
   }
 }
 </style>

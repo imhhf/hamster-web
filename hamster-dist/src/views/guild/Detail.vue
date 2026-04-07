@@ -1,54 +1,94 @@
+<!--
+  公会详情页 Detail.vue
+  路径：/guild/detail
+
+  功能说明：
+  1. 展示公会详细信息（封面、名称、ID、成员数）
+  2. 显示公会创始人信息
+  3. 展示公会之星（前3名成员）
+  4. 提供申请加入公会按钮
+
+  页面参数：
+  - source: 来源标识（h5/App）
+  - uid: 当前用户ID
+  - ticket: 登录凭证
+  - deviceId: 设备ID
+  - guildId: 公会ID（要查看的公会）
+-->
+
 <script setup>
+/**
+ * ==================== 依赖导入 ====================
+ */
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
-import { AppClose } from "@/utils/client";
-import { showToast } from "vant";
-import {
-  GUILD_INFO, //公会详情
-  GUILD_JOIN_APPLY, //申请加入公会
-} from "@/api/guild";
-import card from "@/assets/img/guild/card.png";
-import fans from "@/assets/img/guild/fans.png";
-import star from "@/assets/img/guild/star.png";
-import ques1 from "@/assets/img/charge/ques_1.png";
-import ques2 from "@/assets/img/charge/ques_2.png";
-import ques3 from "@/assets/img/charge/ques_3.png";
 
-// 接收参数
+// 客户端能力：AppClose关闭页面
+import { AppClose } from "@/utils/client";
+
+// Vant 提示组件
+import { showToast } from "vant";
+
+// API 接口
+import {
+  GUILD_INFO,         // 获取公会详情
+  GUILD_JOIN_APPLY,   // 申请加入公会
+} from "@/api/guild";
+
+// 图片资源
+import card from "@/assets/img/guild/card.png";   // 卡片图标
+import fans from "@/assets/img/guild/fans.png";  // 成员数图标
+import star from "@/assets/img/guild/star.png";   // 星星图标
+import ques1 from "@/assets/img/charge/ques_1.png";  // 第一名占位图
+import ques2 from "@/assets/img/charge/ques_2.png";  // 第二名占位图
+import ques3 from "@/assets/img/charge/ques_3.png";  // 第三名占位图
+
+/**
+ * ==================== 接收路由参数 ====================
+ */
 const props = defineProps(["source", "uid", "ticket", "deviceId", "guildId"]);
+
+/**
+ * ==================== 路由实例 ====================
+ */
 const router = useRouter();
-let loading = ref(false); //是否加载中
+
+/**
+ * ==================== 基础数据 ====================
+ */
+let loading = ref(false);  // 页面loading状态
+
+/**
+ * ==================== 公会详情数据 ====================
+ */
 let infos = reactive({
-  guildId: null, //公会ID
-  guildName: "", //公会名称
-  coverPicUrl: "", //公会封面
-  guildNo: null, //公会号
-  memberCount: 0, //成员数量"
-  founderUid: null, //创建者uid
-  founderErbanNo: null, //创建者id
-  founderNick: "", //创建者昵称
-  // 公会之星
+  guildId: null,        // 公会ID
+  guildName: "",        // 公会名称
+  coverPicUrl: "",      // 公会封面图片URL
+  guildNo: null,        // 公会号（展示用ID）
+  memberCount: 0,       // 成员数量
+  founderUid: null,     // 创始人用户ID
+  founderErbanNo: null, // 创始人ID号
+  founderNick: "",      // 创始人昵称
+
+  // 公会之星列表（TOP3成员）
   guildStar: [
-    {
-      uid: null, //用户id
-      avatar: "", //用户头像
-      nick: "", //用户昵称
-    },
-    {
-      uid: null, //用户id
-      avatar: "", //用户头像
-      nick: "", //用户昵称
-    },
-    {
-      uid: null, //用户id
-      avatar: "", //用户头像
-      nick: "", //用户昵称
-    },
+    { uid: null, avatar: "", nick: "" },  // 第一名
+    { uid: null, avatar: "", nick: "" },  // 第二名
+    { uid: null, avatar: "", nick: "" },  // 第三名
   ],
-  appleStatus: 0, //申请状态 0未申请 1申请中 2已加入公会
+
+  // 申请状态：0=未申请 1=申请中 2=已加入公会
+  appleStatus: 0,
 });
 
-// 返回
+/**
+ * ==================== 页面方法 ====================
+ */
+
+/**
+ * 返回上一页
+ */
 function goBack() {
   if (props.source === "h5") {
     router.go(-1);
@@ -57,8 +97,12 @@ function goBack() {
   }
 }
 
-// 申请加入公会
+/**
+ * 申请加入公会
+ * 仅在未申请状态时可点击
+ */
 function onApply() {
+  // 仅未申请时可点击
   if (infos.appleStatus === 0) {
     loading.value = true;
     GUILD_JOIN_APPLY({
@@ -69,7 +113,7 @@ function onApply() {
     })
       .then(() => {
         loading.value = false;
-        getGuildInfo(); //刷新公会详情数据
+        getGuildInfo();  // 刷新公会详情（更新申请状态）
       })
       .catch((err) => {
         loading.value = false;
@@ -78,7 +122,9 @@ function onApply() {
   }
 }
 
-// 获取公会详情
+/**
+ * 获取公会详情
+ */
 function getGuildInfo() {
   loading.value = true;
   GUILD_INFO({
@@ -89,22 +135,14 @@ function getGuildInfo() {
     .then((data) => {
       loading.value = false;
       if (data) {
-        let temp = [{
-          uid: null, //用户id
-          avatar: "", //用户头像
-          nick: "", //用户昵称
-        },
-        {
-          uid: null, //用户id
-          avatar: "", //用户头像
-          nick: "", //用户昵称
-        },
-        {
-          uid: null, //用户id
-          avatar: "", //用户头像
-          nick: "", //用户昵称
-        },];
+        // 初始化公会之星数组（固定3个位置）
+        let temp = [
+          { uid: null, avatar: "", nick: "" },  // 第一名
+          { uid: null, avatar: "", nick: "" },  // 第二名
+          { uid: null, avatar: "", nick: "" },  // 第三名
+        ];
 
+        // 将返回的公会之星数据填充到数组中
         if (data.guildStar && data.guildStar.length > 0) {
           for (let i = 0; i < temp.length; i++) {
             if (data.guildStar[i]) {
@@ -114,7 +152,7 @@ function getGuildInfo() {
         }
 
         data.guildStar = temp;
-        infos = data;
+        infos = data;  // 更新公会信息
       }
     })
     .catch((err) => {
@@ -123,13 +161,24 @@ function getGuildInfo() {
     });
 }
 
-getGuildInfo(); //获取公会详情数据
+/**
+ * ==================== 页面初始化 ====================
+ */
+getGuildInfo();
 </script>
 
 <template>
   <div class="detail">
+    <!-- ==================== 公会封面区域 ==================== -->
     <div class="poster">
-      <nav-bars :is-left="true" :left-slot="true" :title-slot="true" bg-color="transparent">
+      <!-- 导航栏：透明背景，显示返回按钮 -->
+      <nav-bars
+        :is-left="true"
+        :left-slot="true"
+        :title-slot="true"
+        bg-color="transparent"
+      >
+        <!-- 左侧返回按钮 -->
         <template #left_slot>
           <svg @click="goBack" t="1735394484907" class="back" viewBox="0 0 1024 1024" version="1.1"
             xmlns="http://www.w3.org/2000/svg" p-id="1716" width="200" height="200">
@@ -141,16 +190,22 @@ getGuildInfo(); //获取公会详情数据
               fill="#ffffff" p-id="1718"></path>
           </svg>
         </template>
+
+        <!-- 中间标题 -->
         <template #title_slot>
           <span>{{ $t("guild.title") }}</span>
         </template>
       </nav-bars>
 
+      <!-- 公会信息卡片 -->
       <div class="mine">
+        <!-- 公会头像 -->
         <div class="avatar_box">
           <van-image fit="cover" class="avatar" :src="infos.coverPicUrl" />
         </div>
+        <!-- 公会名称 -->
         <div class="nick">{{ infos.guildName || "-" }}</div>
+        <!-- 公会基础信息：ID和成员数 -->
         <ul class="base">
           <li class="id">
             <span>ID:</span>
@@ -164,13 +219,15 @@ getGuildInfo(); //获取公会详情数据
       </div>
     </div>
 
+    <!-- ==================== 内容区域 ==================== -->
     <div class="container">
+      <!-- 创始人信息卡片 -->
       <div class="founder blos">
         <div class="labs">
           <van-image fit="cover" class="icon" :src="card" />
           <span class="text">{{ $t("guild.agencyInfo") }}</span>
         </div>
-
+        <!-- 创始人信息列表 -->
         <ul class="descs">
           <li class="desc">
             <div class="lab">{{ $t("guild.founder.nick") }}</div>
@@ -183,44 +240,74 @@ getGuildInfo(); //获取公会详情数据
         </ul>
       </div>
 
+      <!-- 公会之星卡片 -->
       <div class="tops blos">
         <div class="labs">
           <van-image fit="cover" class="icon" :src="star" />
           <span class="text">{{ $t("guild.agencyStar") }}</span>
         </div>
 
+        <!-- TOP3 成员列表 -->
         <ul class="list">
+          <!-- 第一名 -->
           <li class="item top1">
             <div class="avatar_box">
-              <van-image class="avatar" fit="cover" round :src="infos.guildStar[0].avatar ? infos.guildStar[0].avatar : ques1
-                " />
+              <!-- 无头像时显示占位图 -->
+              <van-image
+                class="avatar"
+                fit="cover"
+                round
+                :src="infos.guildStar[0].avatar ? infos.guildStar[0].avatar : ques1"
+              />
             </div>
           </li>
+          <!-- 第二名 -->
           <li class="item top2">
             <div class="avatar_box">
-              <van-image class="avatar" fit="cover" round :src="infos.guildStar[1].avatar ? infos.guildStar[1].avatar : ques2
-                " />
+              <van-image
+                class="avatar"
+                fit="cover"
+                round
+                :src="infos.guildStar[1].avatar ? infos.guildStar[1].avatar : ques2"
+              />
             </div>
           </li>
+          <!-- 第三名 -->
           <li class="item top3">
             <div class="avatar_box">
-              <van-image class="avatar" fit="cover" round :src="infos.guildStar[2].avatar ? infos.guildStar[2].avatar : ques3
-                " />
+              <van-image
+                class="avatar"
+                fit="cover"
+                round
+                :src="infos.guildStar[2].avatar ? infos.guildStar[2].avatar : ques3"
+              />
             </div>
           </li>
         </ul>
       </div>
     </div>
 
-    <van-button v-if="infos.guildId && infos.appleStatus != 2" type="default" class="btn_new"
-      :class="infos.appleStatus === 0 ? 'new_act' : 'new_def'" @click="onApply">{{
+    <!-- ==================== 申请按钮 ==================== -->
+    <!-- 仅在公会存在且未加入时显示 -->
+    <van-button
+      v-if="infos.guildId && infos.appleStatus != 2"
+      type="default"
+      class="btn_new"
+      :class="infos.appleStatus === 0 ? 'new_act' : 'new_def'"
+      @click="onApply"
+    >
+      <!-- 根据状态显示不同文字 -->
+      {{
         infos.appleStatus === 0 ? $t("guild.applyJoin") : $t("guild.applying")
-      }}</van-button>
+      }}
+    </van-button>
 
+    <!-- 全局Loading -->
     <Loading :show="loading" color="#fff" bg-color="transparent" />
   </div>
 </template>
 
+<!-- SCSS 样式 -->
 <style lang="scss" scoped>
 .detail {
   width: 100%;
@@ -229,6 +316,7 @@ getGuildInfo(); //获取公会详情数据
   display: flex;
   flex-direction: column;
 
+  /* ==================== 封面区域 ==================== */
   .poster {
     width: 100%;
     height: 331px;
@@ -237,6 +325,7 @@ getGuildInfo(); //获取公会详情数据
     background-size: cover;
     position: relative;
 
+    /* 公会信息卡片 */
     .mine {
       display: flex;
       flex-direction: column;
@@ -244,6 +333,7 @@ getGuildInfo(); //获取公会详情数据
       justify-content: center;
       margin: 20px auto 0;
 
+      /* 头像容器 */
       .avatar_box {
         width: 87px;
         height: 87px;
@@ -252,6 +342,7 @@ getGuildInfo(); //获取公会详情数据
         justify-content: center;
         position: relative;
 
+        /* 头像装饰框 */
         &:before {
           content: "";
           width: 100%;
@@ -272,6 +363,7 @@ getGuildInfo(); //获取公会详情数据
         }
       }
 
+      /* 公会名称 */
       .nick {
         margin: 6px auto 10px;
         font-family: PingFangSC, PingFang SC;
@@ -282,6 +374,7 @@ getGuildInfo(); //获取公会详情数据
         font-style: normal;
       }
 
+      /* 基础信息 */
       .base {
         display: flex;
         font-family: PingFangSC, PingFang SC;
@@ -317,6 +410,7 @@ getGuildInfo(); //获取公会详情数据
     }
   }
 
+  /* ==================== 内容区域 ==================== */
   .container {
     flex: 1;
     overflow-x: hidden;
@@ -328,6 +422,7 @@ getGuildInfo(); //获取公会详情数据
     margin-top: -50px;
     position: relative;
 
+    /* 卡片通用样式 */
     .blos {
       width: 100%;
       background: #ffffff;
@@ -362,6 +457,7 @@ getGuildInfo(); //获取公会详情数据
       }
     }
 
+    /* 创始人信息卡片 */
     .founder {
       .descs {
         width: 100%;
@@ -398,6 +494,7 @@ getGuildInfo(); //获取公会详情数据
       }
     }
 
+    /* 公会之星卡片 */
     .tops {
       .list {
         width: 100%;
@@ -438,12 +535,13 @@ getGuildInfo(); //获取公会详情数据
           }
         }
 
+        /* 第一名 */
         .top1 {
           background: url("@/assets/img/guild/stage1.png") no-repeat;
           background-size: cover;
           background-position: center;
           margin-top: 0;
-          order: 2;
+          order: 2;  /* 调整显示顺序，使第一名在中间 */
 
           .avatar_box {
             &::before {
@@ -455,6 +553,7 @@ getGuildInfo(); //获取公会详情数据
           }
         }
 
+        /* 第二名 */
         .top2 {
           background: url("@/assets/img/guild/stage2.png") no-repeat;
           background-size: cover;
@@ -471,6 +570,7 @@ getGuildInfo(); //获取公会详情数据
           }
         }
 
+        /* 第三名 */
         .top3 {
           background: url("@/assets/img/guild/stage3.png") no-repeat;
           background-size: cover;
@@ -490,6 +590,7 @@ getGuildInfo(); //获取公会详情数据
     }
   }
 
+  /* 申请按钮 */
   .btn_new {
     width: 355px;
     height: 46px;
@@ -502,11 +603,13 @@ getGuildInfo(); //获取公会详情数据
     border-radius: 23px;
   }
 
+  /* 申请中状态（禁用） */
   .new_def {
     color: #b5b5b2;
     background: #e5e5e5 !important;
   }
 
+  /* 可申请状态 */
   .new_act {
     color: #ffffff;
     background: linear-gradient(90deg, #AC41F6, #520BF5) !important;
@@ -514,11 +617,14 @@ getGuildInfo(); //获取公会详情数据
 }
 </style>
 
+<!-- 全局样式 -->
 <style lang="scss">
+/* 页面背景 */
 .views_wrap {
   background: #f1f1f1;
 }
 
+/* ==================== RTL 适配（阿拉伯语） ==================== */
 .ara {
   .container {
     .founder {
@@ -533,6 +639,7 @@ getGuildInfo(); //获取公会详情数据
   }
 }
 
+/* 英语（LTR）布局 */
 .en {
   .container {
     .founder {
