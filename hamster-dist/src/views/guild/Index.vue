@@ -31,6 +31,7 @@ import { AppClose, OpenRoom } from "@/utils/client";
 
 // Vant 提示组件
 import { showToast } from "vant";
+// showToast('المستخدم في الوكالة بالفعل، لا يمكن تعيينه كـ BD.')
 
 // API 接口
 import {
@@ -989,9 +990,10 @@ getMyGuildDetail();
       <!-- 标题栏 -->
       <div class="modal-header">
         <span class="modal-title">{{ $t("guild.more.createAgency") }}</span>
-        <svg @click="closeCreateAgency" class="modal-close" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5001" width="20" height="20">
-          <path d="M512 438.4l313.6-313.6c9.6-9.6 9.6-25.6 0-35.2s-25.6-9.6-35.2 0L512 403.2 198.4 89.6c-9.6-9.6-25.6-9.6-35.2 0s-9.6 25.6 0 35.2L438.4 438.4 124.8 752c-9.6 9.6-9.6 25.6 0 35.2s25.6 9.6 35.2 0L512 473.6l313.6 313.6c9.6 9.6 25.6 9.6 35.2 0s9.6-25.6 0-35.2L512 438.4z" fill="#666666" p-id="5002"></path>
-        </svg>
+        <div @click="closeCreateAgency" class="modal-close" >
+          <!-- <path d="M512 438.4l313.6-313.6c9.6-9.6 9.6-25.6 0-35.2s-25.6-9.6-35.2 0L512 403.2 198.4 89.6c-9.6-9.6-25.6-9.6-35.2 0s-9.6 25.6 0 35.2L438.4 438.4 124.8 752c-9.6 9.6-9.6 25.6 0 35.2s25.6 9.6 35.2 0L512 473.6l313.6 313.6c9.6 9.6 25.6 9.6 35.2 0s9.6-25.6 0-35.2L512 438.4z" fill="#666666" p-id="5002"></path> -->
+             <img src="@/assets/img/guild/icon.png" alt=""> 
+        </div>
       </div>
 
       <!-- 表单内容 -->
@@ -1014,9 +1016,9 @@ getMyGuildDetail();
                 <div class="user-id">ID: {{ pops.createAgency.searchResult.erbanNo || pops.createAgency.searchResult.uid }}</div>
               </div>
             </div>
-            <svg @click="pops.createAgency.searchResult = null" class="delete-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6001" width="22" height="22">
-              <path d="M512 438.4l313.6-313.6c9.6-9.6 9.6-25.6 0-35.2s-25.6-9.6-35.2 0L512 403.2 198.4 89.6c-9.6-9.6-25.6-9.6-35.2 0s-9.6 25.6 0 35.2L438.4 438.4 124.8 752c-9.6 9.6-9.6 25.6 0 35.2s25.6 9.6 35.2 0L512 473.6l313.6 313.6c9.6 9.6 25.6 9.6 35.2 0s9.6-25.6 0-35.2L512 438.4z" fill="#999999" p-id="6002"></path>
-            </svg>
+            <div @click="pops.createAgency.searchResult = null" class="delete-icon" >
+             <img src="@/assets/img/guild/off.png" alt=""> 
+            </div>
           </div>
 
           <!-- 搜索框 -->
@@ -1088,6 +1090,10 @@ getMyGuildDetail();
 
 <!-- SCSS 样式 -->
 <style lang="scss" scoped>
+:deep(.van-toast__text){
+     direction: auto;
+  unicode-bidi: plaintext !important; /* 根据内容自动判断方向 */
+}
 /* ==================== 页面容器 ==================== */
 .guild {
   width: 100%;
@@ -1453,6 +1459,10 @@ getMyGuildDetail();
 
 <!-- 全局样式 -->
 <style lang="scss">
+.van-toast .van-toast__text{
+  direction: auto;
+  unicode-bidi: plaintext !important;
+}
 /* 页面背景 */
 .views_wrap {
   background: #f1f1f1;
@@ -2033,6 +2043,10 @@ getMyGuildDetail();
   display: flex;
   flex-direction: column;
   z-index: 10000;
+  :deep(.van-toast__text){
+     direction: auto;
+  unicode-bidi: plaintext !important; /* 根据内容自动判断方向 */
+}
 }
 
 .modal-header {
@@ -2058,6 +2072,10 @@ getMyGuildDetail();
     transform: translateY(-50%);
     cursor: pointer;
     padding: 4px;
+    width: 25px;
+    img{
+      width: 100%;
+    }
   }
 }
 
@@ -2084,6 +2102,12 @@ getMyGuildDetail();
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 323px;
+height: 70px;
+background: #F2F2F2;
+border-radius: 6px;
+box-sizing: border-box;
+padding: 0 10px;
 }
 
 .user-info-card {
@@ -2136,12 +2160,19 @@ getMyGuildDetail();
   }
 
   .delete-icon {
+    width: 30px;
+    height: auto;
     flex-shrink: 0;
     margin-left: 12px;
     cursor: pointer;
     padding: 4px;
     transition: opacity 0.2s;
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img{
+      width: 100%;
+    }
     &:active {
       opacity: 0.6;
     }
@@ -2152,7 +2183,7 @@ getMyGuildDetail();
   flex: 1;
   display: flex;
   align-items: center;
-  background: #f5f5f5;
+  // background: #f5f5f5;
   border-radius: 12px;
   padding: 0 12px;
   height: 46px;
@@ -2261,5 +2292,7 @@ getMyGuildDetail();
   &:disabled:not(.create-btn--active) {
     cursor: not-allowed;
   }
+
 }
+
 </style>

@@ -233,38 +233,74 @@ const fetchWithdrawInfo = async () => {
 
       console.log("更新后的钱包数据:", userWalletData.value);
 
-      // 如果用户已经输入了金额，重新计算USD金额
-      if (withdrawAmount.value && parseFloat(withdrawAmount.value) > 0) {
-        calculateUsdAmount(parseFloat(withdrawAmount.value)) || 0;
-      }
+      // 如果当前输入的金额超过新余额，进行修正并重新计算USD
+      adjustAmountIfExceedsBalance();
     }
   } catch (error) {
     console.error("获取提现初始化信息失败:", error);
   }
 };
 
+// 修正金额：如果当前输入的钻石数量超过余额，则截断为余额并显示提示
+const adjustAmountIfExceedsBalance = () => {
+  const currentAmount = parseFloat(withdrawAmount.value);
+  const maxAmount = parseFloat(userWalletData.value.diamondAmount || "0");
+
+  if (!isNaN(currentAmount) && currentAmount > maxAmount) {
+    amountError.value = t("Agency.AmountCannotExceed", { max: maxAmount });
+    withdrawAmount.value = maxAmount.toString();
+    updateUsdByCurrentAmount();
+  } else if (currentAmount > 0 && currentAmount <= maxAmount) {
+    // 金额有效且未超限，正常计算USD
+    updateUsdByCurrentAmount();
+  } else {
+    // 金额为空或无效，USD显示0
+    usdAmount.value = "0.00";
+  }
+};
+
+// 根据当前输入框的金额（已截断为余额范围内）计算USD并更新
+const updateUsdByCurrentAmount = () => {
+  const amount = parseFloat(withdrawAmount.value);
+  if (!isNaN(amount) && amount > 0) {
+    calculateUsdAmount(amount);
+  } else {
+    usdAmount.value = "0.00";
+  }
+};
+
 // 处理金额输入
 const handleAmountInput = () => {
-  const amount = parseFloat(withdrawAmount.value);
+  let amount = parseFloat(withdrawAmount.value);
   const maxAmount = parseFloat(userWalletData.value.diamondAmount || "0");
 
   // 清除之前的错误
   amountError.value = "";
 
+  // 非数字处理
+  if (isNaN(amount)) {
+    withdrawAmount.value = "";
+    usdAmount.value = "0.00";
+    return;
+  }
+
+  // 超出余额时的处理：截断为最大值，显示错误提示，并且USD基于最大值转换
   if (amount > maxAmount) {
     amountError.value = t("Agency.AmountCannotExceed", { max: maxAmount });
     withdrawAmount.value = maxAmount.toString();
+    // 关键修复：此处使用截断后的最大值（即余额）来计算USD，而不是用户输入的超出值
+    calculateUsdAmount(maxAmount);
+  } else {
+    // 未超限，正常计算USD
+    calculateUsdAmount(amount);
   }
-
-  // 计算USD金额（这里可以根据实际汇率计算）
-  calculateUsdAmount(amount);
 };
 
-// 计算USD金额
+// 计算USD金额（基于钻石数量）
 const calculateUsdAmount = (diamondAmount) => {
   // 使用从接口获取的钻石兑换USD比例
   const rate = userWalletData.value.withdrawDiamondExchangeUsdRate || 0;
-  if (rate > 0) {
+  if (rate > 0 && diamondAmount > 0) {
     // 钻石数量除以兑换比例，保留小数点后两位
     usdAmount.value = (diamondAmount / rate).toFixed(2);
   } else {
@@ -430,7 +466,7 @@ const resetForm = () => {
   amountError.value = "";
 };
 
-// 监听弹窗显示状态，获取钱包数据
+// 监听弹窗显示状态，获取钱包数据并校验金额
 watch(
   () => props.show,
   (newVal) => {
